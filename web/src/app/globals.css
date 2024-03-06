@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /** START COLORS **/
+    --primary-color-1: 255 255 255;
+    --on-primary-color-1: 0 0 0;
+
+    --secondary-color-1: 70 70 70;
+    --light-secondary-color-1: 70 70 70;
+
+    --accent-color-1: 0 150 0;
+    --focused-accent-color-1: 0 255 0;
+    /** END COLORS **/
+
+    /** START FONT-SIZE **/
+    /* Step -2: 11.1111px → 12.8px */
+    --text-xs: clamp(0.6944rem, 0.6709rem + 0.1076vi, 0.8rem);
+    /* Step -1: 13.3333px → 16px */
+    --text-sm: clamp(0.8333rem, 0.7962rem + 0.1699vi, 1rem);
+    /* Step 0: 16px → 20px */
+    --text-base: clamp(1rem, 0.9443rem + 0.2548vi, 1.25rem);
+    /* Step 1: 19.2px → 25px */
+    --text-lg: clamp(1.2rem, 1.1192rem + 0.3694vi, 1.5625rem);
+    /* Step 2: 23.04px → 31.25px */
+    --text-xl: clamp(1.44rem, 1.3256rem + 0.5229vi, 1.9531rem);
+    /* Step 3: 27.648px → 39.0625px */
+    --text-2xl: clamp(1.728rem, 1.569rem + 0.727vi, 2.4414rem);
+    /* Step 4: 33.1776px → 48.8281px */
+    --text-3xl: clamp(2.0736rem, 1.8555rem + 0.9968vi, 3.0518rem);
+    /* Step 5: 39.8131px → 61.0352px */
+    --text-4xl: clamp(2.4883rem, 2.1926rem + 1.3517vi, 3.8147rem);
+    /** END FONT-SIZE **/
+
+    /** START SPACING **/
+    /* Space 3xs: 4px → 5px */
+    --space-3xs: clamp(0.25rem, 0.2361rem + 0.0637vi, 0.3125rem);
+    /* Space 2xs: 8px → 10px */
+    --space-2xs: clamp(0.5rem, 0.4721rem + 0.1274vi, 0.625rem);
+    /* Space xs: 12px → 15px */
+    --space-xs: clamp(0.75rem, 0.7082rem + 0.1911vi, 0.9375rem);
+    /* Space s: 16px → 20px */
+    --space-s: clamp(1rem, 0.9443rem + 0.2548vi, 1.25rem);
+    /* Space m: 24px → 30px */
+    --space-m: clamp(1.5rem, 1.4164rem + 0.3822vi, 1.875rem);
+    /* Space l: 32px → 40px */
+    --space-l: clamp(2rem, 1.8885rem + 0.5096vi, 2.5rem);
+    /* Space xl: 48px → 60px */
+    --space-xl: clamp(3rem, 2.8328rem + 0.7643vi, 3.75rem);
+    /* Space 2xl: 64px → 80px */
+    --space-2xl: clamp(4rem, 3.7771rem + 1.0191vi, 5rem);
+    /* Space 3xl: 96px → 120px */
+    --space-3xl: clamp(6rem, 5.6656rem + 1.5287vi, 7.5rem);
+
+    /* One-up pairs */
+    /* Space 3xs-2xs: 4px → 10px */
+    --space-3xs-2xs: clamp(0.25rem, 0.1664rem + 0.3822vi, 0.625rem);
+    /* Space 2xs-xs: 8px → 15px */
+    --space-2xs-xs: clamp(0.5rem, 0.4025rem + 0.4459vi, 0.9375rem);
+    /* Space xs-s: 12px → 20px */
+    --space-xs-s: clamp(0.75rem, 0.6385rem + 0.5096vi, 1.25rem);
+    /* Space s-m: 16px → 30px */
+    --space-s-m: clamp(1rem, 0.8049rem + 0.8917vi, 1.875rem);
+    /* Space m-l: 24px → 40px */
+    --space-m-l: clamp(1.5rem, 1.2771rem + 1.0191vi, 2.5rem);
+    /* Space l-xl: 32px → 60px */
+    --space-l-xl: clamp(2rem, 1.6099rem + 1.7834vi, 3.75rem);
+    /* Space xl-2xl: 48px → 80px */
+    --space-xl-2xl: clamp(3rem, 2.5541rem + 2.0382vi, 5rem);
+    /* Space 2xl-3xl: 64px → 120px */
+    --space-2xl-3xl: clamp(4rem, 3.2197rem + 3.5669vi, 7.5rem);
+
+    /* Custom pairs */
+    /* Space s-l: 16px → 40px */
+    --space-s-l: clamp(1rem, 0.6656rem + 1.5287vi, 2.5rem);
+    /** END SPACING **/
+
+    /** START MAX WIDTH **/
+    --width-readable: 70ch;
+    --width-min-supported: 350px;
+    --width-max-supported: 1920px;
+    /** END MAX WIDTH **/
+  }
+}
+
+/** START CSS RESET **/
+/* Box sizing rules */
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+  color: var(--on-primary-color-1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin-block-end: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/** END CSS RESET **/
