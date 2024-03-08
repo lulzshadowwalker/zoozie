@@ -66,6 +66,30 @@ const config: Config = {
         "s-l": "var(--space-s-l)",
       },
     },
+    keyframes: {
+      "slide-in-bottom": {
+        "0%": {
+          transform: "translateY(-100%)",
+          opacity: "0",
+        },
+        "100%": {
+          transform: "translateY(0)",
+          opacity: "1",
+        },
+      },
+      "slide-out-top": {
+        "0%": {
+          transform: "translateY(0)",
+        },
+        "100%": {
+          transform: "translateY(-100%)",
+        },
+      },
+    },
+    animation: {
+      "slide-in-bottom": "slide-in-bottom 180ms ease-in forwards",
+      "slide-out-top": "slide-out-top 350ms ease-out forwards",
+    },
   },
   plugins: [require("tailwind-scrollbar-hide"), require("tailwindcss-dir")()],
 };

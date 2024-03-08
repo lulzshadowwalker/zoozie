@@ -3,7 +3,7 @@ import { getRequestConfig } from "next-intl/server";
 
 export type Locale = (typeof config.locales)[number];
 export const config = {
-  locales: ["en", "ru"],
+  locales: ["en", "ar"],
   defaultLocale: "en",
 } as const;
 
