@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
 import ZoozImage from "../zooz-image";
+import Button from "../secondary-button";
 
 export default function HeaderNavigationBar() {
   const navigationSampleItems = ["Buy", "Sell", "Services"];
@@ -44,16 +45,19 @@ export default function HeaderNavigationBar() {
           ))}
         </ul>
 
-        <div className="ms-s-m h-l-xl w-l-xl rounded-full relative overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1709588191280-acd9303db2cc?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt={t("avatar")}
-            title={t("avatar")}
-            fill
-            sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
-            quality={65}
-          />
-        </div>
+        <section className="flex items-center ms-s-m gap-xs-s">
+          <Button>List your home</Button>
+          <div className="h-l-xl w-l-xl rounded-full relative overflow-hidden">
+            <Image
+              src="https://images.unsplash.com/photo-1709588191280-acd9303db2cc?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt={t("avatar")}
+              title={t("avatar")}
+              fill
+              sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
+              quality={65}
+            />
+          </div>
+        </section>
       </nav>
     </header>
   );

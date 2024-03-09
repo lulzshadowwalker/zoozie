@@ -1,6 +1,10 @@
 {
-    "hello": "привет",
     "header-navigation-bar": {
         "avatar": "avatar"
+    },
+    "home": {
+        "featured-listings": "Featured Listings",
+        "partners": "Our Partners",
+        "appreciate-trust": "Thank you for your trust"
     }
 }

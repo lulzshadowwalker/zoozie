@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import { BasePageParams } from "@/lib/types/types";
+import { IBaseLayoutParams } from "@/lib/types/types";
 import { NextIntlClientProvider, useMessages } from "next-intl";
 import HeaderNavigationBar from "@/components/shared/header-navigation-bar";
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
   params: { locale },
-}: BasePageParams) {
+}: IBaseLayoutParams) {
   const messages = useMessages();
   const dir = locale === "ar" ? "rtl" : "ltr";
 

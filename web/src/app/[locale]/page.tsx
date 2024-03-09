@@ -1,173 +1,32 @@
+import { IBasePageParams } from "@/lib/types/types";
 import { useTranslations } from "next-intl";
-import { BasePageParams } from "@/lib/types/types";
-import { Link } from "@/lib/i18n/navigation";
+import FeaturedListings from "@/components/home/featured-listings";
+import Hero from "@/components/home/hero";
+import dynamic from "next/dynamic";
 
-export default function Home({ params: { locale } }: any) {
-  const t = useTranslations();
-  const flippedLocale = locale === "ar" ? "en" : "ar";
+const Partners = dynamic(() => import("@/components/home/partners"));
+
+export default function Home({}: IBasePageParams) {
+  const t = useTranslations("home");
 
   return (
-    <main className="min-w-screen min-h-screen flex flex-col justify-center items-center gap-xs-s">
-      <article className="max-w-readable mx-auto">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-        velit quas vero esse suscipit nam nihil cumque eius dicta fugit, facere
-        autem, amet reiciendis voluptatibus voluptas sit ex praesentium porro!
-      </article>
-      <h1 className="text-4xl">{t("hello")}</h1>
-      <Link
-        href="/"
-        locale={flippedLocale}
-        className="bg-cyan-500 rounded-full aspect-square h-xl-2xl flex justify-center items-center text-lg text-white font-medium"
-      >
-        {flippedLocale.toUpperCase()}
-      </Link>
+    <main className="my-xl-2xl">
+      <Hero />
+      <FeaturedListings />
+
+      {/* TODO: try and use dynamic import for Partners client component */}
+      <Partners />
+
+      <section className="my-l-xl max-w-page px-page mx-auto">
+        <h2 className="text-2xl font-semibold text-center">
+          {t("appreciate-trust")}
+        </h2>
+        <p className="text-4xl text-center font-medium text-gray-500 my-m-l leading-[3.2rem]">
+          3, 416, 214
+          <br />
+          <span className="text-xl font-normal">{t("total-visits")}</span>
+        </p>
+      </section>
     </main>
   );
 }
