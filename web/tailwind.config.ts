@@ -17,6 +17,7 @@ const config: Config = {
       maxWidth: {
         readable: "var(--width-readable)",
         supported: "var(--width-max-supported)",
+        page: "var(--width-max-page)",
       },
       colors: {
         primary: {
@@ -64,6 +65,7 @@ const config: Config = {
         "xl-2xl": "var(--space-xl-2xl)",
         "2xl-3xl": "var(--space-2xl-3xl)",
         "s-l": "var(--space-s-l)",
+        page: "var(--space-page)",
       },
     },
     keyframes: {

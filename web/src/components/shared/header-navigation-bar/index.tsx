@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
+import ZoozImage from "../zooz-image";
 
 export default function HeaderNavigationBar() {
   const navigationSampleItems = ["Buy", "Sell", "Services"];
@@ -16,7 +17,7 @@ export default function HeaderNavigationBar() {
   // TODO: responsive mobile navigation burger menu
   return (
     <header
-      className={cn("sticky top-0 bg-primary-1/70 backdrop-blur-sm", {
+      className={cn("sticky top-0 bg-primary-1/70 backdrop-blur-sm z-10", {
         "animate-slide-in-bottom": !isScrollingDown,
         "animate-slide-out-top": isScrollingDown,
       })}
@@ -26,14 +27,19 @@ export default function HeaderNavigationBar() {
 
         <ul className="ms-auto flex items-center gap-2xs-xs">
           {navigationSampleItems.map((item, index) => (
-            <li
-              key={index}
-              className={cn("text-lg transition-all hover:text-on-primary-1", {
-                "text-gray-500": true,
-                "text-on-primary-1 font-medium": false,
-              })}
-            >
-              <Link href="/">{item}</Link>
+            <li key={index}>
+              <Link
+                href="/"
+                className={cn(
+                  "text-lg transition-all hover:text-on-primary-1 outline-none focus:text-on-primary-1",
+                  {
+                    "text-gray-500": true,
+                    "text-on-primary-1 font-medium": false,
+                  },
+                )}
+              >
+                {item}
+              </Link>
             </li>
           ))}
         </ul>

@@ -11,8 +11,8 @@
     --secondary-color-1: 70 70 70;
     --light-secondary-color-1: 70 70 70;
 
-    --accent-color-1: 0 150 0;
-    --focused-accent-color-1: 0 255 0;
+    --accent-color-1: 255 194 111;
+    --focused-accent-color-1: 255 170 51;
     /** END COLORS **/
 
     /** START FONT-SIZE **/
@@ -75,12 +75,15 @@
     /* Custom pairs */
     /* Space s-l: 16px → 40px */
     --space-s-l: clamp(1rem, 0.6656rem + 1.5287vi, 2.5rem);
+
+    --space-page: var(--space-2xl-3xl);
     /** END SPACING **/
 
     /** START MAX WIDTH **/
     --width-readable: 70ch;
     --width-min-supported: 350px;
     --width-max-supported: 1920px;
+    --width-max-page: 1200px;
     /** END MAX WIDTH **/
   }
 }
@@ -170,3 +173,17 @@ select {
   }
 }
 /** END CSS RESET **/
+
+p {
+  line-height: 2.5rem;
+}
+
+a {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+a:focus {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { BasePageParams } from "@/lib/types/types";
 import { Link } from "@/lib/i18n/navigation";
 
-export default function Home({ params: { locale } }: BasePageParams) {
+export default function Home({ params: { locale } }: any) {
   const t = useTranslations();
   const flippedLocale = locale === "ar" ? "en" : "ar";
 

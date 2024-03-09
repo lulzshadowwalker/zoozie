@@ -5,6 +5,10 @@ import { BasePageParams } from "@/lib/types/types";
 import { NextIntlClientProvider, useMessages } from "next-intl";
 import HeaderNavigationBar from "@/components/shared/header-navigation-bar";
 
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,7 +29,7 @@ export default function RootLayout({
       <NextIntlClientProvider locale={locale} messages={messages}>
         <body className={inter.className}>
           <HeaderNavigationBar />
-          {children}
+          <div className="max-w-supported mx-auto">{children}</div>
         </body>
       </NextIntlClientProvider>
     </html>
