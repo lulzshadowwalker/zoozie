@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 
+// TODO: refactor out the listings items grid
 export default function FeaturedListings() {
   const t = useTranslations("home");
 
@@ -79,7 +80,7 @@ export default function FeaturedListings() {
 
         <Link
           href="/listings"
-          className="inline-block text-end w-full mt-xs-s underline underline-offset-4 hover:decoration-transparent"
+          className="inline-block text-end w-full mt-xs-s underline underline-offset-4 outline-none hover:decoration-transparent focus:decoration-transparent"
         >
           {t("view-more")}{" "}
           <FontAwesomeIcon icon={faArrowRight} className="rtl:rotate-180" />

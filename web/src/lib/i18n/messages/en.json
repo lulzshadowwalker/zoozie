@@ -8,5 +8,9 @@
         "appreciate-trust": "Thank You for Your Trust",
         "view-more": "View More",
         "total-visits": "Total Visits"
+    },
+    "agency": {
+        "view-more": "View More",
+        "view-listings": "View Listings"
     }
 }

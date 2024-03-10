@@ -48,7 +48,7 @@ export default function HeaderNavigationBar() {
         <section className="flex items-center ms-s-m gap-xs-s">
           <Button>List your home</Button>
           <div className="h-l-xl w-l-xl rounded-full relative overflow-hidden">
-            <Image
+            <ZoozImage
               src="https://images.unsplash.com/photo-1709588191280-acd9303db2cc?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt={t("avatar")}
               title={t("avatar")}

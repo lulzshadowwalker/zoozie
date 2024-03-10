@@ -80,21 +80,18 @@ export default function Listing() {
             </div>
           </section>
 
-          <section>
-            <article className="mt-l-xl pt-l-xl border-t">
-              <h2 className="text-xl font-medium">About this home</h2>
-              <p className="text-lg text-gray-500 max-w-readable mt-s-m">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est
-                minima odio quod mollitia optio ipsum iusto cumque laboriosam
-                officia fuga dolorum vel eos reprehenderit ab excepturi harum
-                quisquam, unde porro. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Obcaecati quibusdam ducimus illum architecto
-                doloremque numquam consectetur error. Cumque optio magnam quod
-                tenetur dolore iste eveniet, accusantium harum, ex aperiam hic!
-                _
-              </p>
-            </article>
-          </section>
+          <article className="mt-l-xl pt-l-xl border-t">
+            <h2 className="text-xl font-medium">About this home</h2>
+            <p className="text-lg text-gray-500 max-w-readable mt-s-m">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Est
+              minima odio quod mollitia optio ipsum iusto cumque laboriosam
+              officia fuga dolorum vel eos reprehenderit ab excepturi harum
+              quisquam, unde porro. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Obcaecati quibusdam ducimus illum architecto
+              doloremque numquam consectetur error. Cumque optio magnam quod
+              tenetur dolore iste eveniet, accusantium harum, ex aperiam hic! _
+            </p>
+          </article>
         </section>
 
         <div className="flex-grow basis-0 border border-gray-400 bg-gray-300/20 rounded-2xl px-s-m py-m-l top-[3rem] mt-l-xl lg:sticky">
