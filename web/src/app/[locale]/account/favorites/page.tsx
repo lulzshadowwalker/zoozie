@@ -65,6 +65,7 @@ export default async function Favorites({ params: { locale }}: IBasePageParams) 
                         alt=""
                         title=""
                         fill
+                        sizes="(min-width: 780px) 300px, calc(90.65vw - 91px)"
                         className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
                       />
                     </div>
