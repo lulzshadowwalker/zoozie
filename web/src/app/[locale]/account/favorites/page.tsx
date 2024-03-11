@@ -1,10 +1,12 @@
 import ZoozImage from "@/components/shared/zooz-image";
 import { Link } from "@/lib/i18n/navigation";
+import { IBasePageParams } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-export default function Favorites() {
-  const t = useTranslations("account-favorites");
+export default async function Favorites({ params: { locale }}: IBasePageParams) {
+  unstable_setRequestLocale(locale); 
+  const t = await getTranslations("account-favorites");
 
   const sampleFilters: string[] = ["All", "Property", "Agencies"];
 

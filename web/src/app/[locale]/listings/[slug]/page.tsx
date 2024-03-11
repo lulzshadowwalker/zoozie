@@ -4,8 +4,14 @@ import Marquee from "react-fast-marquee";
 import { faMobile, faToilet } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IBasePageParams } from "@/lib/types/types";
+import { unstable_setRequestLocale } from "next-intl/server";
 
-export default function Listing() {
+export const dynamic = "force-static";
+
+export default function Listing({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale);
+
   const sampleImages: string[] = [
     "https://images.unsplash.com/photo-1551429340-1a7a56cde81f?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?q=80&w=2952&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",

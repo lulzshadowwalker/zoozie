@@ -1,13 +1,14 @@
 import { IBasePageParams } from "@/lib/types/types";
-import { useTranslations } from "next-intl";
 import FeaturedListings from "@/components/home/featured-listings";
 import Hero from "@/components/home/hero";
 import dynamic from "next/dynamic";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 const Partners = dynamic(() => import("@/components/home/partners"));
 
-export default function Home({}: IBasePageParams) {
-  const t = useTranslations("home");
+export default async function Home({ params: { locale }}: IBasePageParams) {
+  unstable_setRequestLocale(locale); 
+  const t = await getTranslations("home");
 
   return (
     <main className="my-xl-2xl">

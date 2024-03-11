@@ -1,14 +1,17 @@
 import Button from "@/components/shared/secondary-button";
 import ZoozImage from "@/components/shared/zooz-image";
+import { IBasePageParams } from "@/lib/types/types";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
+
+export const dynamic = "force-static"; 
 
 // TODO: might wanna refactor sections with border top and a heading
-export default function Agency() {
+export default function Agency({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale); 
   const t = useTranslations("agency");
-
-  // TODO: add a view listing floating button
 
   return (
     <main className="my-2xl-3xl">

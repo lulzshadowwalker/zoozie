@@ -1,10 +1,20 @@
 {
     "header-navigation-bar": {
-        "avatar": "avatar"
+        "avatar": "الصورة الرمزية"
     },
     "home": {
-        "featured-listings": "Featured Listings",
-        "partners": "Our Partners",
-        "appreciate-trust": "Thank you for your trust"
+        "featured-listings": "القوائم المميزة",
+        "partners": "شركاؤنا",
+        "appreciate-trust": "شكراً لثقتكم",
+        "view-more": "عرض المزيد",
+        "total-visits": "إجمالي الزيارات"
+    },
+    "agency": {
+        "view-more": "عرض المزيد",
+        "view-listings": "عرض القوائم"
+    },
+    "account-favorites": {
+        "your-favorites": "مفضلاتك"
     }
 }
+
