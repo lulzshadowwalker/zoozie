@@ -1,19 +1,22 @@
 {
-    "header-navigation-bar": {
-        "avatar": "avatar"
-    },
-    "home": {
-        "featured-listings": "Featured Listings",
-        "partners": "Our Partners",
-        "appreciate-trust": "Thank You for Your Trust",
-        "view-more": "View More",
-        "total-visits": "Total Visits"
-    },
-    "agency": {
-        "view-more": "View More",
-        "view-listings": "View Listings"
-    },
-    "account-favorites": {
-        "your-favorites": "Your Favorites"
-    }
+  "header-navigation-bar": {
+    "avatar": "avatar"
+  },
+  "home": {
+    "featured-listings": "Featured Listings",
+    "partners": "Our Partners",
+    "appreciate-trust": "Thank You for Your Trust",
+    "view-more": "View More",
+    "total-visits": "Total Visits"
+  },
+  "agency": {
+    "view-more": "View More",
+    "view-listings": "View Listings"
+  },
+  "account-favorites": {
+    "your-favorites": "Your Favorites"
+  },
+  "listings": {
+    "filters": "Filters"
+  }
 }
