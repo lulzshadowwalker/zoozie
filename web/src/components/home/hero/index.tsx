@@ -31,26 +31,28 @@ export default function Hero() {
           Find the perfect place for you and your family
         </p>
 
-        <div className="bg-white p-xs-s rounded-xl flex items-center max-w-[42rem] transition-all focus-within:border-[3px] border-focused-accent-1 mt-m-l">
-          <label htmlFor="search-field">
-            <FontAwesomeIcon
-              icon={faMagnifyingGlass}
-              size="xl"
-              className="text-gray-300"
+        <search>
+          <div className="bg-white p-xs-s rounded-xl flex items-center max-w-[42rem] transition-all focus-within:border-[3px] border-focused-accent-1 mt-m-l">
+            <label htmlFor="search-field">
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                size="xl"
+                className="text-gray-300"
+              />
+            </label>
+
+            <input
+              id="search-field"
+              type="search"
+              placeholder="Search by address, city, or ZIP"
+              className="bg-transparent w-full mx-2xs-xs outline-none"
             />
-          </label>
 
-          <input
-            id="search-field"
-            type="text"
-            placeholder="Search by address, city, or ZIP"
-            className="bg-transparent w-full mx-2xs-xs outline-none"
-          />
-
-          <label htmlFor="search-field" className="ms-auto">
-            <Button>Search</Button>
-          </label>
-        </div>
+            <label htmlFor="search-field" className="ms-auto">
+              <Button>Search</Button>
+            </label>
+          </div>
+        </search>
       </div>
     </section>
   );

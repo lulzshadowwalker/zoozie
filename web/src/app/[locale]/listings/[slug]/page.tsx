@@ -43,7 +43,7 @@ export default function Listing() {
                   alt=""
                   title=""
                   fill
-                  sizes="(min-width: 1180px) 260px, (min-width: 780px) calc(21.05vw + 16px), (min-width: 740px) 160px, calc(22.86vw - 5px)"
+                  // sizes="(min-width: 1180px) 260px, (min-width: 780px) calc(21.05vw + 16px), (min-width: 740px) 160px, calc(22.86vw - 5px)"
                   className="object-cover transition-all duration-[800ms] ease-out hover:scale-105"
                   quality={70}
                 />

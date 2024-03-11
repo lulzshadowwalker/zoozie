@@ -6,7 +6,7 @@
   html {
     /** START COLORS **/
     --primary-color-1: 255 255 255;
-    --on-primary-color-1: 0 0 0;
+    --on-primary-color-1: 36 36 36;
 
     --secondary-color-1: 70 70 70;
     --light-secondary-color-1: 70 70 70;
@@ -186,4 +186,8 @@ a {
 a:focus {
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+::selection {
+  background: rgb(var(--accent-color-1));
 }

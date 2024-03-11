@@ -12,5 +12,8 @@
     "agency": {
         "view-more": "View More",
         "view-listings": "View Listings"
+    },
+    "account-favorites": {
+        "your-favorites": "Your Favorites"
     }
 }

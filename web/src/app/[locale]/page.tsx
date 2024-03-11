@@ -14,7 +14,6 @@ export default function Home({}: IBasePageParams) {
       <Hero />
       <FeaturedListings />
 
-      {/* TODO: try and use dynamic import for Partners client component */}
       <Partners />
 
       <section className="my-l-xl max-w-page px-page mx-auto">
