@@ -1,4 +1,7 @@
 {
+  "currency": {
+    "jod": "JOD"
+  },
   "header-navigation-bar": {
     "avatar": "avatar"
   },
@@ -17,6 +20,9 @@
     "your-favorites": "Your Favorites"
   },
   "listings": {
-    "filters": "Filters"
+    "filters": "Filters",
+    "minimum": "minimum",
+    "maximum": "maximum",
+    "clear": "Clear all"
   }
 }

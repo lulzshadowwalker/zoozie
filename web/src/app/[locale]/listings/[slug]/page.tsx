@@ -1,4 +1,4 @@
-import Button from "@/components/shared/secondary-button";
+import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
 import Marquee from "react-fast-marquee";
 import { faMobile, faToilet } from "@fortawesome/free-solid-svg-icons";

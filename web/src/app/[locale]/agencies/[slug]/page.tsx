@@ -1,4 +1,4 @@
-import Button from "@/components/shared/secondary-button";
+import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
 import { IBasePageParams } from "@/lib/types/types";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";

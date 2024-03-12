@@ -3,11 +3,10 @@
 import { Link } from "@/lib/i18n/navigation";
 import ZoozLogo from "../zooz-logo";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
 import ZoozImage from "../zooz-image";
-import Button from "../secondary-button";
+import Button from "../button";
 
 export default function HeaderNavigationBar() {
   const navigationSampleItems = ["Buy", "Sell", "Services"];

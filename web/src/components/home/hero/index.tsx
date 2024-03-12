@@ -1,4 +1,4 @@
-import Button from "@/components/shared/secondary-button";
+import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
 import { useRouter } from "@/lib/i18n/navigation";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";

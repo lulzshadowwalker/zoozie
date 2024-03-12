@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Config } from "@/lib/config";
-import dynamic from "next/dynamic";
 import Image, { ImageProps } from "next/image";
-import { lazy } from "react";
 
 interface Props extends Omit<ImageProps, "src"> {
   src: string;
@@ -46,7 +44,7 @@ async function ServerImage({ src, ...rest }: Props) {
       <Image src={src} placeholder="blur" blurDataURL={base64} {...rest} />
     );
   } catch (e) {
-    console.log("HERE ", e);
+    console.error("failure generating placeholder image because ", e);
     return <Image src={src} {...rest} />;
   }
 }

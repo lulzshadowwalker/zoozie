@@ -191,3 +191,11 @@ a:focus {
 ::selection {
   background: rgb(var(--accent-color-1));
 }
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
