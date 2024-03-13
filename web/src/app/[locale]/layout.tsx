@@ -10,7 +10,7 @@ import { unstable_setRequestLocale } from "next-intl/server";
 
 import "../globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import 'react-photo-view/dist/react-photo-view.css';
+import "react-photo-view/dist/react-photo-view.css";
 
 config.autoAddCss = false;
 
@@ -35,10 +35,7 @@ export default function RootLayout({
   return (
     <html lang={locale} dir={dir}>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <body className={inter.className}>
-          <HeaderNavigationBar />
-          <div className="max-w-supported mx-auto">{children}</div>
-        </body>
+        <body className={inter.className}>{children}</body>
       </NextIntlClientProvider>
     </html>
   );

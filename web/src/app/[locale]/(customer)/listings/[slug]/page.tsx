@@ -6,6 +6,7 @@ import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IBasePageParams } from "@/lib/types/types";
 import { unstable_setRequestLocale } from "next-intl/server";
+import { Link } from "@/lib/i18n/navigation";
 
 export const dynamic = "force-static";
 
@@ -19,7 +20,7 @@ export default function Listing({ params: { locale } }: IBasePageParams) {
     "https://images.unsplash.com/photo-1434873740857-1bc5653afda8?q=80&w=2900&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
 
-  // TODO: use `react-simple-image-viewer` for the listing preview pictures. 
+  // TODO: use `react-simple-image-viewer` for the listing preview pictures.
 
   return (
     <main className="my-xl-2xl">
@@ -158,12 +159,17 @@ export default function Listing({ params: { locale } }: IBasePageParams) {
               </div>
 
               <div>
-                <h3 className="text-xl font-light cursor-pointer">
-                  Railway Real-estate™
-                </h3>
-                <p className="text-base text-gray-500 font-light underline-offset-4 hover:underline cursor-pointer">
+                <Link href="/agencies/foo">
+                  <h3 className="text-xl font-light cursor-pointer">
+                    Railway Real-estate™
+                  </h3>
+                </Link>
+                <Link
+                  href="/agencies/foo#reviews"
+                  className="text-base text-gray-500 font-light underline-offset-4 hover:underline cursor-pointer"
+                >
                   5.0 (12 reviews)
-                </p>
+                </Link>
               </div>
             </div>
 

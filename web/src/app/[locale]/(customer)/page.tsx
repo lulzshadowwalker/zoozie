@@ -1,13 +1,13 @@
 import { IBasePageParams } from "@/lib/types/types";
-import FeaturedListings from "@/components/home/featured-listings";
-import Hero from "@/components/home/hero";
+import FeaturedListings from "@/components/customer/home/featured-listings";
+import Hero from "@/components/customer/home/hero";
 import dynamic from "next/dynamic";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-const Partners = dynamic(() => import("@/components/home/partners"));
+const Partners = dynamic(() => import("@/components/customer/home/partners"));
 
-export default async function Home({ params: { locale }}: IBasePageParams) {
-  unstable_setRequestLocale(locale); 
+export default async function Home({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations("home");
 
   return (

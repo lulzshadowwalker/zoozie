@@ -9,8 +9,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import ListingsComponent from "@components/shared/listings";
-import Filters from "@/components/listings/filters";
-import Search from "@/components/listings/search";
+import Filters from "@/components/customer/listings/filters";
+import Search from "@/components/customer/listings/search";
 
 export default async function Listings({
   params: { locale },
