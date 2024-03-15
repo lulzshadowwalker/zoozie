@@ -11,7 +11,7 @@ export const dynamic = "force-static";
 // TODO: might wanna refactor sections with border top and a heading
 export default function Agency({ params: { locale } }: IBasePageParams) {
   unstable_setRequestLocale(locale);
-  const t = useTranslations("agency");
+  const t = useTranslations("customer.agency");
 
   return (
     <main className="my-2xl-3xl">

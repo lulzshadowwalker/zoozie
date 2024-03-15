@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { ButtonHTMLAttributes, HTMLAttributes, useRef, useState } from "react";
 
 export default function FilterButton() {
-  const t = useTranslations("listings");
+  const t = useTranslations("customer.listings");
   const tCurrency = useTranslations("currency");
 
   const dialogRef = useRef<HTMLDialogElement>(null);

@@ -11,7 +11,7 @@ import Item from "./components/item";
 
 export default function SideNavigationBar() {
   return (
-    <nav className="fixed inset-y-0 start-0 py-m-l border-e-[0.5px] border-gray-400 max-w-[8rem] w-full flex flex-col">
+    <nav className="fixed inset-y-0 start-0 py-m-l border-e-[0.5px] border-gray-300 max-w-[8rem] w-full flex flex-col">
       <section className="flex-grow-[8] flex flex-col justify-center gap-s-m">
         <Item href="/" icon={faHome} />
         <Item href="/listings" icon={faRectangleList} />
@@ -20,7 +20,7 @@ export default function SideNavigationBar() {
         <Item href="/messages" icon={faMessage} />
       </section>
 
-      <section className="flex-grow-[2] flex flex-col justify-center gap-s-m border-t-[0.5px] border-gray-400">
+      <section className="flex-grow-[2] flex flex-col justify-center gap-s-m border-t-[0.5px] border-gray-300">
         <Item href="/settings" icon={faCog} />
 
         {/* TODO: probably might wanna make this a standalone component with differnt styling even  */}

@@ -1,5 +1,5 @@
 import { Link } from "@/lib/i18n/navigation";
-import ZoozImage from "../zooz-image";
+import ZoozImage from "../../../../shared/zooz-image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBed, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 

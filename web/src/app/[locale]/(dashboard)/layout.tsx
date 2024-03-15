@@ -7,7 +7,9 @@ export default function AgencyLayout({ children }: IBaseLayoutParams) {
   return (
     <>
       <SideNavigationBar />
-      {children}
+      <div className="ms-[8rem]">
+        {children}
+      </div>
     </>
   );
 }

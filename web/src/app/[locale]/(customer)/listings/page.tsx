@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
-import ListingsComponent from "@components/shared/listings";
+import ListingsComponent from "@/components/customer/shared/header-navigation-bar/listings";
 import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
 

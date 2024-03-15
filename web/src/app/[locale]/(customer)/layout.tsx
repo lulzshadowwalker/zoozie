@@ -1,4 +1,4 @@
-import HeaderNavigationBar from "@/components/shared/header-navigation-bar";
+import HeaderNavigationBar from "@/components/customer/shared/header-navigation-bar";
 
 export const metadata = {
   title: "Next.js",

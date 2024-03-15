@@ -16,7 +16,7 @@ import { useTranslations } from "next-intl";
 import Marquee from "react-fast-marquee";
 
 export default function Partners() {
-  const t = useTranslations("home");
+  const t = useTranslations("customer.home");
 
   const samplePartnerIcons: IconProp[] = [
     faMicrosoft,

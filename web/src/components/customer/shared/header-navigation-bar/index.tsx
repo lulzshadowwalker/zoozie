@@ -1,16 +1,16 @@
 "use client";
 
 import { Link } from "@/lib/i18n/navigation";
-import ZoozLogo from "../zooz-logo";
+import ZoozLogo from "../../../shared/zooz-logo";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
-import ZoozImage from "../zooz-image";
-import Button from "../button";
+import ZoozImage from "../../../shared/zooz-image";
+import Button from "../../../shared/button";
 
 export default function HeaderNavigationBar() {
   const navigationSampleItems = ["Buy", "Sell", "Services"];
-  const t = useTranslations("header-navigation-bar");
+  const t = useTranslations("customer.header-navigation-bar");
 
   const { isScrollingDown } = useScroll();
 

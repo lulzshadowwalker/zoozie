@@ -1,17 +1,11 @@
-import ZoozImage from "@/components/shared/zooz-image";
-import {
-  faLocationDot,
-  faBed,
-  faArrowRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
-import Listings from "@/components/shared/listings";
+import Listings from "@/components/customer/shared/header-navigation-bar/listings";
 
-// TODO: refactor out the listings items grid
 export default function FeaturedListings() {
-  const t = useTranslations("home");
+  const t = useTranslations("customer.home");
 
   return (
     <section className="my-l-xl max-w-page px-page mx-auto">
