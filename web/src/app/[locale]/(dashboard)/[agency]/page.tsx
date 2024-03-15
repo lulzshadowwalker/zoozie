@@ -1,3 +1,3 @@
 export default function Demo() {
-  return <main>Hello, lulzie.</main>;
+  return <main></main>;
 }

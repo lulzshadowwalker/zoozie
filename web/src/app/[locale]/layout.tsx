@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { IBaseLayoutParams } from "@/lib/types/types";
 import { NextIntlClientProvider, useMessages } from "next-intl";
-import HeaderNavigationBar from "@/components/shared/header-navigation-bar";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { config as i18nConfig } from "@/lib/i18n/config";

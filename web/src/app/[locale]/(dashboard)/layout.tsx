@@ -1,7 +1,12 @@
-export default function AgencyLayout({ children }: any) {
+import SideNavigationBar from "@/components/dashboard/side-navigation-bar";
+import { IBaseLayoutParams } from "@/lib/types/types";
+
+// TODO: these pages should probably not be crawled don't you think ? 
+
+export default function AgencyLayout({ children }: IBaseLayoutParams) {
   return (
     <>
-      <h1>layout</h1>
+      <SideNavigationBar />
       {children}
     </>
   );
