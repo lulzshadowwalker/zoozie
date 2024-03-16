@@ -1,14 +1,15 @@
-"use client";
-
 import Header from "@/components/dashboard/shared/header";
 import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
+import { IBasePageParams } from "@/lib/types/types";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-export default function Home() {
-  const t = useTranslations("dashboard.home");
+export default async function Home({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale);
+  const t = await getTranslations("dashboard.home");
 
   return (
     <Header

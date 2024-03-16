@@ -1,20 +1,35 @@
 {
-    "header-navigation-bar": {
-        "avatar": "الصورة الرمزية"
+    "currency": {
+        "jod": "JOD"
     },
-    "home": {
-        "featured-listings": "القوائم المميزة",
-        "partners": "شركاؤنا",
-        "appreciate-trust": "شكراً لثقتكم",
-        "view-more": "عرض المزيد",
-        "total-visits": "إجمالي الزيارات"
+    "customer": {
+        "header-navigation-bar": {
+            "avatar": "الصورة الرمزية"
+        },
+        "home": {
+            "featured-listings": "القوائم المميزة",
+            "partners": "شركاؤنا",
+            "appreciate-trust": "شكرا لثقتكم",
+            "view-more": "عرض المزيد",
+            "total-visits": "إجمالي الزيارات"
+        },
+        "agency": {
+            "view-more": "عرض المزيد",
+            "view-listings": "عرض القوائم"
+        },
+        "account-favorites": {
+            "your-favorites": "مفضلاتك"
+        },
+        "listings": {
+            "filters": "مرشحات",
+            "minimum": "الحد الأدنى",
+            "maximum": "الحد الأقصى",
+            "clear": "مسح الكل"
+        }
     },
-    "agency": {
-        "view-more": "عرض المزيد",
-        "view-listings": "عرض القوائم"
-    },
-    "account-favorites": {
-        "your-favorites": "مفضلاتك"
+    "dashboard": {
+        "home": {
+            "test": "هل يعمل!"
+        }
     }
 }
-

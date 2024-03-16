@@ -2,6 +2,9 @@
   "currency": {
     "jod": "JOD"
   },
+  "listing-card": {
+    "edit": "Edit"
+  },
   "customer": {
     "header-navigation-bar": {
       "avatar": "avatar"

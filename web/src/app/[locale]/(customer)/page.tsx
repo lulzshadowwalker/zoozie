@@ -14,7 +14,6 @@ export default async function Home({ params: { locale } }: IBasePageParams) {
     <main className="my-xl-2xl">
       <Hero />
       <FeaturedListings />
-
       <Partners />
 
       <section className="my-l-xl max-w-page px-page mx-auto">

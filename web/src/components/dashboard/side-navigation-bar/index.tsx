@@ -3,6 +3,7 @@ import {
   faChartSimple,
   faCog,
   faHome,
+  faInfoCircle,
   faMessage,
   faRectangleList,
   faRightFromBracket,
@@ -18,13 +19,14 @@ export default function SideNavigationBar() {
         <Item href="/market-insights" icon={faChartSimple} />
         <Item href="/ad-center" icon={faBullhorn} />
         <Item href="/messages" icon={faMessage} />
+        <Item href="/information" icon={faInfoCircle} />
       </section>
 
       <section className="flex-grow-[2] flex flex-col justify-center gap-s-m border-t-[0.5px] border-gray-300">
         <Item href="/settings" icon={faCog} />
 
         {/* TODO: probably might wanna make this a standalone component with differnt styling even  */}
-        <Item href="/sign-out" icon={faRightFromBracket} /> 
+        <Item href="/sign-out" icon={faRightFromBracket} />
       </section>
     </nav>
   );
