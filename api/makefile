@@ -1,3 +1,11 @@
+CMD := $(firstword $(MAKECMDGOALS))
+ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+%::
+	@true
+
+.DEFAULT_TARGET=watch
+.PHONY: watch build run test clean proto-go goose-up goose-up-by-one goose-up-to goose-down goose-down-to goose-redo goose-reset goose-status goose-version goose-create goose-fix goose-validate
+
 # Live Reload
 watch:
 	@if command -v air > /dev/null; then \
@@ -24,6 +32,11 @@ build:
 run:
 	@go run cmd/api/main.go
 
+# Run Jet migrations
+jet-migrations:
+	@go run cmd/migrations/main.go
+
+
 # Test the application
 test:
 	@echo "Testing..."
@@ -41,5 +54,53 @@ proto-go:
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		internal/$(PROTO_FILE_PATH)
 
-.PHONY: all build run test clean
 
+
+GOOSE_DIR="./internal/database/migrations/"
+# goose up
+goose-up:
+	@goose --dir ${GOOSE_DIR} up
+
+# goose up-by-one
+goose-up-by-one:
+	@goose --dir ${GOOSE_DIR} up-by-one
+
+# goose up-to VERSION
+goose-up-to:
+	@goose --dir ${GOOSE_DIR} up-to $(ARGS)
+
+# goose down
+goose-down:
+	@goose --dir ${GOOSE_DIR} down
+
+# goose down-to VERSION
+goose-down-to:
+	@goose --dir ${GOOSE_DIR} down-to $(ARGS)
+
+# goose redo
+goose-redo:
+	@goose --dir ${GOOSE_DIR} redo
+
+# goose reset
+goose-reset:
+	@goose --dir ${GOOSE_DIR} reset
+
+# goose status
+goose-status:
+	@goose --dir ${GOOSE_DIR} status
+
+# goose version
+goose-version:
+	@goose --dir ${GOOSE_DIR} version
+
+# goose create NAME [sql|go] 
+goose-create:
+	@goose --dir ${GOOSE_DIR} create $(ARGS)
+
+# goose fix
+gosoe-fix:
+	@goose --dir ${GOOSE_DIR} fix
+
+# goose validate
+goose-validate:
+	@goose --dir ${GOOSE_DIR} validate
