@@ -8,13 +8,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lulzshadowwalker/zooz/api/internal/config"
-	"github.com/lulzshadowwalker/zooz/api/internal/database"
 	"github.com/lulzshadowwalker/zooz/api/internal/handlers"
 	"github.com/lulzshadowwalker/zooz/api/internal/repos"
 	"github.com/lulzshadowwalker/zooz/api/internal/services"
 	"github.com/lulzshadowwalker/zooz/api/internal/utils"
 
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -58,12 +59,7 @@ func (s *Server) Run() error {
 		},
 	}))
 
-	db := database.Database
-	defer db.Close()
-
-	agenciesRepo := repos.NewAgenciesRepo(db)
-	agenciesService := services.NewAgenciesService(agenciesRepo)
-	agenciesHandler := handlers.NewAgenciesHandler(agenciesService)
+	router.Validator = handlers.NewZoozieValidator()
 
 	router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "hello, lulzie")
@@ -80,7 +76,26 @@ func (s *Server) Run() error {
 		}
 	})
 
-	api.GET("/agencies", agenciesHandler.GetAgencies)
+	// TODO: use [Google Wire](https://github.com/google/wire) for dependency injection
+	agenciesRepo := repos.NewAgenciesRepo(s.database)
+	agenciesService := services.NewAgenciesService(agenciesRepo)
+	agenciesHandler := handlers.NewAgenciesHandler(agenciesService)
+	agenciesHandler.RegisterRoutes(api)
+
+	// protcted := api.Group("/", middleware.JWTWithConfig(config.GetJWTConfig()))
+	authRepo := repos.NewUserRepo(s.database)
+	authService := services.NewAuthService(authRepo)
+	authHandler := handlers.NewAuthHandler(authService)
+	authHandler.RegisterRoutes(api)
+
+	jwtConfig := echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(services.JwtCustomClaims)
+		},
+		SigningKey: []byte(config.GetJwtSecret()),
+	}
+	protected := router.Group("", echojwt.WithConfig(jwtConfig))
+  _ = protected
 
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil

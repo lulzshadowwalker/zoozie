@@ -27,6 +27,7 @@ watch:
 build:
 	@echo "Building..."
 	@go build -o ./bin/main cmd/api/main.go
+	@echo "executable built at ./bin/main"
 
 # Run the application
 run:

@@ -62,3 +62,7 @@ func GetDatabaseName() string {
 func GetSupportedLocales() []string {
   return []string{"en", "ar"}
 }
+
+func GetJwtSecret() string {
+  return os.Getenv("JWT_SECRET")
+}

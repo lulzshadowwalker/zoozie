@@ -11,6 +11,7 @@ import (
 )
 
 type AgenciesHandler struct {
+  handler
 	service AgenciesService
 }
 
@@ -23,6 +24,10 @@ func NewAgenciesHandler(s AgenciesService) *AgenciesHandler {
 	return &AgenciesHandler{
 		service: s,
 	}
+}
+
+func (h *AgenciesHandler) RegisterRoutes(e *echo.Group) {
+  e.GET("/agencies", h.GetAgencies)
 }
 
 func (h *AgenciesHandler) GetAgencies(c echo.Context) error {

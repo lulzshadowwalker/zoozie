@@ -10,6 +10,18 @@ import (
 
 const ContextLocaleKey = "locale"
 
+type ApiError struct {
+	Status  int
+	Message string
+}
+
+func (e *ApiError) Error() string {
+	return e.Message
+}
+
+func NewApiError(status int, message string) error {
+	return &ApiError{status, message}
+}
 
 // GetLocale extracts the locale value from the given context.
 //
