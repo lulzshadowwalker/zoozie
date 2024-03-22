@@ -12,7 +12,7 @@ type (
 
 	User struct {
 		model.Users
-		AccessToken string `json:"accessToken"`
-    RefreshToken string `json:"refreshToken"`
+		AccessToken  string `json:"accessToken,omitempty"`
+		RefreshToken string `json:"refreshToken,omitempty"`
 	}
 )

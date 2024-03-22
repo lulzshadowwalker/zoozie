@@ -21,8 +21,8 @@ type (
 	}
 
 	AuthRepo interface {
-  GetUserByEmail(context.Context, string) (*models.User, error)
-  GetUserById(context.Context, int) (*models.User, error)
+		GetUserByEmail(context.Context, string) (*models.User, error)
+		GetUserById(context.Context, int) (*models.User, error)
 	}
 
 	JwtCustomClaims struct {
@@ -39,6 +39,11 @@ func NewAuthService(r AuthRepo) *AuthService {
 
 func (s *AuthService) Login(c context.Context, email, password string) (*models.User, error) {
 	user, err := s.repo.GetUserByEmail(c, email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkUserActiveStatus(user)
 	if err != nil {
 		return nil, err
 	}
@@ -61,15 +66,12 @@ func (s *AuthService) Login(c context.Context, email, password string) (*models.
 
 func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error) {
 	t, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok || err != nil {
 			return nil, utils.NewApiError(http.StatusUnauthorized, "invalid token")
 		}
 
 		return []byte(config.GetJwtSecret()), nil
 	})
-	if err != nil {
-		return "", "", fmt.Errorf("failed to parse the token because %w", err)
-	}
 
 	claims, ok := t.Claims.(jwt.MapClaims)
 	if !ok {
@@ -80,24 +82,19 @@ func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken
 		return "", "", utils.NewApiError(http.StatusUnauthorized, "invalid token")
 	}
 
-  uid, err := strconv.Atoi(claims["sub"].(string))
-  if err != nil {
-    return "", "", fmt.Errorf("failed to parse the user id because %w", err)
-  }
+	uid, err := strconv.Atoi(claims["sub"].(string))
+	if err != nil {
+		return "", "", fmt.Errorf("failed to parse the user id because %w", err)
+	}
 
 	user, err := s.repo.GetUserById(c, uid)
 	if err != nil {
 		return "", "", err
 	}
 
-
-  isActive := user.IsActive
-  if isActive == nil {
-    return "", "", fmt.Errorf("users.is_active cannot be null")
-  }
-
-	if !*isActive {
-		return "", "", utils.NewApiError(http.StatusForbidden, "user has been deactivated")
+	err = checkUserActiveStatus(user)
+	if err != nil {
+		return "", "", err
 	}
 
 	return s.generateTokenPair(user)
@@ -137,4 +134,17 @@ func (s *AuthService) generateTokenPair(user *models.User) (accessToken, refresh
 	}
 
 	return
+}
+
+func checkUserActiveStatus(user *models.User) error {
+	isActive := user.IsActive
+	if isActive == nil {
+		panic("users.is_active cannot be null")
+	}
+
+	if !*isActive {
+		return utils.NewApiError(http.StatusForbidden, "user has been deactivated")
+	}
+
+	return nil
 }

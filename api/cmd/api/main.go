@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-  db := database.Database
-  defer db.Close() 
+	db := database.Database
+	defer db.Close()
 
-  app := server.NewServer(db, config.GetPort()) 
-  log.Fatal(app.Run())
+	app := server.NewServer(db, config.GetPort())
+	log.Fatal(app.Run())
 }

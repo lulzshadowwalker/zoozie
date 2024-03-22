@@ -82,9 +82,8 @@ func (s *Server) Run() error {
 	agenciesHandler := handlers.NewAgenciesHandler(agenciesService)
 	agenciesHandler.RegisterRoutes(api)
 
-	// protcted := api.Group("/", middleware.JWTWithConfig(config.GetJWTConfig()))
-	authRepo := repos.NewUserRepo(s.database)
-	authService := services.NewAuthService(authRepo)
+	userRepo := repos.NewUserRepo(s.database)
+	authService := services.NewAuthService(userRepo)
 	authHandler := handlers.NewAuthHandler(authService)
 	authHandler.RegisterRoutes(api)
 
@@ -94,8 +93,12 @@ func (s *Server) Run() error {
 		},
 		SigningKey: []byte(config.GetJwtSecret()),
 	}
-	protected := router.Group("", echojwt.WithConfig(jwtConfig))
-  _ = protected
+	protected := api.Group("")
+  protected.Use(echojwt.WithConfig(jwtConfig))
+
+	userService := services.NewUserService(userRepo)
+	userHandler := handlers.NewUserHandler(userService)
+	userHandler.RegisterRoutes(protected)
 
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zooz/api/internal/models"
@@ -53,6 +54,8 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		return err
 	}
 
+	h.setCookies(c, user.AccessToken, user.RefreshToken)
+
 	return c.JSON(http.StatusOK, map[string]any{
 		"data": map[string]any{
 			"user": user,
@@ -79,10 +82,33 @@ func (h *AuthHandler) RefreshToken(c echo.Context) error {
 		return err
 	}
 
+	h.setCookies(c, accessToken, refreshToken)
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": map[string]any{
 			"accessToken":  accessToken,
 			"refreshToken": refreshToken,
 		},
 	})
+}
+
+func (h *AuthHandler) setCookies(c echo.Context, accessToken, refreshToken string) {
+	accessTokenCookie := http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		HttpOnly: true,
+		Secure:   true,
+		Expires:  time.Now().Add(time.Hour * 24 * 30),
+	}
+
+	refreshTokenCookie := http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		HttpOnly: true,
+		Secure:   true,
+		Expires:  time.Now().Add(time.Hour * 24 * 30),
+	}
+
+	c.SetCookie(&accessTokenCookie)
+	c.SetCookie(&refreshTokenCookie)
 }

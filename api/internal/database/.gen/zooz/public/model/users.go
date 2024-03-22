@@ -12,13 +12,14 @@ import (
 )
 
 type Users struct {
-	ID           int64      `sql:"primary_key" json:"id,omitempty"`
-	EmailAddress string     `json:"emailAddress,omitempty"`
-	PasswordHash string     `json:"passwordHash,omitempty"`
-	PhoneNumber  *string    `json:"phoneNumber,omitempty"`
-	CreatedAt    time.Time  `json:"createdAt,omitempty"`
-	UpdatedAt    time.Time  `json:"updatedAt,omitempty"`
-	LastLoginAt  *time.Time `json:"lastLoginAt,omitempty"`
-	Name         *string    `json:"name,omitempty"`
-	IsActive     *bool      `json:"isActive,omitempty"`
+	ID             int64      `sql:"primary_key" json:"id,omitempty"`
+	EmailAddress   string     `json:"emailAddress,omitempty"`
+	PasswordHash   string     `json:"passwordHash,omitempty"`
+	PhoneNumber    *string    `json:"phoneNumber,omitempty"`
+	CreatedAt      time.Time  `json:"createdAt,omitempty"`
+	UpdatedAt      time.Time  `json:"updatedAt,omitempty"`
+	LastLoginAt    *time.Time `json:"lastLoginAt,omitempty"`
+	Name           *string    `json:"name,omitempty"`
+	IsActive       *bool      `json:"isActive,omitempty"`
+	ProfilePicture *string    `json:"profilePicture,omitempty"`
 }
