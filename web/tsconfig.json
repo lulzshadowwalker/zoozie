@@ -25,6 +25,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
       "@components/*": [
         "./src/components/*"
       ],
@@ -32,10 +35,13 @@
         "./src/lib/utils.ts"
       ],
       "@types": [
-        "./src/lib/types/*"
+        "./src/lib/types.ts"
       ],
       "@hooks": [
         "./src/lib/hooks.ts"
+      ],
+      "@actions": [
+        "./src/lib/actions/*"
       ]
     }
   },

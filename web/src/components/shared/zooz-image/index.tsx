@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { Config } from "@/lib/config";
+import Config from "@/lib/config";
 import Image, { ImageProps } from "next/image";
 
 interface Props extends Omit<ImageProps, "src"> {

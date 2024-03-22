@@ -1,4 +1,4 @@
-import { IBasePageParams } from "@/lib/types/types";
+import { IBasePageParams } from "@types";
 import FeaturedListings from "@/components/customer/home/featured-listings";
 import Hero from "@/components/customer/home/hero";
 import dynamic from "next/dynamic";

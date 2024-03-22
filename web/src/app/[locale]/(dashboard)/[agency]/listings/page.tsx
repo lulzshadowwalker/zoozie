@@ -1,5 +1,5 @@
 import Header from "@/components/dashboard/shared/header";
-import { IBasePageParams } from "@/lib/types/types";
+import { IBasePageParams } from "@types";
 import { unstable_setRequestLocale } from "next-intl/server";
 import Card from "@/components/dashboard/listings/card";
 import Button from "@/components/shared/button";

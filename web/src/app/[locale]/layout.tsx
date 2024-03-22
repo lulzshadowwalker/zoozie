@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { IBaseLayoutParams } from "@/lib/types/types";
+import { IBaseLayoutParams } from "@types";
 import { NextIntlClientProvider, useMessages } from "next-intl";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -10,6 +10,9 @@ import { unstable_setRequestLocale } from "next-intl/server";
 import "../globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "react-photo-view/dist/react-photo-view.css";
+import "react-toastify/dist/ReactToastify.css";
+import ZoozieToast from "@/components/shared/zoozie-toast";
+import UserContextProvider from "@/lib/context/user-context";
 
 config.autoAddCss = false;
 
@@ -34,7 +37,12 @@ export default function RootLayout({
   return (
     <html lang={locale} dir={dir}>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <body className={inter.className}>{children}</body>
+        <UserContextProvider>
+          <body className={inter.className}>
+            <ZoozieToast />
+            {children}
+          </body>
+        </UserContextProvider>
       </NextIntlClientProvider>
     </html>
   );

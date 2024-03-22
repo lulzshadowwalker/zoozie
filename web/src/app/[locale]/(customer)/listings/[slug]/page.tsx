@@ -4,7 +4,7 @@ import Marquee from "react-fast-marquee";
 import { faMobile, faToilet } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IBasePageParams } from "@/lib/types/types";
+import { IBasePageParams } from "@types";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 

@@ -1,5 +1,5 @@
 import SideNavigationBar from "@/components/dashboard/side-navigation-bar";
-import { IBaseLayoutParams } from "@/lib/types/types";
+import { IBaseLayoutParams } from "@types";
 
 // TODO: these pages should probably not be crawled don't you think ? 
 

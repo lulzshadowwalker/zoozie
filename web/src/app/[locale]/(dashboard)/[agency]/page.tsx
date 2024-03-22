@@ -1,7 +1,7 @@
 import Header from "@/components/dashboard/shared/header";
 import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
-import { IBasePageParams } from "@/lib/types/types";
+import { IBasePageParams } from "@types";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";

@@ -1,7 +1,5 @@
 import Card from "@/components/customer/listings/card";
-import ZoozImage from "@/components/shared/zooz-image";
-import { Link } from "@/lib/i18n/navigation";
-import { IBasePageParams } from "@/lib/types/types";
+import { IBasePageParams } from "@types";
 import { cn } from "@/lib/utils";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 

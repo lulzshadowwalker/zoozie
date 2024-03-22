@@ -1,14 +1,6 @@
-import Button from "@/components/shared/button";
-import { IBasePageParams } from "@/lib/types/types";
-import { cn } from "@/lib/utils";
-import {
-  faArrowRight,
-  faMagnifyingGlass,
-  faWheatAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IBasePageParams } from "@types";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
-import ListingsComponent from "@/components/customer/shared/header-navigation-bar/listings";
+import ListingsComponent from "@/components/customer/shared/listings";
 import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
 

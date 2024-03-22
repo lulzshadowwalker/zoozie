@@ -2,7 +2,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
-import Listings from "@/components/customer/shared/header-navigation-bar/listings";
+import Listings from "@/components/customer/shared/listings";
 
 export default function FeaturedListings() {
   const t = useTranslations("customer.home");

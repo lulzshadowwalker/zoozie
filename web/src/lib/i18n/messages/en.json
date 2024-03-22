@@ -6,6 +6,17 @@
     "edit": "Edit"
   },
   "customer": {
+    "auth": {
+      "user-not-found": "User not found. Please check your email and try again.",
+      "user-deactivated": "Your account has been deactivated. Please contact support for more information.",
+      "invalid-credentials": "Invalid email or password. Please try again.",
+      "failure": "An unexpected error occurred. Please try again later.",
+      "success": "Login successful! Welcome back.",
+      "welcome-back": "Welcome back, login to your account",
+      "enter-credentials": "enter your credentials to continue",
+      "sign-in": "Sign in",
+      "sign-up": "Sign up"
+    },
     "header-navigation-bar": {
       "avatar": "avatar"
     },

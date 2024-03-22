@@ -1,4 +1,4 @@
-import { IBaseLayoutParams } from "@/lib/types/types";
+import { IBaseLayoutParams } from "@types";
 import { unstable_setRequestLocale } from "next-intl/server";
 
 export const dynamicParams = false;
