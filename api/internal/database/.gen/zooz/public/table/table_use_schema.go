@@ -12,6 +12,8 @@ package table
 func UseSchema(schema string) {
 	Agencies = Agencies.FromSchema(schema)
 	AgenciesI18n = AgenciesI18n.FromSchema(schema)
+	Amenities = Amenities.FromSchema(schema)
+	AmenitiesI18n = AmenitiesI18n.FromSchema(schema)
 	GooseDbVersion = GooseDbVersion.FromSchema(schema)
 	Users = Users.FromSchema(schema)
 }

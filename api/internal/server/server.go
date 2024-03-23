@@ -36,7 +36,7 @@ func NewServer(database *sql.DB, port int) *Server {
 func (s *Server) Run() error {
 	router := echo.New()
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	router.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:   true,
 		LogURI:      true,
@@ -87,6 +87,11 @@ func (s *Server) Run() error {
 	authHandler := handlers.NewAuthHandler(authService)
 	authHandler.RegisterRoutes(api)
 
+	amenitiesRepo := repos.NewAmenitiesRepo(s.database)
+	amenitiesService := services.NewAmenitiesService(amenitiesRepo)
+	amenitiesHandler := handlers.NewAmenitiesHandler(amenitiesService)
+	amenitiesHandler.RegisterRoutes(api)
+
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(services.JwtCustomClaims)
@@ -94,7 +99,7 @@ func (s *Server) Run() error {
 		SigningKey: []byte(config.GetJwtSecret()),
 	}
 	protected := api.Group("")
-  protected.Use(echojwt.WithConfig(jwtConfig))
+	protected.Use(echojwt.WithConfig(jwtConfig))
 
 	userService := services.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)

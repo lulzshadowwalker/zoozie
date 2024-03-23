@@ -2,9 +2,9 @@
 -- +goose StatementBegin
 CREATE TABLE agencies_i18n (
   id BIGSERIAL PRIMARY KEY,
-  agency_id BIGINT REFERENCES agencies(id),
+  agency_id BIGINT REFERENCES agencies(id) ON DELETE CASCADE,
   slug TEXT NOT NULL UNIQUE,
-  locale CHAR(2) NOT NULL,
+  language_code CHAR(2) NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL
 );
