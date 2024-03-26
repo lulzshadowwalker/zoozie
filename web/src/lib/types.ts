@@ -28,3 +28,11 @@ export type TUser = {
   accessToken?: string;
   refreshToken?: string;
 };
+
+export type TCoreFeature = {
+  name?: string;
+  description?: string;
+  icon?: string;
+  required?: boolean;
+  dataType?: "text" | "number";
+};

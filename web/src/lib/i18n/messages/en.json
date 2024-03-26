@@ -42,8 +42,34 @@
     }
   },
   "dashboard": {
-    "home": {
-      "test": "Does it work!"
+    "side-navigation-bar": {
+      "home": "Home",
+      "listings": "Listings",
+      "market-insights": "Market Insights",
+      "ad-center": "Ad Center",
+      "messages": "Messages",
+      "agency-information": "Agency Information",
+      "settings": "Settings",
+      "sign-out": "Sign out"
+    },
+    "create-listing": {
+      "title": "title",
+      "description": "description",
+      "create-listing": "Create Listing",
+      "click-to-upload": "Click to upload",
+      "or-drag-and-drop": "or drag and drop",
+      "core-feature-title": "title",
+      "core-feature-description": "description",
+      "add-core-feature": "Add Feature",
+      "contact-information": "Contact Information",
+      "message": "Message",
+      "price": "Price",
+      "listing-description": "Listing Description",
+      "about-this-home": "About This Home",
+      "extra-features": "Extra Features and Amenities",
+      "extra-feature": "Extra Feature",
+      "title-input": "Title",
+      "additional-feature": "Additional Feature"
     }
   }
 }

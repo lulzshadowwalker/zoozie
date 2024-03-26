@@ -18,6 +18,7 @@ export default function UserAvatar() {
           fill
           sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
           quality={65}
+          className="object-cover"
         />
       }
     </div>

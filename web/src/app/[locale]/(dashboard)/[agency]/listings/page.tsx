@@ -32,13 +32,11 @@ export default async function Listings({
           </ul>
         </article>
 
-
-
         <iframe
           src="https://widgets.scribblemaps.com/sm/?d&dv&cv&z&l&gc&af&mc&lat=31.98770722&lng=35.83656691&vz=14&type=custom_style&ti&s&width=550&height=400&id=Fj4JzBDCcz"
           allow="geolocation"
           loading="lazy"
-          className="flex-grow basis-0 rounded-xl sticky top-[1.2rem] self-stretch max-lg:hidden h-[95dvh]"
+          className="flex-grow basis-0 rounded-xl sticky top-[1.2rem] self-stretch max-lg:hidden h-[95dvh] bg-gray-100 animate-pulse"
         />
         <AddFab />
       </section>

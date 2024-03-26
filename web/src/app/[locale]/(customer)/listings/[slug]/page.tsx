@@ -52,7 +52,7 @@ export default function Listing({ params: { locale } }: IBasePageParams) {
                   alt=""
                   title=""
                   fill
-                  // sizes="(min-width: 1180px) 260px, (min-width: 780px) calc(21.05vw + 16px), (min-width: 740px) 160px, calc(22.86vw - 5px)"
+                  sizes="(min-width: 1180px) 260px, (min-width: 780px) calc(21.05vw + 16px), (min-width: 740px) 160px, calc(22.86vw - 5px)"
                   className="object-cover transition-all duration-[800ms] ease-out hover:scale-105"
                   quality={70}
                 />
@@ -91,6 +91,7 @@ export default function Listing({ params: { locale } }: IBasePageParams) {
 
           <article className="mt-l-xl pt-l-xl border-t">
             <h2 className="text-xl font-medium">About this home</h2>
+            {/* FIXME: width  */}
             <p className="text-lg text-gray-500 max-w-readable mt-s-m">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Est
               minima odio quod mollitia optio ipsum iusto cumque laboriosam

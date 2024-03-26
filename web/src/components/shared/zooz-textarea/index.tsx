@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { InputHTMLAttributes } from "react";
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLTextAreaElement> {
   id: string;
   label: string;
   labelClassName?: string;
@@ -9,10 +9,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
 }
 
-/**
- * for checkbox inputs see `ZoozCheckbox`
- */
-export default function ZoozInput({
+export default function ZoozTextarea({
   id,
   label,
   labelClassName,
@@ -23,27 +20,28 @@ export default function ZoozInput({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-gray-200 flex flex-col px-xs-s py-3xs-2xs transition-all focus-within:border-on-primary-1 w-full",
+        "rounded-2xl border border-gray-200 overflow-hidden flex flex-col transition-all focus-within:border-on-primary-1 w-full",
         containerClassName,
       )}
     >
       <label
         htmlFor={id}
         className={cn(
-          "text-base text-gray-400 font-extralight",
+          "text-base text-on-primary-1 font-medium px-xs-s py-3xs-2xs bg-gray-200",
           labelClassName,
         )}
       >
         {label}
       </label>
-      <input
+
+      <textarea
         id={id}
-        className={cn(
-          "outline-none placeholder:text-lg bg-transparent",
-          inputClassName,
-        )}
+        className={cn("rounded-2xl px-xs-s py-3xs-2xs w-full outline-none placeholder:text-lg", inputClassName)}
+        maxLength={10000}
+        rows={10}
         {...rest}
       />
     </div>
   );
 }
+

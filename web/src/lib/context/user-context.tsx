@@ -14,11 +14,11 @@ type Props = {
   children: ReactNode;
 };
 
-type UserContextType = {
+type TUserContext = {
   user?: TUser;
 };
 
-const UserContext = createContext<UserContextType | null>(null);
+const UserContext = createContext<TUserContext | null>(null);
 
 export default function UserContextProvider({ children }: Props) {
   const [user, setUser] = useState<TUser | undefined>();
@@ -36,7 +36,7 @@ export default function UserContextProvider({ children }: Props) {
   );
 }
 
-export function useUser(): UserContextType {
+export function useUser(): TUserContext {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("useUser must be used within a UserContextProvider");

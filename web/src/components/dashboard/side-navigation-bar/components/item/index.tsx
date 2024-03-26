@@ -7,11 +7,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMemo } from "react";
 
 type Props = {
+  title: string;
   href: string;
   icon: IconProp;
 };
 
-export default function Item({ href, icon }: Props) {
+export default function Item({ title, href, icon }: Props) {
   const pathname = usePathname();
 
   const { agency, sanitizedPathname } = useMemo(() => {
@@ -22,13 +23,20 @@ export default function Item({ href, icon }: Props) {
     return { agency, sanitizedPathname };
   }, [pathname]);
 
-  const isActive = sanitizedPathname === href;
+  const isActive = useMemo(() => {
+    if (href === "/") {
+      return sanitizedPathname === href;
+    }
+
+    return sanitizedPathname.startsWith(href);
+  }, [sanitizedPathname, href]);
 
   return (
     <Link
       href={agency + href}
+      title={title}
       className={cn(
-        "group flex items-center justify-center focus:!text-on-primary-1",
+        "group flex items-center justify-center text-gray-300 focus:text-on-primary-1",
         {
           "pointer-events-none": isActive,
         },
@@ -42,7 +50,7 @@ export default function Item({ href, icon }: Props) {
         icon={icon}
         size="lg"
         className={cn(
-          "text-gray-300 transition-all hover:text-on-primary-1 focus:text-on-primary-1 cursor-pointer mx-auto py-xs",
+          "text-inherit transition-all hover:text-on-primary-1 cursor-pointer mx-auto py-xs",
           {
             "text-on-primary-1": isActive,
           },

@@ -8,7 +8,7 @@ const Partners = dynamic(() => import("@/components/customer/home/partners"));
 
 export default async function Home({ params: { locale } }: IBasePageParams) {
   unstable_setRequestLocale(locale);
-  const t = await getTranslations("home");
+  const t = await getTranslations("customer.home");
 
   return (
     <main className="my-xl-2xl">
