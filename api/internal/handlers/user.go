@@ -9,9 +9,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zooz/api/internal/models"
-	"github.com/lulzshadowwalker/zooz/api/internal/services"
-	"github.com/lulzshadowwalker/zooz/api/internal/utils"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/services"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (

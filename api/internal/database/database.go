@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-	"github.com/lulzshadowwalker/zooz/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 )
 
 var Database *sql.DB

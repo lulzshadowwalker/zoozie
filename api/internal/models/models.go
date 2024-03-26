@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/lulzshadowwalker/zooz/api/internal/database/.gen/zooz/public/model"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
 )
 
 type Agency struct {
@@ -15,7 +15,7 @@ type User struct {
 	RefreshToken string `json:"refreshToken,omitempty"`
 }
 
-type Amenity struct {
-	model.Amenities
-	model.AmenitiesI18n
+type CoreFeature struct {
+	model.CoreFeatures
+	model.CoreFeaturesI18n
 }

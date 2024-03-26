@@ -9,7 +9,7 @@ import (
 	"github.com/go-jet/jet/v2/generator/template"
 	postgres2 "github.com/go-jet/jet/v2/postgres"
 	_ "github.com/lib/pq"
-	"github.com/lulzshadowwalker/zooz/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/serenize/snaker"
 )
 

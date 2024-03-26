@@ -10,9 +10,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/lulzshadowwalker/zooz/api/internal/config"
-	"github.com/lulzshadowwalker/zooz/api/internal/models"
-	"github.com/lulzshadowwalker/zooz/api/internal/utils"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (

@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"github.com/lulzshadowwalker/zooz/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 )
 
 type AgenciesService struct {

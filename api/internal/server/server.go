@@ -9,11 +9,11 @@ import (
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/lulzshadowwalker/zooz/api/internal/config"
-	"github.com/lulzshadowwalker/zooz/api/internal/handlers"
-	"github.com/lulzshadowwalker/zooz/api/internal/repos"
-	"github.com/lulzshadowwalker/zooz/api/internal/services"
-	"github.com/lulzshadowwalker/zooz/api/internal/utils"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
+	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
+	"github.com/lulzshadowwalker/zoozie/api/internal/services"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -59,6 +59,8 @@ func (s *Server) Run() error {
 		},
 	}))
 
+	// TODO: setup cors allowed origins
+	router.Use(middleware.CORS())
 	router.Validator = handlers.NewZoozieValidator()
 
 	router.GET("/", func(c echo.Context) error {
@@ -87,10 +89,10 @@ func (s *Server) Run() error {
 	authHandler := handlers.NewAuthHandler(authService)
 	authHandler.RegisterRoutes(api)
 
-	amenitiesRepo := repos.NewAmenitiesRepo(s.database)
-	amenitiesService := services.NewAmenitiesService(amenitiesRepo)
-	amenitiesHandler := handlers.NewAmenitiesHandler(amenitiesService)
-	amenitiesHandler.RegisterRoutes(api)
+	coreFeaturesRepo := repos.NewCoreFeaturesRepo(s.database)
+	coreFeaturesService := services.NewCoreFeaturesService(coreFeaturesRepo)
+	coreFeaturesHandler := handlers.NewCoreFeaturesHandler(coreFeaturesService)
+	coreFeaturesHandler.RegisterRoutes(api)
 
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {

@@ -1,4 +1,4 @@
-module github.com/lulzshadowwalker/zooz/api
+module github.com/lulzshadowwalker/zoozie/api
 
 go 1.21.1
 

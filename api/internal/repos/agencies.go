@@ -8,9 +8,9 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
-	. "github.com/lulzshadowwalker/zooz/api/internal/database/.gen/zooz/public/table"
-	"github.com/lulzshadowwalker/zooz/api/internal/models"
-	"github.com/lulzshadowwalker/zooz/api/internal/utils"
+	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type AgenciesRepo struct {

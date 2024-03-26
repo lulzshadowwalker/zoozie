@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/lulzshadowwalker/zooz/api/internal/config"
-	"github.com/lulzshadowwalker/zooz/api/internal/database"
-	"github.com/lulzshadowwalker/zooz/api/internal/server"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database"
+	"github.com/lulzshadowwalker/zoozie/api/internal/server"
 )
 
 func main() {

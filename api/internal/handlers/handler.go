@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zooz/api/internal/utils"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 
 	"net/http"
 )
