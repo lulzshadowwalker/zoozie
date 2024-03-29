@@ -66,3 +66,7 @@ func GetSupportedLocales() []string {
 func GetJwtSecret() string {
   return os.Getenv("JWT_SECRET")
 }
+
+func GetAppUrl() string {
+  return os.Getenv("APP_URL")
+}

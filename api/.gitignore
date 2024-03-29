@@ -32,3 +32,5 @@ bin
 lulzie.md
 .env
 .env.*local
+
+public

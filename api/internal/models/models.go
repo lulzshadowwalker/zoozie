@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
 )
 
@@ -18,4 +19,15 @@ type User struct {
 type CoreFeature struct {
 	model.CoreFeatures
 	model.CoreFeaturesI18n
+}
+
+type Listing struct {
+	Urls []string
+}
+
+type Upload = model.Uploads
+
+type JwtCustomClaims struct {
+	Name string `json:"name"`
+	jwt.RegisteredClaims
 }

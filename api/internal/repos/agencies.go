@@ -64,13 +64,13 @@ func (r *AgenciesRepo) GetAgencyBySlug(c context.Context, slug string) (*models.
 		AgenciesI18n.LocaleCode,
 	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LocaleCode.EQ(String(locale)).AND(Agencies.Slug.EQ(String(slug))))
 
-  var dest models.Agency
+	var dest models.Agency
 
-  err = stmt.Query(r.database, &dest) 
+	err = stmt.Query(r.database, &dest)
 	if err != nil {
-    if errors.Is(err, qrm.ErrNoRows) {
-      return nil, nil
-    }
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
+		}
 
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}

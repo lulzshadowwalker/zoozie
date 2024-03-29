@@ -17,9 +17,9 @@ type ZoozieValidator struct {
 }
 
 func NewZoozieValidator() *ZoozieValidator {
-  return &ZoozieValidator{
-    validator: validator.New(),
-  }
+	return &ZoozieValidator{
+		validator: validator.New(),
+	}
 }
 
 // validates input and returns an `*echo.HTTPError` with status `400 - Bad Request` if validation fails
@@ -34,16 +34,15 @@ func (cv *ZoozieValidator) Validate(i interface{}) error {
 type wrappedHandlerFunc func(c echo.Context) error
 
 func unwrap(fn wrappedHandlerFunc) echo.HandlerFunc {
-  return func(c echo.Context) error {
-    if err := fn(c); err != nil {
-      if err, ok := err.(*utils.ApiError); ok {
-        return echo.NewHTTPError(err.Status, err.Message)
-      }
+	return func(c echo.Context) error {
+		if err := fn(c); err != nil {
+			if err, ok := err.(*utils.ApiError); ok {
+				return echo.NewHTTPError(err.Status, err.Message)
+			}
 
-      return err
-    }
+			return err
+		}
 
-    return nil
-  }
+		return nil
+	}
 }
-

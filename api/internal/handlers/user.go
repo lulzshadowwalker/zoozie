@@ -2,15 +2,10 @@ package handlers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"net/http"
-	"strconv"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/models"
-	"github.com/lulzshadowwalker/zoozie/api/internal/services"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -36,22 +31,7 @@ func (h *UserHandler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *UserHandler) GetUser(c echo.Context) error {
-	// TODO :check for absent value
-	u, ok := c.Get("user").(*jwt.Token)
-	if !ok {
-		return errors.New("echo.Context.Get(\"user\") is not *jwt.Token")
-	}
-
-	if u == nil || !u.Valid {
-		return echo.NewHTTPError(http.StatusUnauthorized)
-	}
-
-	claims := u.Claims.(*services.JwtCustomClaims)
-  uidString := claims.Subject
-	uid, err := strconv.Atoi(uidString)
-	if err != nil {
-		return fmt.Errorf("failed to parse the user id because %w", err)
-	}
+	uid, err := utils.GetUser(utils.TransformEchoContext(c))
 
 	user, err := h.service.GetUserById(utils.TransformEchoContext(c), uid)
 	if err != nil {

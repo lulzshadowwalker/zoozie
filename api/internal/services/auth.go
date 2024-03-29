@@ -24,11 +24,6 @@ type (
 		GetUserByEmail(context.Context, string) (*models.User, error)
 		GetUserById(context.Context, int) (*models.User, error)
 	}
-
-	JwtCustomClaims struct {
-		Name string `json:"name"`
-		jwt.RegisteredClaims
-	}
 )
 
 func NewAuthService(r AuthRepo) *AuthService {
@@ -107,11 +102,12 @@ func (s *AuthService) generateTokenPair(user *models.User) (accessToken, refresh
 	}
 
 	uid := strconv.Itoa(int(user.ID))
-	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtCustomClaims{
+	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, models.JwtCustomClaims{
 		name,
 		jwt.RegisteredClaims{
 			Subject:   uid,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
+			// TODO: FIXME: set access_token expiration for production
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 42069)),
 		},
 	})
 

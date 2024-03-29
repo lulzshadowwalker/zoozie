@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
 	"github.com/lulzshadowwalker/zoozie/api/internal/services"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
@@ -61,11 +62,15 @@ func (s *Server) Run() error {
 
 	// TODO: setup cors allowed origins
 	router.Use(middleware.CORS())
+	router.Use(middleware.Recover())
+
 	router.Validator = handlers.NewZoozieValidator()
 
 	router.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "hello, lulzie")
 	})
+
+	router.Static("/", "public")
 
 	api := router.Group("/api/:locale", func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -96,7 +101,7 @@ func (s *Server) Run() error {
 
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(services.JwtCustomClaims)
+			return new(models.JwtCustomClaims)
 		},
 		SigningKey: []byte(config.GetJwtSecret()),
 	}
@@ -106,6 +111,11 @@ func (s *Server) Run() error {
 	userService := services.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)
 	userHandler.RegisterRoutes(protected)
+
+	uploadsRepo := repos.NewUploadsRepo(s.database)
+	uploadsService := services.NewUploadsService(uploadsRepo)
+	uploadsHandler := handlers.NewUploadsHandler(uploadsService)
+	uploadsHandler.RegisterRoutes(protected)
 
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil

@@ -15,5 +15,6 @@ func UseSchema(schema string) {
 	CoreFeatures = CoreFeatures.FromSchema(schema)
 	CoreFeaturesI18n = CoreFeaturesI18n.FromSchema(schema)
 	GooseDbVersion = GooseDbVersion.FromSchema(schema)
+	Uploads = Uploads.FromSchema(schema)
 	Users = Users.FromSchema(schema)
 }
