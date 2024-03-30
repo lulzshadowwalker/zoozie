@@ -5,7 +5,7 @@ import "github.com/lulzshadowwalker/zoozie/api/internal/models"
 type (
 	ListingExtraFeature struct {
 		Title  string `json:"title,omitempty" validate:"required"`
-		Exists bool   `json:"exists,omitempty" validate:"required,boolean"`
+		Exists bool   `json:"exists,omitempty" validate:"boolean"`
 	}
 
 	ListingCoreFeature struct {

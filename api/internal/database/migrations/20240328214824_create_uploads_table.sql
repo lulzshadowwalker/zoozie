@@ -4,6 +4,8 @@ CREATE TABLE uploads (
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   file TEXT NOT NULL,
+  original_file_name TEXT,
+  file_type TEXT,
 
 -- TODO: might wanna save original_file_name
 

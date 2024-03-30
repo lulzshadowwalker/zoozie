@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 )
 
@@ -19,21 +18,42 @@ func NewUploadsRepo(database *sql.DB) *UploadsRepo {
 	}
 }
 
-func (r *UploadsRepo) Upload(c context.Context, files []models.Upload) error {
-	stmt := Uploads.INSERT(
-		Uploads.File,
-		Uploads.UserID,
-	)
-
-	for _, file := range files {
-		stmt = stmt.VALUES(file.File, file.UserID)
-	}
-
-	_, err := stmt.Exec(r.database)
+func (r *UploadsRepo) Upload(c context.Context, files []models.Upload) ([]models.Upload, error) {
+	tx, err := r.database.BeginTx(c, nil)
 	if err != nil {
-		return fmt.Errorf("failed to store uploaded file in the database because %w", err)
+		return nil, fmt.Errorf("failed to begin transaction because %w", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+		INSERT INTO uploads (
+			file,
+			original_file_name,
+			file_type,
+			user_id
+		)
+		VALUES($1, $2, $3, $4)
+		RETURNING id;
+	`
+	stmt, err := tx.PrepareContext(c, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare the query to store uploaded files because %w", err)
 	}
 
-	return nil
-}
+	for index := range files {
+		file := &files[index]
+		err = stmt.
+			QueryRowContext(c, file.File, file.OriginalFileName, file.FileType, file.UploadedBy).
+			Scan(&file.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to store uploaded file in the database because %w", err)
+		}
+	}
 
+	err = tx.Commit()
+	if err != nil {
+		return nil, fmt.Errorf("failed to commit transaction because %w", err)
+	}
+
+	return files, nil
+}

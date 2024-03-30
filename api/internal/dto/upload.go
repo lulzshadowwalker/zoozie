@@ -1,8 +1,9 @@
 package dto
 
 import (
+	"fmt"
 	"mime/multipart"
-	"path"
+	"net/url"
 	"strings"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
@@ -11,7 +12,7 @@ import (
 
 type (
 	UploadRequest struct {
-		Files []*multipart.FileHeader `json:"file"`
+		Files []*multipart.FileHeader `json:"files"`
 	}
 
 	UploadResponseMultiple struct {
@@ -19,15 +20,24 @@ type (
 	}
 
 	UploadResponse struct {
-		Url string `json:"url"`
+		ID       int    `json:"id,omitempty"`
+		Filename string `json:"filename,omitempty"`
+		FileType string `json:"fileType,omitempty"`
+		Url      string `json:"url"`
 	}
 )
 
-func NewUploadResponseFromEntity(entity *models.Upload) UploadResponse {
+func NewUploadResponseFromEntity(entity *models.Upload) (UploadResponse, error) {
 	sanitized := strings.TrimPrefix(entity.File, "public/")
-	url := path.Join(config.GetAppUrl(), sanitized)
+	url, err := url.JoinPath(config.GetAppUrl(), sanitized)
+	if err != nil {
+		return UploadResponse{}, fmt.Errorf("failed to join path because %w", err)
+	}
 
 	return UploadResponse{
-		Url: url,
-	}
+		ID:       entity.ID,
+		Filename: entity.OriginalFileName,
+		FileType: entity.FileType,
+		Url:      url,
+	}, nil
 }

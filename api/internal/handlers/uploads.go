@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"mime/multipart"
 	"net/http"
 
@@ -34,12 +35,13 @@ func (h *UploadHandler) RegisterRoutes(e *echo.Group) {
 func (h *UploadHandler) Upload(c echo.Context) error {
 	form, err := c.MultipartForm()
 	if err != nil {
+		log.Println(err)
 		return utils.NewApiError(http.StatusBadRequest, "Content-Type must be set to multipart/form-data")
 	}
 
-	files := form.File["file"]
+	files := form.File["files"]
 	if files == nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"message": "file must not be empty"})
+		return c.JSON(http.StatusBadRequest, echo.Map{"message": "'files' must not be empty"})
 	}
 
 	// TODO: limit upload file size
@@ -55,13 +57,10 @@ func (h *UploadHandler) Upload(c echo.Context) error {
 
 	response := make([]dto.UploadResponse, len(entities))
 	for index, entity := range entities {
-		response[index] = dto.NewUploadResponseFromEntity(&entity)
-	}
-
-	if len (response) == 1 {
-		return c.JSON(http.StatusOK, echo.Map{
-			"file": response[0],
-		})
+		response[index], err = dto.NewUploadResponseFromEntity(&entity)
+		if err != nil {
+			return err
+		}
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{

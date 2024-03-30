@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path"
 	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lulzshadowwalker/zoozie/api/internal/models"
-	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (
@@ -20,7 +21,7 @@ type (
 	}
 
 	UploadsRepo interface {
-		Upload(c context.Context, files []models.Upload) error
+		Upload(c context.Context, files []models.Upload) ([]models.Upload, error)
 	}
 )
 
@@ -31,10 +32,10 @@ func NewUploadsService(repo UploadsRepo) *UploadsService {
 }
 
 func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader) ([]models.Upload, error) {
-	uid, err := utils.GetUser(c)
-	if err != nil {
-		return nil, err
-	}
+	// uid, err := utils.GetUser(c)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	entities := make([]models.Upload, len(files))
 	for index, file := range files {
@@ -48,7 +49,7 @@ func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader
 		}
 
 		filepath := path.Join(destPath, id+path.Ext(file.Filename))
-		dest, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, 0666)
+		dest, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, 0o666)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open file because %w", err)
 		}
@@ -64,14 +65,24 @@ func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader
 		if err != nil {
 			return nil, fmt.Errorf("failed to copy file because %w", err)
 		}
+		entity := &entities[index]
+		*entity = models.Upload{
+			File:             strings.TrimPrefix(filepath, "public/"),
+			OriginalFileName: file.Filename,
+			UploadedBy:       1, // TODO: protected route
+		}
+		log.Println(*entity)
 
-		entities[index] = models.Upload{
-			File:   strings.TrimPrefix(filepath, "public/"),
-			UserID: int64(uid),
+		buffer := make([]byte, 512)
+		_, err = source.Read(buffer)
+		if err != nil {
+			mime := http.DetectContentType(buffer)
+			entity.FileType = mime
 		}
 	}
 
-	if err := s.repo.Upload(c, entities); err != nil {
+	entities, err := s.repo.Upload(c, entities)
+	if err != nil {
 		return nil, err
 	}
 
