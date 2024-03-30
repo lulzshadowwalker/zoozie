@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
 	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -37,9 +38,14 @@ func (h *CoreFeaturesHandler) GetCoreFeatures(c echo.Context) error {
 		return err
 	}
 
+	responseFeatures := make([]dto.CoreFeaturesResponse, len(features))
+	for index, feature := range features {
+		responseFeatures[index] = dto.ToCoreFeaturesResponse(feature)
+	}
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
-			"coreFeatures": features,
+			"coreFeatures": responseFeatures,
 		},
 	})
 }

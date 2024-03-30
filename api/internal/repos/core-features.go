@@ -3,12 +3,8 @@ package repos
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
-	. "github.com/go-jet/jet/v2/postgres"
-	"github.com/go-jet/jet/v2/qrm"
-	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -29,24 +25,39 @@ func (r *CoreFeaturesRepo) GetAll(c context.Context) ([]*models.CoreFeature, err
 		return nil, err
 	}
 
-	stmt := SELECT(
-		CoreFeatures.ID.AS("_id"),
-		CoreFeatures.Icon,
-		CoreFeatures.Required,
-		CoreFeatures.DataType,
-		CoreFeaturesI18n.Name,
-		CoreFeaturesI18n.Description,
-	).FROM(CoreFeatures.LEFT_JOIN(CoreFeaturesI18n, CoreFeatures.ID.EQ(CoreFeaturesI18n.CoreFeatureID))).WHERE(CoreFeaturesI18n.LanguageCode.EQ(String(language)))
+	query := `
+		SELECT 
+			cf.id,
+			cf.icon,
+			cf.required,
+			cf.data_type,
 
-	var dest []*models.CoreFeature
-	err = stmt.Query(r.database, &dest)
+			i18n.name,
+			i18n.description
+		FROM 
+			core_features cf
+		LEFT JOIN
+			core_features_i18n i18n
+		ON
+			cf.id = i18n.core_feature_id
+		WHERE
+			i18n.language_code = $1
+	`
+	rows, err := r.database.QueryContext(c, query, language)
 	if err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, nil
-		}
-
-		return nil, fmt.Errorf("failed to query the agencies because %w", err)
+		return nil, fmt.Errorf("failed to query the core features because %w", err)
 	}
 
-	return dest, err
+	features := make([]*models.CoreFeature, 0)
+	for rows.Next() {
+		var f models.CoreFeature
+		err = rows.Scan(&f.ID, &f.Icon, &f.Requried, &f.DataType, &f.Name, &f.Description)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan the core features because %w", err)
+		}
+
+		features = append(features, &f)
+	}
+
+	return features, err
 }

@@ -1,8 +1,17 @@
 package models
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
+type Datatype string
+
+const (
+	Datatype_Text   Datatype = "text"
+	Datatype_Number Datatype = "number"
+)
 
 type CoreFeature struct {
-	model.CoreFeatures
-	model.CoreFeaturesI18n
+	ID          int
+	Name        string
+	Description string
+	Requried    bool
+	DataType    Datatype
+	Icon        string
 }
