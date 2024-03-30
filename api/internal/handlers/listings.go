@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
+	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -16,7 +17,7 @@ type (
 	}
 
 	ListingsService interface {
-		CreateListing(context.Context, dto.CreateListingRequest) error
+		CreateListing(context.Context, dto.CreateListingRequest) (models.Listing, error)
 	}
 )
 
@@ -28,7 +29,7 @@ func NewListingsHandler(service ListingsService) *ListingsHandler {
 
 func (h *ListingsHandler) RegisterRoutes(e *echo.Group) {
 	// TODO: admin middleware also per agency
-	e.POST("/listings", h.CreateListings)
+	e.POST("/listings", unwrap(h.CreateListings))
 }
 
 // TODO: write unit test
@@ -46,9 +47,14 @@ func (h *ListingsHandler) CreateListings(c echo.Context) error {
 		return c.JSON(400, echo.Map{"message": "pictures must not be empty"})
 	}
 
-	if err := h.service.CreateListing(utils.TransformEchoContext(c), request); err != nil {
+	entity, err := h.service.CreateListing(utils.TransformEchoContext(c), request)
+	if err != nil {
 		return err
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"listing": entity,
+		},
+	})
 }

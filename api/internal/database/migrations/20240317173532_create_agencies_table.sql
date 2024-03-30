@@ -1,5 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
+-- TODO: timestamp triggers
+
 CREATE TABLE agencies (
   id BIGSERIAL PRIMARY KEY,
   phone_number TEXT NOT NULL UNIQUE,

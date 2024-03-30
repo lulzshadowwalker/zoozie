@@ -117,6 +117,11 @@ func (s *Server) Run() error {
 	uploadsHandler := handlers.NewUploadsHandler(uploadsService)
 	uploadsHandler.RegisterRoutes(protected)
 
+	listingsRepo := repos.NewListingsRepo(s.database)
+	listingsService := services.NewListingsService(listingsRepo)
+	listingsHandler := handlers.NewListingsHandler(listingsService)
+	listingsHandler.RegisterRoutes(protected)
+
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil
 }

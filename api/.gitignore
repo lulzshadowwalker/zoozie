@@ -34,3 +34,4 @@ lulzie.md
 .env.*local
 
 public
+*.session.sql

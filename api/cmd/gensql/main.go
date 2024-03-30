@@ -44,9 +44,8 @@ EXECUTE PROCEDURE update_updated_at_TABLE_NAME();
 DROP TRIGGER update_TABLE_NAME_updated_at ON TABLE_NAME;
 DROP FUNCTION update_updated_at_TABLE_NAME();
 DROP TABLE TABLE_NAME;
--- +goose StatementEnd
-  `
+-- +goose StatementEnd`
 
 	result := strings.ReplaceAll(template, "TABLE_NAME", tableName)
-	fmt.Println("\n\n\n", result, "\n\n\n")
+	fmt.Println(result)
 }
