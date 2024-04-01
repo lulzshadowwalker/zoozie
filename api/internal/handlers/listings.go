@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -17,7 +17,9 @@ type (
 	}
 
 	ListingsService interface {
-		CreateListing(context.Context, dto.CreateListingRequest) (models.Listing, error)
+		CreateListing(context.Context, dto.CreateListingRequest) (entity.Listing, error)
+		GetListing(context.Context, dto.GetListingRequest) (entity.Listing, error)
+		GetAllListings(context.Context) ([]entity.Listing, error)
 	}
 )
 
@@ -30,6 +32,8 @@ func NewListingsHandler(service ListingsService) *ListingsHandler {
 func (h *ListingsHandler) RegisterRoutes(e *echo.Group) {
 	// TODO: admin middleware also per agency
 	e.POST("/listings", unwrap(h.CreateListings))
+	e.GET("/listings", unwrap(h.GetAllListings))
+	e.GET("/listings/:id", unwrap(h.GetListing))
 }
 
 // TODO: write unit test
@@ -55,6 +59,41 @@ func (h *ListingsHandler) CreateListings(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"listing": entity,
+		},
+	})
+}
+
+func (h *ListingsHandler) GetListing(c echo.Context) error {
+	var request dto.GetListingRequest
+	if err := c.Bind(&request); err != nil {
+		return err
+	}
+
+	if err := c.Validate(&request); err != nil {
+		return err
+	}
+
+	listing, err := h.service.GetListing(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"listing": listing,
+		},
+	})
+}
+
+func (h *ListingsHandler) GetAllListings(c echo.Context) error {
+	entities, err := h.service.GetAllListings(utils.TransformEchoContext(c))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"listings": entities,
 		},
 	})
 }

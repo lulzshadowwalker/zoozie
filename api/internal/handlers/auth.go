@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -17,7 +17,7 @@ type (
 	}
 
 	AuthService interface {
-		Login(c context.Context, email, password string) (*models.User, error)
+		Login(c context.Context, email, password string) (*entity.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
 	}
 )

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	entity "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
 type UploadsRepo struct {
@@ -18,7 +18,7 @@ func NewUploadsRepo(database *sql.DB) *UploadsRepo {
 	}
 }
 
-func (r *UploadsRepo) Upload(c context.Context, files []models.Upload) ([]models.Upload, error) {
+func (r *UploadsRepo) Upload(c context.Context, files []entity.Upload) ([]entity.Upload, error) {
 	tx, err := r.database.BeginTx(c, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to begin transaction because %w", err)

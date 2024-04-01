@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -14,7 +14,7 @@ type (
 	}
 
 	UserRepo interface {
-		GetUserById(context.Context, int) (*models.User, error)
+		GetUserById(context.Context, int) (*entity.User, error)
 	}
 )
 
@@ -24,7 +24,7 @@ func NewUserService(r UserRepo) *UserService {
 	}
 }
 
-func (s *UserService) GetUserById(c context.Context, id int) (*models.User, error) {
+func (s *UserService) GetUserById(c context.Context, id int) (*entity.User, error) {
 	user, err := s.repo.GetUserById(c, id)
 	if err != nil {
 		return nil, err

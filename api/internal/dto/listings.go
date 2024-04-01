@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/models"
+import "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 
 type (
 	ListingExtraFeature struct {
@@ -15,8 +15,8 @@ type (
 	}
 
 	ListingFile struct {
-		Title string `json:"title,omitempty" validate:"required"`
-		Url   string `json:"url,omitempty" validate:"required,url"`
+		Title *string `json:"title,omitempty" validate:"required"`
+		Url   string  `json:"url,omitempty" validate:"required,url"`
 	}
 
 	ListingPrice struct {
@@ -32,63 +32,22 @@ type (
 		Pictures      []ListingFile         `json:"pictures,omitempty" validate:"required,dive"`
 	}
 
-	CreateListingResponse struct {
-		Price         ListingPrice          `json:"price,omitempty"`
-		Description   string                `json:"description,omitempty"`
-		CoreFeatures  []ListingCoreFeature  `json:"coreFeatures,omitempty"`
-		ExtraFeatures []ListingExtraFeature `json:"extraFeatures,omitempty"`
-		Pictures      []ListingFile         `json:"pictures,omitempty"`
+	GetListingRequest struct {
+		ID int `param:"id" validate:"required,number,gt=0"`
 	}
 )
 
-func ListingResponseFromEntity(listing models.Listing) CreateListingResponse {
-	response := CreateListingResponse{
-		Price: ListingPrice{
-			Amount:   listing.Price.Amount,
-			Currency: listing.Price.Currency,
-		},
-		Description:   listing.Description,
-		CoreFeatures:  make([]ListingCoreFeature, len(listing.CoreFeatures)),
-		ExtraFeatures: make([]ListingExtraFeature, len(listing.ExtraFeatures)),
-		Pictures:      make([]ListingFile, len(listing.Pictures)),
-	}
-
-	for i, coreFeature := range listing.CoreFeatures {
-		response.CoreFeatures[i] = ListingCoreFeature{
-			CoreFeatureID: coreFeature.CoreFeatureID,
-			Title:         coreFeature.Title,
-			Description:   coreFeature.Description,
-		}
-	}
-
-	for i, extraFeature := range listing.ExtraFeatures {
-		response.ExtraFeatures[i] = ListingExtraFeature{
-			Title:  extraFeature.Title,
-			Exists: extraFeature.Exists,
-		}
-	}
-
-	for i, picture := range listing.Pictures {
-		response.Pictures[i] = ListingFile{
-			Title: picture.Title,
-			Url:   picture.Url,
-		}
-	}
-
-	return response
-}
-
-func (r *CreateListingRequest) ToEntity() models.Listing {
-	listing := models.Listing{
-		Price:         models.ListingPrice{Amount: r.Price.Amount, Currency: r.Price.Currency},
+func (r *CreateListingRequest) ToEntity() entity.Listing {
+	listing := entity.Listing{
+		Price:         entity.ListingPrice{Amount: r.Price.Amount, Currency: r.Price.Currency},
 		Description:   r.Description,
-		CoreFeatures:  make([]models.ListingCoreFeature, len(r.CoreFeatures)),
-		ExtraFeatures: make([]models.ListingExtraFeature, len(r.ExtraFeatures)),
-		Pictures:      make([]models.ListingFile, len(r.Pictures)),
+		CoreFeatures:  make([]entity.ListingCoreFeature, len(r.CoreFeatures)),
+		ExtraFeatures: make([]entity.ListingExtraFeature, len(r.ExtraFeatures)),
+		Pictures:      make([]entity.ListingFile, len(r.Pictures)),
 	}
 
 	for i, coreFeature := range r.CoreFeatures {
-		listing.CoreFeatures[i] = models.ListingCoreFeature{
+		listing.CoreFeatures[i] = entity.ListingCoreFeature{
 			CoreFeatureID: coreFeature.CoreFeatureID,
 			Title:         coreFeature.Title,
 			Description:   coreFeature.Description,
@@ -96,14 +55,14 @@ func (r *CreateListingRequest) ToEntity() models.Listing {
 	}
 
 	for i, extraFeature := range r.ExtraFeatures {
-		listing.ExtraFeatures[i] = models.ListingExtraFeature{
+		listing.ExtraFeatures[i] = entity.ListingExtraFeature{
 			Title:  extraFeature.Title,
 			Exists: extraFeature.Exists,
 		}
 	}
 
 	for i, picture := range r.Pictures {
-		listing.Pictures[i] = models.ListingFile{
+		listing.Pictures[i] = entity.ListingFile{
 			Title: picture.Title,
 			Url:   picture.Url,
 		}

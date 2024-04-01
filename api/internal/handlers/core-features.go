@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -17,7 +17,7 @@ type (
 	}
 
 	CoreFeaturesService interface {
-		GetAll(context.Context) ([]*models.CoreFeature, error)
+		GetAll(context.Context) ([]*entity.CoreFeature, error)
 	}
 )
 

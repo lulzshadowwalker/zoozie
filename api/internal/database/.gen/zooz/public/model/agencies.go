@@ -8,8 +8,8 @@
 package model
 
 type Agencies struct {
-	ID           int64   `sql:"primary_key" json:"id,omitempty"`
-	PhoneNumber  string  `json:"phoneNumber,omitempty"`
-	EmailAddress string  `json:"emailAddress,omitempty"`
-	Slug         *string `json:"slug,omitempty"`
+	ID           int64  `sql:"primary_key" json:"id,omitempty"`
+	PhoneNumber  string `json:"phoneNumber,omitempty"`
+	EmailAddress string `json:"emailAddress,omitempty"`
+	Slug         string `json:"slug,omitempty"`
 }

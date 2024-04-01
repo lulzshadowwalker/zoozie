@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
 type (
@@ -12,7 +12,7 @@ type (
 	}
 
 	CoreFeaturesRepo interface {
-		GetAll(context.Context) ([]*models.CoreFeature, error)
+		GetAll(context.Context) ([]*entity.CoreFeature, error)
 	}
 )
 
@@ -22,6 +22,6 @@ func NewCoreFeaturesService(repo CoreFeaturesRepo) *CoreFeaturesService {
 	}
 }
 
-func (s *CoreFeaturesService) GetAll(c context.Context) ([]*models.CoreFeature, error) {
+func (s *CoreFeaturesService) GetAll(c context.Context) ([]*entity.CoreFeature, error) {
 	return s.repo.GetAll(c)
 }

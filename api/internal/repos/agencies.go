@@ -9,7 +9,8 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -23,8 +24,8 @@ func NewAgenciesRepo(database *sql.DB) *AgenciesRepo {
 	}
 }
 
-func (r *AgenciesRepo) GetAgencies(c context.Context) ([]*models.Agency, error) {
-	locale, err := utils.GetLocale(c)
+func (r *AgenciesRepo) GetAgencies(c context.Context) ([]*entity.Agency, error) {
+	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
@@ -36,8 +37,8 @@ func (r *AgenciesRepo) GetAgencies(c context.Context) ([]*models.Agency, error) 
 		Agencies.EmailAddress,
 		AgenciesI18n.Name,
 		AgenciesI18n.Description,
-		AgenciesI18n.LocaleCode,
-	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LocaleCode.EQ(String(locale)))
+		AgenciesI18n.LanguageCode,
+	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(language)))
 
 	var dest []*models.Agency
 	err = stmt.Query(r.database, &dest)
@@ -45,10 +46,15 @@ func (r *AgenciesRepo) GetAgencies(c context.Context) ([]*models.Agency, error) 
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}
 
-	return dest, nil
+	entities := make([]*entity.Agency, len(dest))
+	for index, agency := range dest {
+		entities[index] = agency.ToEntity()
+	}
+
+	return entities, nil
 }
 
-func (r *AgenciesRepo) GetAgencyBySlug(c context.Context, slug string) (*models.Agency, error) {
+func (r *AgenciesRepo) GetAgencyBySlug(c context.Context, slug string) (*entity.Agency, error) {
 	locale, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
@@ -61,11 +67,10 @@ func (r *AgenciesRepo) GetAgencyBySlug(c context.Context, slug string) (*models.
 		Agencies.EmailAddress,
 		AgenciesI18n.Name,
 		AgenciesI18n.Description,
-		AgenciesI18n.LocaleCode,
-	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LocaleCode.EQ(String(locale)).AND(Agencies.Slug.EQ(String(slug))))
+		AgenciesI18n.LanguageCode,
+	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(locale)).AND(Agencies.Slug.EQ(String(slug))))
 
 	var dest models.Agency
-
 	err = stmt.Query(r.database, &dest)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -75,5 +80,5 @@ func (r *AgenciesRepo) GetAgencyBySlug(c context.Context, slug string) (*models.
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}
 
-	return &dest, err
+	return dest.ToEntity(), err
 }

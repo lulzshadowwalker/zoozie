@@ -10,11 +10,13 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
-const ContextLocaleKey = "locale"
-const ContextUserKey = "user"
+const (
+	ContextLocaleKey = "locale"
+	ContextUserKey   = "user"
+)
 
 type ApiError struct {
 	Status  int
@@ -83,7 +85,7 @@ func GetUser(c context.Context) (int, error) {
 		return -1, echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
-	claims := u.Claims.(*models.JwtCustomClaims)
+	claims := u.Claims.(*entity.JwtCustomClaims)
 	uidString := claims.Subject
 	uid, err := strconv.Atoi(uidString)
 	if err != nil {

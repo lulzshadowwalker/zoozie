@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -16,7 +16,7 @@ type (
 	}
 
 	UserService interface {
-		GetUserById(c context.Context, id int) (*models.User, error)
+		GetUserById(c context.Context, id int) (*entity.User, error)
 	}
 )
 

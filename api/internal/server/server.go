@@ -10,8 +10,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
 	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
 	"github.com/lulzshadowwalker/zoozie/api/internal/services"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
@@ -101,26 +101,26 @@ func (s *Server) Run() error {
 
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(models.JwtCustomClaims)
+			return new(entity.JwtCustomClaims)
 		},
 		SigningKey: []byte(config.GetJwtSecret()),
 	}
 	protected := api.Group("")
 	protected.Use(echojwt.WithConfig(jwtConfig))
 
-	userService := services.NewUserService(userRepo)
-	userHandler := handlers.NewUserHandler(userService)
-	userHandler.RegisterRoutes(protected)
+	// userService := services.NewUserService(userRepo)
+	// userHandler := handlers.NewUserHandler(userService)
+	// userHandler.RegisterRoutes(protected)
 
 	uploadsRepo := repos.NewUploadsRepo(s.database)
 	uploadsService := services.NewUploadsService(uploadsRepo)
 	uploadsHandler := handlers.NewUploadsHandler(uploadsService)
-	uploadsHandler.RegisterRoutes(protected)
+	uploadsHandler.RegisterRoutes(api)
 
 	listingsRepo := repos.NewListingsRepo(s.database)
 	listingsService := services.NewListingsService(listingsRepo)
 	listingsHandler := handlers.NewListingsHandler(listingsService)
-	listingsHandler.RegisterRoutes(protected)
+	listingsHandler.RegisterRoutes(api)
 
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil

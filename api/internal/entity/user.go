@@ -1,4 +1,4 @@
-package models
+package entity
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"

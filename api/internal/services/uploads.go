@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
 type (
@@ -21,7 +21,7 @@ type (
 	}
 
 	UploadsRepo interface {
-		Upload(c context.Context, files []models.Upload) ([]models.Upload, error)
+		Upload(c context.Context, files []entity.Upload) ([]entity.Upload, error)
 	}
 )
 
@@ -31,13 +31,13 @@ func NewUploadsService(repo UploadsRepo) *UploadsService {
 	}
 }
 
-func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader) ([]models.Upload, error) {
+func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader) ([]entity.Upload, error) {
 	// uid, err := utils.GetUser(c)
 	// if err != nil {
 	// 	return nil, err
 	// }
 
-	entities := make([]models.Upload, len(files))
+	entities := make([]entity.Upload, len(files))
 	for index, file := range files {
 		id := uuid.NewString()
 
@@ -65,19 +65,19 @@ func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader
 		if err != nil {
 			return nil, fmt.Errorf("failed to copy file because %w", err)
 		}
-		entity := &entities[index]
-		*entity = models.Upload{
+		e := &entities[index]
+		*e = entity.Upload{
 			File:             strings.TrimPrefix(filepath, "public/"),
 			OriginalFileName: file.Filename,
 			UploadedBy:       1, // TODO: protected route
 		}
-		log.Println(*entity)
+		log.Println(*e)
 
 		buffer := make([]byte, 512)
 		_, err = source.Read(buffer)
 		if err != nil {
 			mime := http.DetectContentType(buffer)
-			entity.FileType = mime
+			e.FileType = &mime
 		}
 	}
 

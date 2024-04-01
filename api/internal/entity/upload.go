@@ -1,9 +1,9 @@
-package models
+package entity
 
 type Upload struct {
 	ID               int
 	File             string
-	FileType         string
+	FileType         *string
 	OriginalFileName string
 	UploadedBy       int
 }

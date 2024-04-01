@@ -8,7 +8,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -18,7 +18,7 @@ type (
 	}
 
 	UploadService interface {
-		Upload(c context.Context, files []*multipart.FileHeader) ([]models.Upload, error)
+		Upload(c context.Context, files []*multipart.FileHeader) ([]entity.Upload, error)
 	}
 )
 

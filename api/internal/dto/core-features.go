@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/models"
+import "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 
 type (
 	CoreFeaturesResponse struct {
@@ -13,7 +13,7 @@ type (
 	}
 )
 
-func ToCoreFeaturesResponse(feature *models.CoreFeature) CoreFeaturesResponse {
+func ToCoreFeaturesResponse(feature *entity.CoreFeature) CoreFeaturesResponse {
 	return CoreFeaturesResponse{
 		ID:          feature.ID,
 		Name:        feature.Name,

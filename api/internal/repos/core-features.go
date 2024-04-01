@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	entity "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -19,7 +19,7 @@ func NewCoreFeaturesRepo(database *sql.DB) *CoreFeaturesRepo {
 	}
 }
 
-func (r *CoreFeaturesRepo) GetAll(c context.Context) ([]*models.CoreFeature, error) {
+func (r *CoreFeaturesRepo) GetAll(c context.Context) ([]*entity.CoreFeature, error) {
 	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, err
@@ -48,9 +48,9 @@ func (r *CoreFeaturesRepo) GetAll(c context.Context) ([]*models.CoreFeature, err
 		return nil, fmt.Errorf("failed to query the core features because %w", err)
 	}
 
-	features := make([]*models.CoreFeature, 0)
+	features := make([]*entity.CoreFeature, 0)
 	for rows.Next() {
-		var f models.CoreFeature
+		var f entity.CoreFeature
 		err = rows.Scan(&f.ID, &f.Icon, &f.Requried, &f.DataType, &f.Name, &f.Description)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan the core features because %w", err)

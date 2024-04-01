@@ -17,11 +17,11 @@ type agenciesI18nTable struct {
 	postgres.Table
 
 	// Columns
-	ID          postgres.ColumnInteger
-	Agency      postgres.ColumnInteger
-	LocaleCode  postgres.ColumnString
-	Name        postgres.ColumnString
-	Description postgres.ColumnString
+	ID           postgres.ColumnInteger
+	Agency       postgres.ColumnInteger
+	LanguageCode postgres.ColumnString
+	Name         postgres.ColumnString
+	Description  postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -62,24 +62,24 @@ func newAgenciesI18nTable(schemaName, tableName, alias string) *AgenciesI18nTabl
 
 func newAgenciesI18nTableImpl(schemaName, tableName, alias string) agenciesI18nTable {
 	var (
-		IDColumn          = postgres.IntegerColumn("id")
-		AgencyColumn      = postgres.IntegerColumn("agency")
-		LocaleCodeColumn  = postgres.StringColumn("locale_code")
-		NameColumn        = postgres.StringColumn("name")
-		DescriptionColumn = postgres.StringColumn("description")
-		allColumns        = postgres.ColumnList{IDColumn, AgencyColumn, LocaleCodeColumn, NameColumn, DescriptionColumn}
-		mutableColumns    = postgres.ColumnList{AgencyColumn, LocaleCodeColumn, NameColumn, DescriptionColumn}
+		IDColumn           = postgres.IntegerColumn("id")
+		AgencyColumn       = postgres.IntegerColumn("agency")
+		LanguageCodeColumn = postgres.StringColumn("language_code")
+		NameColumn         = postgres.StringColumn("name")
+		DescriptionColumn  = postgres.StringColumn("description")
+		allColumns         = postgres.ColumnList{IDColumn, AgencyColumn, LanguageCodeColumn, NameColumn, DescriptionColumn}
+		mutableColumns     = postgres.ColumnList{AgencyColumn, LanguageCodeColumn, NameColumn, DescriptionColumn}
 	)
 
 	return agenciesI18nTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		Agency:      AgencyColumn,
-		LocaleCode:  LocaleCodeColumn,
-		Name:        NameColumn,
-		Description: DescriptionColumn,
+		ID:           IDColumn,
+		Agency:       AgencyColumn,
+		LanguageCode: LanguageCodeColumn,
+		Name:         NameColumn,
+		Description:  DescriptionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
 type (
@@ -20,14 +20,14 @@ type (
 	}
 
 	UploadResponse struct {
-		ID       int    `json:"id,omitempty"`
-		Filename string `json:"filename,omitempty"`
-		FileType string `json:"fileType,omitempty"`
-		Url      string `json:"url"`
+		ID       int     `json:"id,omitempty"`
+		Filename *string `json:"filename,omitempty"`
+		FileType *string `json:"fileType,omitempty"`
+		Url      string  `json:"url"`
 	}
 )
 
-func NewUploadResponseFromEntity(entity *models.Upload) (UploadResponse, error) {
+func NewUploadResponseFromEntity(entity *entity.Upload) (UploadResponse, error) {
 	sanitized := strings.TrimPrefix(entity.File, "public/")
 	url, err := url.JoinPath(config.GetAppUrl(), sanitized)
 	if err != nil {
@@ -36,7 +36,7 @@ func NewUploadResponseFromEntity(entity *models.Upload) (UploadResponse, error) 
 
 	return UploadResponse{
 		ID:       entity.ID,
-		Filename: entity.OriginalFileName,
+		Filename: &entity.OriginalFileName,
 		FileType: entity.FileType,
 		Url:      url,
 	}, nil

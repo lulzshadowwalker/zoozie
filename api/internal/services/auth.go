@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -21,8 +21,8 @@ type (
 	}
 
 	AuthRepo interface {
-		GetUserByEmail(context.Context, string) (*models.User, error)
-		GetUserById(context.Context, int) (*models.User, error)
+		GetUserByEmail(context.Context, string) (*entity.User, error)
+		GetUserById(context.Context, int) (*entity.User, error)
 	}
 )
 
@@ -32,7 +32,7 @@ func NewAuthService(r AuthRepo) *AuthService {
 	}
 }
 
-func (s *AuthService) Login(c context.Context, email, password string) (*models.User, error) {
+func (s *AuthService) Login(c context.Context, email, password string) (*entity.User, error) {
 	user, err := s.repo.GetUserByEmail(c, email)
 	if err != nil {
 		return nil, err
@@ -95,17 +95,17 @@ func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken
 	return s.generateTokenPair(user)
 }
 
-func (s *AuthService) generateTokenPair(user *models.User) (accessToken, refreshToken string, err error) {
+func (s *AuthService) generateTokenPair(user *entity.User) (accessToken, refreshToken string, err error) {
 	name := "lulzie"
 	if user.Name != nil {
 		name = *user.Name
 	}
 
 	uid := strconv.Itoa(int(user.ID))
-	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, models.JwtCustomClaims{
+	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, entity.JwtCustomClaims{
 		name,
 		jwt.RegisteredClaims{
-			Subject:   uid,
+			Subject: uid,
 			// TODO: FIXME: set access_token expiration for production
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 42069)),
 		},
@@ -132,7 +132,7 @@ func (s *AuthService) generateTokenPair(user *models.User) (accessToken, refresh
 	return
 }
 
-func checkUserActiveStatus(user *models.User) error {
+func checkUserActiveStatus(user *entity.User) error {
 	isActive := user.IsActive
 	if isActive == nil {
 		panic("users.is_active cannot be null")

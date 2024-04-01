@@ -23,6 +23,10 @@ watch:
 	    fi; \
 	fi
 
+# Generate SQL template with the necessary boilerplate and copy them into the system clipboard
+gensql:
+	go run cmd/gensql/main.go some_table sql
+
 # Build the application
 build:
 	@echo "Building..."
@@ -36,7 +40,6 @@ run:
 # Run Jet migrations
 jet-migrations:
 	@go run cmd/migrations/main.go
-
 
 # Test the application
 test:
@@ -54,7 +57,6 @@ proto-go:
 	@protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		internal/$(PROTO_FILE_PATH)
-
 
 
 GOOSE_DIR="./internal/database/migrations/"

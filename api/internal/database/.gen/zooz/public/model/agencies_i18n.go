@@ -8,9 +8,9 @@
 package model
 
 type AgenciesI18n struct {
-	ID          int64   `sql:"primary_key" json:"id,omitempty"`
-	Agency      *int64  `json:"agency,omitempty"`
-	LocaleCode  *string `json:"localeCode,omitempty"`
-	Name        string  `json:"name,omitempty"`
-	Description string  `json:"description,omitempty"`
+	ID           int64   `sql:"primary_key" json:"id,omitempty"`
+	Agency       *int64  `json:"agency,omitempty"`
+	LanguageCode *string `json:"languageCode,omitempty"`
+	Name         string  `json:"name,omitempty"`
+	Description  string  `json:"description,omitempty"`
 }

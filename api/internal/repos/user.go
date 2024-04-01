@@ -10,7 +10,7 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
-	"github.com/lulzshadowwalker/zoozie/api/internal/models"
+	entity "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -24,11 +24,11 @@ func NewUserRepo(database *sql.DB) *UserRepo {
 	}
 }
 
-func (r *UserRepo) GetUserById(c context.Context, id int) (*models.User, error) {
+func (r *UserRepo) GetUserById(c context.Context, id int) (*entity.User, error) {
 	stmt := Users.SELECT(Users.AllColumns).
 		WHERE(Users.ID.EQ(Int(int64(id))))
 
-	var user models.User
+	var user entity.User
 	err := stmt.Query(r.database, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -41,11 +41,11 @@ func (r *UserRepo) GetUserById(c context.Context, id int) (*models.User, error) 
 	return &user, nil
 }
 
-func (r *UserRepo) GetUserByEmail(c context.Context, email string) (*models.User, error) {
+func (r *UserRepo) GetUserByEmail(c context.Context, email string) (*entity.User, error) {
 	stmt := Users.SELECT(Users.AllColumns).
 		WHERE(Users.EmailAddress.EQ(String(email)))
 
-	var user models.User
+	var user entity.User
 	err := stmt.Query(r.database, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
