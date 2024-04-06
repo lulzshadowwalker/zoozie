@@ -1,44 +1,42 @@
-package handlers
+package listings
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
+	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (
-	ListingsHandler struct {
-		handler
-		service ListingsService
+	handler struct {
+		service Service
 	}
 
-	ListingsService interface {
-		CreateListing(context.Context, dto.CreateListingRequest) (entity.Listing, error)
-		GetListing(context.Context, dto.GetListingRequest) (entity.Listing, error)
-		GetAllListings(context.Context) ([]entity.Listing, error)
+	Service interface {
+		CreateListing(context.Context, createListingRequest) (Listing, error)
+		GetListing(context.Context, getListingRequest) (Listing, error)
+		GetAllListings(context.Context) ([]Listing, error)
 	}
 )
 
-func NewListingsHandler(service ListingsService) *ListingsHandler {
-	return &ListingsHandler{
+func NewHandler(service Service) *handler {
+	return &handler{
 		service: service,
 	}
 }
 
-func (h *ListingsHandler) RegisterRoutes(e *echo.Group) {
+func (h *handler) RegisterRoutes(e *echo.Group) {
 	// TODO: admin middleware also per agency
-	e.POST("/listings", unwrap(h.CreateListings))
-	e.GET("/listings", unwrap(h.GetAllListings))
-	e.GET("/listings/:id", unwrap(h.GetListing))
+	e.POST("/listings", utils.Unwrap(h.CreateListings), middleware.Auth())
+	e.GET("/listings", utils.Unwrap(h.GetAllListings))
+	e.GET("/listings/:id", utils.Unwrap(h.GetListing))
 }
 
 // TODO: write unit test
-func (h *ListingsHandler) CreateListings(c echo.Context) error {
-	var request dto.CreateListingRequest
+func (h *handler) CreateListings(c echo.Context) error {
+	var request createListingRequest
 	if err := c.Bind(&request); err != nil {
 		return err
 	}
@@ -63,8 +61,8 @@ func (h *ListingsHandler) CreateListings(c echo.Context) error {
 	})
 }
 
-func (h *ListingsHandler) GetListing(c echo.Context) error {
-	var request dto.GetListingRequest
+func (h *handler) GetListing(c echo.Context) error {
+	var request getListingRequest
 	if err := c.Bind(&request); err != nil {
 		return err
 	}
@@ -85,7 +83,7 @@ func (h *ListingsHandler) GetListing(c echo.Context) error {
 	})
 }
 
-func (h *ListingsHandler) GetAllListings(c echo.Context) error {
+func (h *handler) GetAllListings(c echo.Context) error {
 	entities, err := h.service.GetAllListings(utils.TransformEchoContext(c))
 	if err != nil {
 		return err

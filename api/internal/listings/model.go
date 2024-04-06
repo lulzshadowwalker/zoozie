@@ -1,11 +1,10 @@
-package models
+package listings
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
-type Listing struct {
+type dbListing struct {
 	Listing             model.Listings
 	ListingTranslations model.ListingsI18n
 
@@ -20,39 +19,39 @@ type Listing struct {
 	Pictures []model.ListingPictures
 }
 
-func (l *Listing) ToEntity() entity.Listing {
-	coreFeatures := make([]entity.ListingCoreFeature, len(l.ListingCoreFeatures))
+func (l *dbListing) ToEntity() Listing {
+	coreFeatures := make([]CoreFeature, len(l.ListingCoreFeatures))
 	for index, coreFeature := range l.ListingCoreFeatures {
 		t := l.ListingCoreFeaturesTranslations[index]
 
-		coreFeatures[index] = entity.ListingCoreFeature{
+		coreFeatures[index] = CoreFeature{
 			CoreFeatureID: int(coreFeature.CoreFeatureID),
 			Title:         t.Title,
 			Description:   t.Description,
 		}
 	}
 
-	extraFeatures := make([]entity.ListingExtraFeature, len(l.ListingExtraFeatures))
+	extraFeatures := make([]ExtraFeature, len(l.ListingExtraFeatures))
 	for index, extraFeature := range l.ListingExtraFeatures {
 		t := l.ListingExtraFeaturesTranslations[index]
-		extraFeatures[index] = entity.ListingExtraFeature{
+		extraFeatures[index] = ExtraFeature{
 			ID:     int(extraFeature.ID),
 			Title:  t.Title,
 			Exists: extraFeature.Exists,
 		}
 	}
 
-	pictures := make([]entity.ListingFile, len(l.Pictures))
+	pictures := make([]File, len(l.Pictures))
 	for index, picture := range l.Pictures {
-		pictures[index] = entity.ListingFile{
+		pictures[index] = File{
 			ID:    int(picture.ID),
 			Title: picture.Title,
 			Url:   picture.URL,
 		}
 	}
 
-	return entity.Listing{
-		Price:         entity.ListingPrice{Amount: l.ListingPrices.Amount, Currency: l.ListingPrices.Currency},
+	return Listing{
+		Price:         Price{Amount: l.ListingPrices.Amount, Currency: l.ListingPrices.Currency},
 		Description:   l.ListingTranslations.Description,
 		CoreFeatures:  coreFeatures,
 		ExtraFeatures: extraFeatures,

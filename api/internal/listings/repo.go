@@ -1,4 +1,4 @@
-package repos
+package listings
 
 import (
 	"context"
@@ -8,22 +8,20 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
-	"github.com/lulzshadowwalker/zoozie/api/internal/database/models"
-	entity "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-type ListingsRepo struct {
+type repo struct {
 	database *sql.DB
 }
 
-func NewListingsRepo(database *sql.DB) *ListingsRepo {
-	return &ListingsRepo{
+func NewRepo(database *sql.DB) *repo {
+	return &repo{
 		database: database,
 	}
 }
 
-var baseListingsQueryStmt = SELECT(
+var baseQueryStmt = SELECT(
 	Listings.AllColumns,
 	ListingsI18n.AllColumns,
 	ListingPrices.AllColumns,
@@ -43,15 +41,15 @@ var baseListingsQueryStmt = SELECT(
 		LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)),
 )
 
-func (r *ListingsRepo) CreateListing(c context.Context, listing entity.Listing) (entity.Listing, error) {
+func (r *repo) CreateListing(c context.Context, listing Listing) (Listing, error) {
 	languageCode, err := utils.GetLocale(c)
 	if err != nil {
-		return entity.Listing{}, err
+		return Listing{}, err
 	}
 
 	tx, err := r.database.BeginTx(c, nil)
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to start transaction because %w", err)
+		return Listing{}, fmt.Errorf("failed to start transaction because %w", err)
 	}
 	defer tx.Rollback()
 
@@ -60,20 +58,20 @@ func (r *ListingsRepo) CreateListing(c context.Context, listing entity.Listing) 
 	l := model.Listings{}
 	err = Listings.INSERT(Listings.AgencyID).VALUES(Int(1)).RETURNING(Listings.ID).QueryContext(c, tx, &l)
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to insert listing because %w", err)
+		return Listing{}, fmt.Errorf("failed to insert listing because %w", err)
 	}
 	listing.ID = int(l.ID)
 
 	_, err = ListingsI18n.INSERT(ListingsI18n.ListingID, ListingsI18n.Description, ListingsI18n.LanguageCode).VALUES(listing.ID, listing.Description, languageCode).ExecContext(c, tx)
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to insert listing i18n because %w", err)
+		return Listing{}, fmt.Errorf("failed to insert listing i18n because %w", err)
 	}
 
 	// price
 	p := model.ListingPrices{}
 	err = ListingPrices.INSERT(ListingPrices.ListingID, ListingPrices.Amount, ListingPrices.Currency).VALUES(listing.ID, listing.Price.Amount, listing.Price.Currency).RETURNING(ListingPrices.ID).QueryContext(c, tx, &p)
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to insert listing price because %w", err)
+		return Listing{}, fmt.Errorf("failed to insert listing price because %w", err)
 	}
 	listing.Price.ID = int(p.ID)
 
@@ -83,13 +81,13 @@ func (r *ListingsRepo) CreateListing(c context.Context, listing entity.Listing) 
 		f := model.ListingCoreFeatures{}
 		err = ListingCoreFeatures.INSERT(ListingCoreFeatures.ListingID, ListingCoreFeatures.CoreFeatureID).VALUES(listing.ID, coreFeature.CoreFeatureID).RETURNING(ListingCoreFeatures.ID).QueryContext(c, tx, &f)
 		if err != nil {
-			return entity.Listing{}, fmt.Errorf("failed to insert listing core feature because %w", err)
+			return Listing{}, fmt.Errorf("failed to insert listing core feature because %w", err)
 		}
 		coreFeature.ID = int(f.ID)
 
 		_, err = ListingCoreFeaturesI18n.INSERT(ListingCoreFeaturesI18n.ListingCoreFeatureID, ListingCoreFeaturesI18n.Title, ListingCoreFeaturesI18n.Description, ListingCoreFeaturesI18n.LanguageCode).VALUES(coreFeature.ID, coreFeature.Title, coreFeature.Description, languageCode).ExecContext(c, tx)
 		if err != nil {
-			return entity.Listing{}, fmt.Errorf("failed to insert listing core feature i18n because %w", err)
+			return Listing{}, fmt.Errorf("failed to insert listing core feature i18n because %w", err)
 		}
 	}
 
@@ -99,13 +97,13 @@ func (r *ListingsRepo) CreateListing(c context.Context, listing entity.Listing) 
 		f := model.ListingExtraFeatures{}
 		err = ListingExtraFeatures.INSERT(ListingExtraFeatures.ListingID, ListingExtraFeatures.Exists).VALUES(listing.ID, extraFeature.Exists).RETURNING(ListingExtraFeatures.ID).QueryContext(c, tx, &f)
 		if err != nil {
-			return entity.Listing{}, fmt.Errorf("failed to insert listing extra feature because %w", err)
+			return Listing{}, fmt.Errorf("failed to insert listing extra feature because %w", err)
 		}
 		extraFeature.ID = int(f.ID)
 
 		_, err = ListingExtraFeaturesI18n.INSERT(ListingExtraFeaturesI18n.ListingExtraFeaturesID, ListingCoreFeaturesI18n.Title, ListingCoreFeaturesI18n.LanguageCode).VALUES(extraFeature.ID, extraFeature.Title, languageCode).ExecContext(c, tx)
 		if err != nil {
-			return entity.Listing{}, fmt.Errorf("failed to insert listing extra feature i18n because %w", err)
+			return Listing{}, fmt.Errorf("failed to insert listing extra feature i18n because %w", err)
 		}
 	}
 
@@ -115,41 +113,41 @@ func (r *ListingsRepo) CreateListing(c context.Context, listing entity.Listing) 
 		p := model.ListingPictures{}
 		err = ListingPictures.INSERT(ListingPictures.ListingID, ListingPictures.URL, ListingPictures.Title).VALUES(listing.ID, picture.Url, picture.Title).RETURNING(ListingPictures.ID).QueryContext(c, tx, &p)
 		if err != nil {
-			return entity.Listing{}, fmt.Errorf("failed to insert listing picture because %w", err)
+			return Listing{}, fmt.Errorf("failed to insert listing picture because %w", err)
 		}
 		picture.ID = int(p.ID)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to commit transaction because %w", err)
+		return Listing{}, fmt.Errorf("failed to commit transaction because %w", err)
 	}
 
 	return listing, nil
 }
 
-func (r *ListingsRepo) GetListing(c context.Context, id int) (entity.Listing, error) {
-	stmt := baseListingsQueryStmt.WHERE(Listings.ID.EQ(Int(int64(id))))
+func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
+	stmt := baseQueryStmt.WHERE(Listings.ID.EQ(Int(int64(id))))
 
-	var dest models.Listing
+	var dest dbListing
 	err := stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
-		return entity.Listing{}, fmt.Errorf("failed to query the listing because %w", err)
+		return Listing{}, fmt.Errorf("failed to query the listing because %w", err)
 	}
 
 	listing := dest.ToEntity()
 	return listing, nil
 }
 
-func (r *ListingsRepo) GetAllListings(c context.Context) ([]entity.Listing, error) {
-	stmt := baseListingsQueryStmt
-	var dest []models.Listing
+func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
+	stmt := baseQueryStmt
+	var dest []dbListing
 	err := stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query the listing because %w", err)
 	}
 
-	listings := make([]entity.Listing, len(dest))
+	listings := make([]Listing, len(dest))
 	for index, listing := range dest {
 		listings[index] = listing.ToEntity()
 	}

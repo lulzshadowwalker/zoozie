@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-jet/jet/qrm"
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
@@ -114,4 +115,23 @@ func Unwrap(fn wrappedHandlerFunc) echo.HandlerFunc {
 
 		return nil
 	}
+}
+
+type ZoozieValidator struct {
+	validator *validator.Validate
+}
+
+func NewZoozieValidator() *ZoozieValidator {
+	return &ZoozieValidator{
+		validator: validator.New(),
+	}
+}
+
+// validates input and returns an `*echo.HTTPError` with status `400 - Bad Request` if validation fails
+func (cv *ZoozieValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return nil
 }
