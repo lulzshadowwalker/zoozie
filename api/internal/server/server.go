@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
@@ -83,11 +84,7 @@ func (s *Server) Run() error {
 		}
 	})
 
-	// TODO: use [Google Wire](https://github.com/google/wire) for dependency injection
-	agenciesRepo := repos.NewAgenciesRepo(s.database)
-	agenciesService := services.NewAgenciesService(agenciesRepo)
-	agenciesHandler := handlers.NewAgenciesHandler(agenciesService)
-	agenciesHandler.RegisterRoutes(api)
+	agencies.Initialize(s.database).RegisterRoutes(api)
 
 	userRepo := repos.NewUserRepo(s.database)
 	authService := services.NewAuthService(userRepo)

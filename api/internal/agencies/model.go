@@ -1,17 +1,16 @@
-package models
+package agencies
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
-type Agency struct {
+type DBAgency struct {
 	Agency       model.Agencies
 	Translations model.AgenciesI18n
 }
 
-func (m *Agency) ToEntity() *entity.Agency {
-	return &entity.Agency{
+func (m *DBAgency) ToEntity() *Agency {
+	return &Agency{
 		ID:           int(m.Agency.ID),
 		PhoneNumber:  m.Agency.PhoneNumber,
 		EmailAddress: m.Agency.EmailAddress,

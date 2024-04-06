@@ -1,4 +1,4 @@
-package handlers
+package agencies
 
 import (
 	"context"
@@ -6,33 +6,30 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-type AgenciesHandler struct {
-	handler
-	service AgenciesService
+type handler struct {
+	service Service
 }
 
-type AgenciesService interface {
-	GetAgencies(context.Context) ([]*entity.Agency, error)
-	GetAgencyBySlug(c context.Context, request dto.GetAgencyBySlugRequest) (*entity.Agency, error)
+type Service interface {
+	GetAgencies(context.Context) ([]*Agency, error)
+	GetAgencyBySlug(c context.Context, request getAgencyBySlugRequest) (*Agency, error)
 }
 
-func NewAgenciesHandler(s AgenciesService) *AgenciesHandler {
-	return &AgenciesHandler{
+func NewHandler(s Service) *handler {
+	return &handler{
 		service: s,
 	}
 }
 
-func (h *AgenciesHandler) RegisterRoutes(e *echo.Group) {
+func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/agencies", h.GetAgencies)
 }
 
-func (h *AgenciesHandler) GetAgencies(c echo.Context) error {
-	var request dto.GetAgencyBySlugRequest
+func (h *handler) GetAgencies(c echo.Context) error {
+	var request getAgencyBySlugRequest
 	if err := c.Bind(&request); err != nil {
 		return err
 	}
