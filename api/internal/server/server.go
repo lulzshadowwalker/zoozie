@@ -15,6 +15,7 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
 	"github.com/lulzshadowwalker/zoozie/api/internal/services"
+	"github.com/lulzshadowwalker/zoozie/api/internal/uploads"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -84,7 +85,8 @@ func (s *Server) Run() error {
 		}
 	})
 
-	agencies.Initialize(s.database).RegisterRoutes(api)
+	agencies.Init(s.database).RegisterRoutes(api)
+	uploads.Init(s.database).RegisterRoutes(api)
 
 	userRepo := repos.NewUserRepo(s.database)
 	authService := services.NewAuthService(userRepo)
@@ -108,11 +110,6 @@ func (s *Server) Run() error {
 	// userService := services.NewUserService(userRepo)
 	// userHandler := handlers.NewUserHandler(userService)
 	// userHandler.RegisterRoutes(protected)
-
-	uploadsRepo := repos.NewUploadsRepo(s.database)
-	uploadsService := services.NewUploadsService(uploadsRepo)
-	uploadsHandler := handlers.NewUploadsHandler(uploadsService)
-	uploadsHandler.RegisterRoutes(api)
 
 	listingsRepo := repos.NewListingsRepo(s.database)
 	listingsService := services.NewListingsService(listingsRepo)

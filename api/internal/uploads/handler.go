@@ -1,41 +1,37 @@
-package handlers
+package uploads
 
 import (
 	"context"
-	"log"
 	"mime/multipart"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/dto"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (
-	UploadHandler struct {
-		service UploadService
+	handler struct {
+		service Service
 	}
 
-	UploadService interface {
-		Upload(c context.Context, files []*multipart.FileHeader) ([]entity.Upload, error)
+	Service interface {
+		Upload(c context.Context, files []*multipart.FileHeader) ([]Upload, error)
 	}
 )
 
-func NewUploadsHandler(service UploadService) *UploadHandler {
-	return &UploadHandler{
+func NewHandler(service Service) *handler {
+	return &handler{
 		service: service,
 	}
 }
 
-func (h *UploadHandler) RegisterRoutes(e *echo.Group) {
-	e.POST("/uploads", unwrap(h.Upload))
+func (h *handler) RegisterRoutes(e *echo.Group) {
+	e.POST("/uploads", utils.Unwrap(h.Upload))
 }
 
-func (h *UploadHandler) Upload(c echo.Context) error {
+func (h *handler) Upload(c echo.Context) error {
 	form, err := c.MultipartForm()
 	if err != nil {
-		log.Println(err)
 		return utils.NewApiError(http.StatusBadRequest, "Content-Type must be set to multipart/form-data")
 	}
 
@@ -46,7 +42,7 @@ func (h *UploadHandler) Upload(c echo.Context) error {
 
 	// TODO: limit upload file size
 
-	request := &dto.UploadRequest{
+	request := &request{
 		Files: files,
 	}
 
@@ -55,9 +51,9 @@ func (h *UploadHandler) Upload(c echo.Context) error {
 		return err
 	}
 
-	response := make([]dto.UploadResponse, len(entities))
+	response := make([]response, len(entities))
 	for index, entity := range entities {
-		response[index], err = dto.NewUploadResponseFromEntity(&entity)
+		response[index], err = newResponseFromEntity(&entity)
 		if err != nil {
 			return err
 		}

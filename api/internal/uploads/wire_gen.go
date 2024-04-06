@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package agencies
+package uploads
 
 import (
 	"database/sql"
@@ -12,9 +12,9 @@ import (
 
 // Injectors from wire.go:
 
-func Init(database *sql.DB) *handler {
-	agenciesRepo := NewRepo(database)
-	agenciesService := NewService(agenciesRepo)
-	agenciesHandler := NewHandler(agenciesService)
-	return agenciesHandler
+func Init(datbase *sql.DB) *handler {
+	uploadsRepo := NewRepo(datbase)
+	uploadsService := NewService(uploadsRepo)
+	uploadsHandler := NewHandler(uploadsService)
+	return uploadsHandler
 }

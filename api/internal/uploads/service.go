@@ -1,10 +1,9 @@
-package services
+package uploads
 
 import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -12,32 +11,31 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
 type (
-	UploadsService struct {
-		repo UploadsRepo
+	service struct {
+		repo Repo
 	}
 
-	UploadsRepo interface {
-		Upload(c context.Context, files []entity.Upload) ([]entity.Upload, error)
+	Repo interface {
+		Upload(c context.Context, files []Upload) ([]Upload, error)
 	}
 )
 
-func NewUploadsService(repo UploadsRepo) *UploadsService {
-	return &UploadsService{
+func NewService(repo Repo) *service {
+	return &service{
 		repo: repo,
 	}
 }
 
-func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader) ([]entity.Upload, error) {
+func (s *service) Upload(c context.Context, files []*multipart.FileHeader) ([]Upload, error) {
 	// uid, err := utils.GetUser(c)
 	// if err != nil {
 	// 	return nil, err
 	// }
 
-	entities := make([]entity.Upload, len(files))
+	entities := make([]Upload, len(files))
 	for index, file := range files {
 		id := uuid.NewString()
 
@@ -66,12 +64,11 @@ func (s *UploadsService) Upload(c context.Context, files []*multipart.FileHeader
 			return nil, fmt.Errorf("failed to copy file because %w", err)
 		}
 		e := &entities[index]
-		*e = entity.Upload{
+		*e = Upload{
 			File:             strings.TrimPrefix(filepath, "public/"),
 			OriginalFileName: file.Filename,
 			UploadedBy:       1, // TODO: protected route
 		}
-		log.Println(*e)
 
 		buffer := make([]byte, 512)
 		_, err = source.Read(buffer)

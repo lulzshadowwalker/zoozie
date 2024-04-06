@@ -25,7 +25,7 @@ func NewHandler(s Service) *handler {
 }
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
-	e.GET("/agencies", h.GetAgencies)
+	e.GET("/agencies", utils.Unwrap(h.GetAgencies))
 }
 
 func (h *handler) GetAgencies(c echo.Context) error {

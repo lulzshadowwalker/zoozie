@@ -12,6 +12,8 @@ github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWo
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
 github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcPfT7nKyLpA0lbSSk=
+github.com/go-jet/jet v2.3.0+incompatible h1:Yg7JSERDC0f9x3dHUBMA2cxe9/qC6qlozDDO/s38USU=
+github.com/go-jet/jet v2.3.0+incompatible/go.mod h1:XgTt00fj8pAXMKe1ETL9R/kZWWyi2j/ymuH+gaW+EdI=
 github.com/go-jet/jet/v2 v2.11.0 h1:wpdZUVMSoLFnW4AnOuaj7tKjCjrYgYVXxN9ZYHNxAao=
 github.com/go-jet/jet/v2 v2.11.0/go.mod h1:2xdyjmsnbqZ1rIVppcz3VsBaaUMDD6946ZfeEOInmdE=
 github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=

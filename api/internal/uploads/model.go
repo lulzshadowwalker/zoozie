@@ -1,16 +1,15 @@
-package models
+package uploads
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 )
 
-type Upload struct {
+type DBUpload struct {
 	Upload model.Uploads
 }
 
-func (u *Upload) ToEntity() entity.Upload {
-	return entity.Upload{
+func (u *DBUpload) ToEntity() Upload {
+	return Upload{
 		ID:               int(u.Upload.ID),
 		File:             u.Upload.File,
 		FileType:         u.Upload.FileType,

@@ -1,6 +1,6 @@
 //go:build wireinject
 
-package agencies
+package uploads
 
 import (
 	"database/sql"
@@ -8,13 +8,14 @@ import (
 	"github.com/google/wire"
 )
 
-func Init(database *sql.DB) *handler {
+func Init(datbase *sql.DB) *handler {
 	wire.Build(
 		NewHandler,
 		NewService,
-		wire.Bind(new(Service), new(*service)),
+		wire.Bind(new(Service), new((*service))),
 		NewRepo,
-		wire.Bind(new(Repo), new(*repo)),
+		wire.Bind(new(Repo), new((*repo))),
 	)
+
 	return &handler{}
 }

@@ -3,6 +3,7 @@ module github.com/lulzshadowwalker/zoozie/api
 go 1.21.1
 
 require (
+	github.com/go-jet/jet v2.3.0+incompatible
 	github.com/go-jet/jet/v2 v2.11.0
 	github.com/google/wire v0.6.0
 	github.com/labstack/echo/v4 v4.11.4
