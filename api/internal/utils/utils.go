@@ -11,7 +11,7 @@ import (
 	"github.com/go-jet/jet/qrm"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
 const (
@@ -86,7 +86,7 @@ func GetUser(c context.Context) (int, error) {
 		return -1, echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
-	claims := u.Claims.(*entity.JwtCustomClaims)
+	claims := u.Claims.(*entities.JwtCustomClaims)
 	uidString := claims.Subject
 	uid, err := strconv.Atoi(uidString)
 	if err != nil {

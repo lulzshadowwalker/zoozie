@@ -10,8 +10,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+	"github.com/lulzshadowwalker/zoozie/api/internal/auth"
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/handlers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
 	"github.com/lulzshadowwalker/zoozie/api/internal/services"
@@ -88,11 +89,7 @@ func (s *Server) Run() error {
 
 	agencies.Init(s.database).RegisterRoutes(api)
 	uploads.Init(s.database).RegisterRoutes(api)
-
-	// userRepo := repos.NewUserRepo(s.database)
-	// authService := services.NewAuthService(userRepo)
-	// authHandler := handlers.NewAuthHandler(authService)
-	// authHandler.RegisterRoutes(api)
+	auth.Init(s.database).RegisterRoutes(api)
 
 	coreFeaturesRepo := repos.NewCoreFeaturesRepo(s.database)
 	coreFeaturesService := services.NewCoreFeaturesService(coreFeaturesRepo)
@@ -101,7 +98,7 @@ func (s *Server) Run() error {
 
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(entity.JwtCustomClaims)
+			return new(entities.JwtCustomClaims)
 		},
 		SigningKey: []byte(config.GetJwtSecret()),
 	}

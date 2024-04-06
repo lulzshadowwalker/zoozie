@@ -1,4 +1,4 @@
-package handlers
+package auth
 
 import (
 	"context"
@@ -11,30 +11,29 @@ import (
 )
 
 type (
-	AuthHandler struct {
-		handler
-		service AuthService
+	handler struct {
+		service Service
 	}
 
-	AuthService interface {
+	Service interface {
 		Login(c context.Context, email, password string) (*users.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
 	}
 )
 
-func NewAuthHandler(s AuthService) *AuthHandler {
-	return &AuthHandler{
+func NewHandler(s Service) *handler {
+	return &handler{
 		service: s,
 	}
 }
 
-func (h *AuthHandler) RegisterRoutes(e *echo.Group) {
+func (h *handler) RegisterRoutes(e *echo.Group) {
 	auth := e.Group("/auth")
-	auth.POST("/login", unwrap(h.Login))
-	auth.POST("/refresh-token", unwrap(h.RefreshToken))
+	auth.POST("/login", utils.Unwrap(h.Login))
+	auth.POST("/refresh-token", utils.Unwrap(h.RefreshToken))
 }
 
-func (h *AuthHandler) Login(c echo.Context) error {
+func (h *handler) Login(c echo.Context) error {
 	type Request struct {
 		Email    string `json:"email" form:"email" validate:"required,email"`
 		Password string `json:"password" form:"password" validate:"required,min=8"`
@@ -63,7 +62,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	})
 }
 
-func (h *AuthHandler) RefreshToken(c echo.Context) error {
+func (h *handler) RefreshToken(c echo.Context) error {
 	type Request struct {
 		RefreshToken string `json:"refreshToken" form:"refreshToken" validate:"required"`
 	}
@@ -92,7 +91,7 @@ func (h *AuthHandler) RefreshToken(c echo.Context) error {
 	})
 }
 
-func (h *AuthHandler) setCookies(c echo.Context, accessToken, refreshToken string) {
+func (h *handler) setCookies(c echo.Context, accessToken, refreshToken string) {
 	accessTokenCookie := http.Cookie{
 		Name:     "access_token",
 		Value:    accessToken,

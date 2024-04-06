@@ -1,4 +1,4 @@
-package services
+package auth
 
 import (
 	"context"
@@ -11,31 +11,29 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-// NOTE: This is probably broken as of right now for replacing entity.User with users.User
-
 type (
-	AuthService struct {
-		repo AuthRepo
+	service struct {
+		repo Repo
 	}
 
-	AuthRepo interface {
+	Repo interface {
 		GetUserByEmail(context.Context, string) (*users.User, error)
 		GetUserById(context.Context, int) (*users.User, error)
 	}
 )
 
-func NewAuthService(r AuthRepo) *AuthService {
-	return &AuthService{
+func NewService(r Repo) *service {
+	return &service{
 		repo: r,
 	}
 }
 
-func (s *AuthService) Login(c context.Context, email, password string) (*users.User, error) {
+func (s *service) Login(c context.Context, email, password string) (*users.User, error) {
 	user, err := s.repo.GetUserByEmail(c, email)
 	if err != nil {
 		return nil, err
@@ -62,7 +60,7 @@ func (s *AuthService) Login(c context.Context, email, password string) (*users.U
 	return user, nil
 }
 
-func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error) {
+func (s *service) RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error) {
 	t, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok || err != nil {
 			return nil, utils.NewApiError(http.StatusUnauthorized, "invalid token")
@@ -98,16 +96,16 @@ func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken
 	return s.generateTokenPair(user)
 }
 
-func (s *AuthService) generateTokenPair(user *users.User) (accessToken, refreshToken string, err error) {
+func (s *service) generateTokenPair(user *users.User) (accessToken, refreshToken string, err error) {
 	name := "lulzie"
 	if user.Name != nil {
 		name = *user.Name
 	}
 
 	uid := strconv.Itoa(int(user.ID))
-	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, entity.JwtCustomClaims{
-		name,
-		jwt.RegisteredClaims{
+	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, entities.JwtCustomClaims{
+		Name: name,
+		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: uid,
 			// TODO: FIXME: set access_token expiration for production
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 42069)),
