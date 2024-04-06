@@ -1,4 +1,4 @@
-package repos
+package users
 
 import (
 	"context"
@@ -10,25 +10,24 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
-	entity "github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-type UserRepo struct {
+type repo struct {
 	database *sql.DB
 }
 
-func NewUserRepo(database *sql.DB) *UserRepo {
-	return &UserRepo{
+func NewRepo(database *sql.DB) *repo {
+	return &repo{
 		database: database,
 	}
 }
 
-func (r *UserRepo) GetUserById(c context.Context, id int) (*entity.User, error) {
+func (r *repo) GetUserById(c context.Context, id int) (*User, error) {
 	stmt := Users.SELECT(Users.AllColumns).
 		WHERE(Users.ID.EQ(Int(int64(id))))
 
-	var user entity.User
+	var user dbUser
 	err := stmt.Query(r.database, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -38,14 +37,15 @@ func (r *UserRepo) GetUserById(c context.Context, id int) (*entity.User, error) 
 		return nil, fmt.Errorf("failed to query the users because %w", err)
 	}
 
-	return &user, nil
+	entity := user.ToEntity()
+	return &entity, nil
 }
 
-func (r *UserRepo) GetUserByEmail(c context.Context, email string) (*entity.User, error) {
+func (r *repo) GetUserByEmail(c context.Context, email string) (*User, error) {
 	stmt := Users.SELECT(Users.AllColumns).
 		WHERE(Users.EmailAddress.EQ(String(email)))
 
-	var user entity.User
+	var user dbUser
 	err := stmt.Query(r.database, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -55,10 +55,11 @@ func (r *UserRepo) GetUserByEmail(c context.Context, email string) (*entity.User
 		return nil, fmt.Errorf("failed to query the users because %w", err)
 	}
 
-	return &user, nil
+	entity := user.ToEntity()
+	return &entity, nil
 }
 
-func (r *UserRepo) UpdateUserLastLogin(c context.Context, id int) error {
+func (r *repo) UpdateUserLastLogin(c context.Context, id int) error {
 	_, err := Users.UPDATE(Users.LastLoginAt).
 		SET(NOW()).
 		WHERE(Users.ID.EQ(Int(int64(id)))).

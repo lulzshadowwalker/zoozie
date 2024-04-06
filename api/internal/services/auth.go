@@ -12,8 +12,11 @@ import (
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
+	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
+
+// NOTE: This is probably broken as of right now for replacing entity.User with users.User
 
 type (
 	AuthService struct {
@@ -21,8 +24,8 @@ type (
 	}
 
 	AuthRepo interface {
-		GetUserByEmail(context.Context, string) (*entity.User, error)
-		GetUserById(context.Context, int) (*entity.User, error)
+		GetUserByEmail(context.Context, string) (*users.User, error)
+		GetUserById(context.Context, int) (*users.User, error)
 	}
 )
 
@@ -32,7 +35,7 @@ func NewAuthService(r AuthRepo) *AuthService {
 	}
 }
 
-func (s *AuthService) Login(c context.Context, email, password string) (*entity.User, error) {
+func (s *AuthService) Login(c context.Context, email, password string) (*users.User, error) {
 	user, err := s.repo.GetUserByEmail(c, email)
 	if err != nil {
 		return nil, err
@@ -95,7 +98,7 @@ func (s *AuthService) RefreshToken(c context.Context, token string) (accessToken
 	return s.generateTokenPair(user)
 }
 
-func (s *AuthService) generateTokenPair(user *entity.User) (accessToken, refreshToken string, err error) {
+func (s *AuthService) generateTokenPair(user *users.User) (accessToken, refreshToken string, err error) {
 	name := "lulzie"
 	if user.Name != nil {
 		name = *user.Name
@@ -132,7 +135,7 @@ func (s *AuthService) generateTokenPair(user *entity.User) (accessToken, refresh
 	return
 }
 
-func checkUserActiveStatus(user *entity.User) error {
+func checkUserActiveStatus(user *users.User) error {
 	isActive := user.IsActive
 	if isActive == nil {
 		panic("users.is_active cannot be null")

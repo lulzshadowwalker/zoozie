@@ -1,0 +1,44 @@
+package users
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
+)
+
+type (
+	handler struct {
+		service Service
+	}
+
+	Service interface {
+		GetUserById(c context.Context, id int) (*User, error)
+	}
+)
+
+func NewHandler(s Service) *handler {
+	return &handler{
+		service: s,
+	}
+}
+
+func (h *handler) RegisterRoutes(e *echo.Group) {
+	e.GET("/me", utils.Unwrap(h.GetUser))
+}
+
+func (h *handler) GetUser(c echo.Context) error {
+	uid, err := utils.GetUser(utils.TransformEchoContext(c))
+
+	user, err := h.service.GetUserById(utils.TransformEchoContext(c), uid)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"user": newResponseFromEntity(user),
+		},
+	})
+}

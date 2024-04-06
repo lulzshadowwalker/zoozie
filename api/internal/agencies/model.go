@@ -4,12 +4,12 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
 )
 
-type DBAgency struct {
+type dbAgency struct {
 	Agency       model.Agencies
 	Translations model.AgenciesI18n
 }
 
-func (m *DBAgency) ToEntity() *Agency {
+func (m *dbAgency) ToEntity() *Agency {
 	return &Agency{
 		ID:           int(m.Agency.ID),
 		PhoneNumber:  m.Agency.PhoneNumber,

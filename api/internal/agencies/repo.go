@@ -38,7 +38,7 @@ func (r *repo) GetAgencies(c context.Context) ([]*Agency, error) {
 		AgenciesI18n.LanguageCode,
 	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(language)))
 
-	var dest []*DBAgency
+	var dest []*dbAgency
 	err = stmt.Query(r.database, &dest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
@@ -68,7 +68,7 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 		AgenciesI18n.LanguageCode,
 	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(locale)).AND(Agencies.Slug.EQ(String(slug))))
 
-	var dest DBAgency
+	var dest dbAgency
 	err = stmt.Query(r.database, &dest)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {

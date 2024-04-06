@@ -4,11 +4,11 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
 )
 
-type DBUpload struct {
+type dbUpload struct {
 	Upload model.Uploads
 }
 
-func (u *DBUpload) ToEntity() Upload {
+func (u *dbUpload) ToEntity() Upload {
 	return Upload{
 		ID:               int(u.Upload.ID),
 		File:             u.Upload.File,

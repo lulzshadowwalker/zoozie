@@ -16,6 +16,7 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/repos"
 	"github.com/lulzshadowwalker/zoozie/api/internal/services"
 	"github.com/lulzshadowwalker/zoozie/api/internal/uploads"
+	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -88,10 +89,10 @@ func (s *Server) Run() error {
 	agencies.Init(s.database).RegisterRoutes(api)
 	uploads.Init(s.database).RegisterRoutes(api)
 
-	userRepo := repos.NewUserRepo(s.database)
-	authService := services.NewAuthService(userRepo)
-	authHandler := handlers.NewAuthHandler(authService)
-	authHandler.RegisterRoutes(api)
+	// userRepo := repos.NewUserRepo(s.database)
+	// authService := services.NewAuthService(userRepo)
+	// authHandler := handlers.NewAuthHandler(authService)
+	// authHandler.RegisterRoutes(api)
 
 	coreFeaturesRepo := repos.NewCoreFeaturesRepo(s.database)
 	coreFeaturesService := services.NewCoreFeaturesService(coreFeaturesRepo)
@@ -107,9 +108,7 @@ func (s *Server) Run() error {
 	protected := api.Group("")
 	protected.Use(echojwt.WithConfig(jwtConfig))
 
-	// userService := services.NewUserService(userRepo)
-	// userHandler := handlers.NewUserHandler(userService)
-	// userHandler.RegisterRoutes(protected)
+	users.Init(s.database).RegisterRoutes(protected)
 
 	listingsRepo := repos.NewListingsRepo(s.database)
 	listingsService := services.NewListingsService(listingsRepo)

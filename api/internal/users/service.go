@@ -1,30 +1,29 @@
-package services
+package users
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/entity"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (
-	UserService struct {
-		repo UserRepo
+	service struct {
+		repo Repo
 	}
 
-	UserRepo interface {
-		GetUserById(context.Context, int) (*entity.User, error)
+	Repo interface {
+		GetUserById(context.Context, int) (*User, error)
 	}
 )
 
-func NewUserService(r UserRepo) *UserService {
-	return &UserService{
+func NewService(r Repo) *service {
+	return &service{
 		repo: r,
 	}
 }
 
-func (s *UserService) GetUserById(c context.Context, id int) (*entity.User, error) {
+func (s *service) GetUserById(c context.Context, id int) (*User, error) {
 	user, err := s.repo.GetUserById(c, id)
 	if err != nil {
 		return nil, err
