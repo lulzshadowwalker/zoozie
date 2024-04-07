@@ -2,10 +2,11 @@
 -- +goose StatementBegin
 CREATE TABLE listings (
     id BIGSERIAL PRIMARY KEY,
-    agency_id BIGINT NOT NULL REFERENCES users (id),
-
+    type_id BIGINT NOT NULL REFERENCES listing_types(id) ON UPDATE CASCADE,
+    agency_id BIGINT NOT NULL REFERENCES agencies(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    location_id BIGINT NOT NULL REFERENCES agencies(id) ON UPDATE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE FUNCTION update_updated_at_listings() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();

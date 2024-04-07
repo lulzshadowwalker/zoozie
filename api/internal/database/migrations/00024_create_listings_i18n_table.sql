@@ -2,12 +2,11 @@
 -- +goose StatementBegin
 CREATE TABLE listings_i18n (
     id BIGSERIAL PRIMARY KEY,
-    listing_id BIGINT NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
     language_code CHAR(2) NOT NULL,
-    description TEXT NOT NULL,
-
+    listing_id BIGINT NOT NULL REFERENCES listings(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE FUNCTION update_updated_at_listings_i18n() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();

@@ -2,12 +2,11 @@
 -- +goose StatementBegin
 CREATE TABLE listing_extra_features_i18n (
     id BIGSERIAL PRIMARY KEY,
-    listing_extra_features_id BIGINT NOT NULL REFERENCES listing_extra_features(id) ON DELETE CASCADE,
+    listing_extra_features_id BIGINT NOT NULL REFERENCES listing_extra_features(id) ON DELETE CASCADE ON UPDATE CASCADE,
     language_code CHAR(2) NOT NULL,
     title TEXT NOT NULL,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE FUNCTION update_updated_at_listing_extra_features_i18n() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();
