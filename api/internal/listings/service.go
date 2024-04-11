@@ -22,8 +22,6 @@ func NewService(repo Repo) *service {
 
 func (s *service) CreateListing(c context.Context, listing createListingRequest) (Listing, error) {
 	entity := listing.ToEntity()
-	// TODO: check for required coreListingFeatures
-
 	return s.repo.CreateListing(c, entity)
 }
 

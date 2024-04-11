@@ -16,5 +16,4 @@ DELETE FROM
     listings
 WHERE
     id = -42069;
-
 -- +goose StatementEnd

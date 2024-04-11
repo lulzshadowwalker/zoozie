@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-jet/jet/qrm"
+	qrmV2 "github.com/go-jet/jet/v2/qrm"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -102,12 +103,12 @@ type wrappedHandlerFunc func(c echo.Context) error
 func Unwrap(fn wrappedHandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if err := fn(c); err != nil {
-			if err, ok := err.(*ApiError); ok {
-				return echo.NewHTTPError(err.Status, err.Message)
+			if errors.Is(err, qrm.ErrNoRows) || errors.Is(err, qrmV2.ErrNoRows) {
+				return echo.NewHTTPError(http.StatusNotFound)
 			}
 
-			if errors.Is(err, qrm.ErrNoRows) {
-				return echo.NewHTTPError(http.StatusNotFound)
+			if err, ok := err.(*ApiError); ok {
+				return echo.NewHTTPError(err.Status, err.Message)
 			}
 
 			return err

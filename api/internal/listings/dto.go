@@ -25,7 +25,6 @@ type (
 	createListingRequest struct {
 		Price         Price          `json:"price,omitempty" validate:"required"`
 		Description   string         `json:"description,omitempty" validate:"required"`
-		CoreFeatures  []CoreFeature  `json:"coreFeatures,omitempty" validate:"required,dive"`
 		ExtraFeatures []ExtraFeature `json:"extraFeatures,omitempty" validate:"dive"`
 		Pictures      []File         `json:"pictures,omitempty" validate:"required,dive"`
 	}
@@ -33,31 +32,21 @@ type (
 	responseListing = createListingRequest
 
 	getListingRequest struct {
-		ID int `param:"id" validate:"required,number,gt=0"`
+		ID int `param:"id" validate:"required,number"`
 	}
 )
 
 func (r *createListingRequest) ToEntity() Listing {
 	listing := Listing{
-		Price:         Price{Amount: r.Price.Amount, Currency: r.Price.Currency},
 		Description:   r.Description,
-		CoreFeatures:  make([]CoreFeature, len(r.CoreFeatures)),
 		ExtraFeatures: make([]ExtraFeature, len(r.ExtraFeatures)),
 		Pictures:      make([]File, len(r.Pictures)),
 	}
 
-	for i, coreFeature := range r.CoreFeatures {
-		listing.CoreFeatures[i] = CoreFeature{
-			CoreFeatureID: coreFeature.CoreFeatureID,
-			Title:         coreFeature.Title,
-			Description:   coreFeature.Description,
-		}
-	}
-
 	for i, extraFeature := range r.ExtraFeatures {
 		listing.ExtraFeatures[i] = ExtraFeature{
-			Title:  extraFeature.Title,
-			Exists: extraFeature.Exists,
+			Title:     extraFeature.Title,
+			Available: extraFeature.Available,
 		}
 	}
 

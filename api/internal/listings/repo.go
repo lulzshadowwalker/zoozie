@@ -21,19 +21,50 @@ func NewRepo(database *sql.DB) *repo {
 	}
 }
 
-var baseQueryStmt = SELECT(
-	Listings.AllColumns,
-	ListingsI18n.AllColumns,
-	ListingExtraFeatures.AllColumns,
-	ListingExtraFeaturesI18n.AllColumns,
-	ListingPictures.AllColumns,
-).FROM(
-	Listings.
-		LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID)).
-		LEFT_JOIN(ListingExtraFeatures, Listings.ID.EQ(ListingExtraFeatures.ListingID)).
-		LEFT_JOIN(ListingExtraFeaturesI18n, ListingExtraFeatures.ID.EQ(ListingExtraFeaturesI18n.ListingExtraFeaturesID)).
-		LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)),
-)
+func getBaseQueryStatement(language string) SelectStatement {
+	return SELECT(
+		// TODO: fetch only the necessary columns
+		Listings.AllColumns,
+		ListingsI18n.AllColumns,
+		Availabilities.AllColumns,
+		ListingAvailabilities.AllColumns,
+		ListingAvailabilityPrices.AllColumns,
+		ListingExtraFeatures.AllColumns,
+		ListingExtraFeaturesI18n.AllColumns,
+		ListingPictures.AllColumns,
+		ListingTypes.AllColumns,
+		ListingTypesI18n.AllColumns,
+		ListingLocations.AllColumns,
+		Countries.AllColumns,
+		CountriesI18n.AllColumns,
+		Cities.AllColumns,
+		CitiesI18n.AllColumns,
+		Areas.AllColumns,
+		AreasI18n.AllColumns,
+		Properties.AllColumns,
+		PropertiesI18n.AllColumns,
+	).FROM(
+		Listings.
+			LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID).AND(ListingsI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingExtraFeatures, Listings.ID.EQ(ListingExtraFeatures.ListingID)).
+			LEFT_JOIN(ListingExtraFeaturesI18n, ListingExtraFeatures.ID.EQ(ListingExtraFeaturesI18n.ListingExtraFeaturesID).AND(ListingExtraFeaturesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)).
+			LEFT_JOIN(ListingAvailabilities, Listings.ID.EQ(ListingAvailabilities.ListingID)).
+			LEFT_JOIN(Availabilities, ListingAvailabilities.AvailabilityID.EQ(Availabilities.ID)).
+			LEFT_JOIN(ListingAvailabilityPrices, ListingAvailabilities.ID.EQ(ListingAvailabilityPrices.ListingAvailabilityID)).
+			LEFT_JOIN(ListingTypes, Listings.TypeID.EQ(ListingTypes.ID)).
+			LEFT_JOIN(ListingTypesI18n, ListingTypes.ID.EQ(ListingTypesI18n.ListingTypeID).AND(ListingTypesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingLocations, Listings.LocationID.EQ(ListingLocations.ID)).
+			LEFT_JOIN(Countries, ListingLocations.CountryID.EQ(Countries.ID)).
+			LEFT_JOIN(CountriesI18n, Countries.ID.EQ(CountriesI18n.CountryID).AND(CountriesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Cities, ListingLocations.CityID.EQ(Cities.ID)).
+			LEFT_JOIN(CitiesI18n, Cities.ID.EQ(CitiesI18n.CityID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Areas, ListingLocations.AreaID.EQ(Areas.ID)).
+			LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Properties, Listings.ID.EQ(Properties.ListingID)).
+			LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language)))),
+	)
+}
 
 func (r *repo) CreateListing(c context.Context, listing Listing) (Listing, error) {
 	languageCode, err := utils.GetLocale(c)
@@ -68,7 +99,7 @@ func (r *repo) CreateListing(c context.Context, listing Listing) (Listing, error
 	for index := range listing.ExtraFeatures {
 		extraFeature := &listing.ExtraFeatures[index]
 		f := model.ListingExtraFeatures{}
-		err = ListingExtraFeatures.INSERT(ListingExtraFeatures.ListingID, ListingExtraFeatures.Available).VALUES(listing.ID, extraFeature.Exists).RETURNING(ListingExtraFeatures.ID).QueryContext(c, tx, &f)
+		err = ListingExtraFeatures.INSERT(ListingExtraFeatures.ListingID, ListingExtraFeatures.Available).VALUES(listing.ID, extraFeature.Available).RETURNING(ListingExtraFeatures.ID).QueryContext(c, tx, &f)
 		if err != nil {
 			return Listing{}, fmt.Errorf("failed to insert listing extra feature because %w", err)
 		}
@@ -100,10 +131,15 @@ func (r *repo) CreateListing(c context.Context, listing Listing) (Listing, error
 }
 
 func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
-	stmt := baseQueryStmt.WHERE(Listings.ID.EQ(Int(int64(id))))
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return Listing{}, err
+	}
+
+	stmt := getBaseQueryStatement(language).WHERE(Listings.ID.EQ(Int(int64(id))))
 
 	var dest dbListing
-	err := stmt.QueryContext(c, r.database, &dest)
+	err = stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
 		return Listing{}, fmt.Errorf("failed to query the listing because %w", err)
 	}
@@ -113,11 +149,16 @@ func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
 }
 
 func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
-	stmt := baseQueryStmt
-	var dest []dbListing
-	err := stmt.QueryContext(c, r.database, &dest)
+	language, err := utils.GetLocale(c)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query the listing because %w", err)
+		return nil, err
+	}
+
+	stmt := getBaseQueryStatement(language)
+	var dest []dbListing
+	err = stmt.QueryContext(c, r.database, &dest)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query the listings because %w", err)
 	}
 
 	listings := make([]Listing, len(dest))

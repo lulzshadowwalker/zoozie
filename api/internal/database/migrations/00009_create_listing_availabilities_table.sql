@@ -3,7 +3,7 @@
 CREATE TABLE listing_availabilities (
     id BIGSERIAL PRIMARY KEY,
     availability_id BIGINT NOT NULL REFERENCES availabilities(id) ON UPDATE CASCADE,
-    price DECIMAL NOT NULL,
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
