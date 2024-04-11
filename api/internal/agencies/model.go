@@ -1,7 +1,7 @@
 package agencies
 
 import (
-	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 )
 
 type dbAgency struct {
@@ -15,7 +15,7 @@ func (m *dbAgency) ToEntity() *Agency {
 		PhoneNumber:  m.Agency.PhoneNumber,
 		EmailAddress: m.Agency.EmailAddress,
 		Slug:         m.Agency.Slug,
-		LanguageCode: *m.Translations.LanguageCode,
+		Logo:         m.Agency.Logo,
 		Name:         m.Translations.Name,
 		Description:  m.Translations.Description,
 	}

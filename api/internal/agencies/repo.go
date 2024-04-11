@@ -8,9 +8,23 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
-	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
+	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
+
+func getBaseQueryStatement(language string) SelectStatement {
+	return SELECT(
+		Agencies.ID,
+		Agencies.Slug,
+		Agencies.PhoneNumber,
+		Agencies.EmailAddress,
+		Agencies.Logo,
+		AgenciesI18n.Name,
+		AgenciesI18n.Name,
+		AgenciesI18n.Description,
+		AgenciesI18n.LanguageCode,
+	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.AgencyID).AND(AgenciesI18n.LanguageCode.EQ(String(language)))))
+}
 
 type repo struct {
 	database *sql.DB
@@ -28,15 +42,7 @@ func (r *repo) GetAgencies(c context.Context) ([]*Agency, error) {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := SELECT(
-		Agencies.ID,
-		Agencies.Slug,
-		Agencies.PhoneNumber,
-		Agencies.EmailAddress,
-		AgenciesI18n.Name,
-		// AgenciesI18n.Description,
-		AgenciesI18n.LanguageCode,
-	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(language)))
+	stmt := getBaseQueryStatement(language).WHERE(AgenciesI18n.LanguageCode.EQ(String(language)))
 
 	var dest []*dbAgency
 	err = stmt.Query(r.database, &dest)
@@ -53,20 +59,12 @@ func (r *repo) GetAgencies(c context.Context) ([]*Agency, error) {
 }
 
 func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) {
-	locale, err := utils.GetLocale(c)
+	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := SELECT(
-		Agencies.ID,
-		Agencies.Slug,
-		Agencies.PhoneNumber,
-		Agencies.EmailAddress,
-		AgenciesI18n.Name,
-		AgenciesI18n.Description,
-		AgenciesI18n.LanguageCode,
-	).FROM(Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.Agency))).WHERE(AgenciesI18n.LanguageCode.EQ(String(locale)).AND(Agencies.Slug.EQ(String(slug))))
+	stmt := getBaseQueryStatement(language)
 
 	var dest dbAgency
 	err = stmt.Query(r.database, &dest)

@@ -101,9 +101,58 @@ goose-create:
 	@goose --dir ${GOOSE_DIR} create $(ARGS)
 
 # goose fix
-gosoe-fix:
+goose-fix:
 	@goose --dir ${GOOSE_DIR} fix
 
 # goose validate
 goose-validate:
 	@goose --dir ${GOOSE_DIR} validate
+
+SEEDERS_DIR="./internal/database/seeders/"
+# seeders up
+seeders-up:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" up
+
+# seeders up-by-one
+seeders-up-by-one:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" up-by-one
+
+# seeders up-to VERSION
+seeders-up-to:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" up-to $(ARGS)
+
+# seeders down
+seeders-down:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" down
+
+# seeders down-to VERSION
+seeders-down-to:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" down-to $(ARGS)
+
+# seeders redo
+seeders-redo:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" redo
+
+# seeders reset
+seeders-reset:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" reset
+
+# seeders status
+seeders-status:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" status
+
+# seeders version
+seeders-version:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" version
+
+# seeders create NAME [sql|go] 
+seeders-create:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" create $(ARGS)
+
+# seeders fix
+seeders-fix:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" fix
+
+# seeders validate
+seeders-validate:
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" validate

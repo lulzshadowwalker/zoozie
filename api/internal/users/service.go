@@ -29,11 +29,7 @@ func (s *service) GetUserById(c context.Context, id int) (*User, error) {
 		return nil, err
 	}
 
-	if user.IsActive == nil {
-		panic("users.is_active cannot be null")
-	}
-
-	if !*user.IsActive {
+	if !user.Active {
 		return nil, utils.NewApiError(http.StatusForbidden, "user has been deactivated")
 	}
 

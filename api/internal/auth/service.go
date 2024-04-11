@@ -97,14 +97,9 @@ func (s *service) RefreshToken(c context.Context, token string) (accessToken, re
 }
 
 func (s *service) generateTokenPair(user *users.User) (accessToken, refreshToken string, err error) {
-	name := "lulzie"
-	if user.Name != nil {
-		name = *user.Name
-	}
-
 	uid := strconv.Itoa(int(user.ID))
 	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, entities.JwtCustomClaims{
-		Name: name,
+		Name: user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: uid,
 			// TODO: FIXME: set access_token expiration for production
@@ -134,12 +129,7 @@ func (s *service) generateTokenPair(user *users.User) (accessToken, refreshToken
 }
 
 func checkUserActiveStatus(user *users.User) error {
-	isActive := user.IsActive
-	if isActive == nil {
-		panic("users.is_active cannot be null")
-	}
-
-	if !*isActive {
+	if !user.Active {
 		return utils.NewApiError(http.StatusForbidden, "user has been deactivated")
 	}
 

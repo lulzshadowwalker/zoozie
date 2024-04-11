@@ -1,7 +1,7 @@
 package uploads
 
 import (
-	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 )
 
 type dbUpload struct {

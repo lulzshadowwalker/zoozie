@@ -1,7 +1,7 @@
 package users
 
 import (
-	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/model"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 )
 
 type dbUser struct {
@@ -9,13 +9,14 @@ type dbUser struct {
 }
 
 func (u dbUser) ToEntity() User {
-	return User{
+	user := User{
 		ID:             int64(u.User.ID),
 		EmailAddress:   u.User.EmailAddress,
-		PasswordHash:   u.User.PasswordHash,
 		PhoneNumber:    u.User.PhoneNumber,
 		Name:           u.User.Name,
-		IsActive:       u.User.IsActive,
+		Active:         u.User.Active,
 		ProfilePicture: u.User.ProfilePicture,
 	}
+
+	return user
 }

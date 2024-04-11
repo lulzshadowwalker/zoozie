@@ -9,7 +9,7 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
-	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zooz/public/table"
+	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
