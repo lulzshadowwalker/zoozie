@@ -30,6 +30,11 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 }
 
 func (h *handler) Upload(c echo.Context) error {
+	err := c.Request().ParseMultipartForm(10 << 20) // 10 MB max
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "request is too large")
+	}
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		return utils.NewApiError(http.StatusBadRequest, "Content-Type must be set to multipart/form-data")
@@ -39,8 +44,6 @@ func (h *handler) Upload(c echo.Context) error {
 	if files == nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"message": "'files' must not be empty"})
 	}
-
-	// TODO: limit upload file size
 
 	request := &request{
 		Files: files,

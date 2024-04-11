@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"path"
 	"strings"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/google/uuid"
 )
 
@@ -67,15 +68,23 @@ func (s *service) Upload(c context.Context, files []*multipart.FileHeader) ([]Up
 		*e = Upload{
 			File:             strings.TrimPrefix(filepath, "public/"),
 			OriginalFileName: file.Filename,
-			UploadedBy:       1, // TODO: protected route
+			UploadedBy:       -42069, // TODO: protected route
 		}
 
 		buffer := make([]byte, 512)
-		_, err = source.Read(buffer)
+		_, err = dest.Seek(0, 0)
 		if err != nil {
-			mime := http.DetectContentType(buffer)
-			e.FileType = &mime
+			slog.ErrorContext(c, "failed to seek to file origin", "err", err)
+			continue
 		}
+
+		_, err = dest.Read(buffer)
+		if err != nil {
+			slog.ErrorContext(c, "failed to detect mime type", "err", err)
+		}
+
+		mime := mimetype.Detect(buffer).String()
+		e.FileType = &mime
 	}
 
 	entities, err := s.repo.Upload(c, entities)
