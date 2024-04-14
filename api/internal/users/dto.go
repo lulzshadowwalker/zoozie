@@ -1,5 +1,7 @@
 package users
 
+import "fmt"
+
 type response struct {
 	ID             int64   `json:"id,omitempty"`
 	EmailAddress   string  `json:"emailAddress,omitempty"`
@@ -12,10 +14,11 @@ type response struct {
 }
 
 func newResponseFromEntity(user *User) *response {
+	phoneNumber := fmt.Sprintf("%s%s", user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
 	return &response{
 		ID:             user.ID,
 		EmailAddress:   user.EmailAddress,
-		PhoneNumber:    user.PhoneNumber,
+		PhoneNumber:    phoneNumber,
 		Name:           user.Name,
 		IsActive:       user.Active,
 		ProfilePicture: user.ProfilePicture,

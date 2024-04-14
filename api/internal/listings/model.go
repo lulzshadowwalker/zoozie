@@ -1,7 +1,6 @@
 package listings
 
 import (
-	"log"
 	"time"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
@@ -74,8 +73,6 @@ func (l *dbListing) ToEntity() Listing {
 
 	availabilities := make([]Availability, len(l.Availabilities))
 	for index, availability := range l.Availabilities {
-
-		log.Println("index:", index, "avail:", availability.Availability.Code, "price:", availability.Price.Amount)
 		availabilities[index] = Availability{
 			Availability: availability.Availability.Code,
 			Price: Price{

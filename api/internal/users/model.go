@@ -2,17 +2,26 @@ package users
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
-type dbUser struct {
-	User model.Users
+type DBUser struct {
+	User         model.Users
+	PhoneNumbers model.UserPhoneNumbers
+	Role         model.UserRoles
 }
 
-func (u dbUser) ToEntity() User {
+func (u DBUser) ToEntity() User {
+	phoneNumber := entities.PhoneNumber{
+		CountryCode: u.PhoneNumbers.CountryCode,
+		PhoneNumber: u.PhoneNumbers.PhoneNumber,
+	}
+
 	user := User{
 		ID:             int64(u.User.ID),
+		Role:           u.Role.Name,
 		EmailAddress:   u.User.EmailAddress,
-		PhoneNumber:    u.User.PhoneNumber,
+		PhoneNumber:    phoneNumber,
 		Name:           u.User.Name,
 		Active:         u.User.Active,
 		ProfilePicture: u.User.ProfilePicture,

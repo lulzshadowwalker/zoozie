@@ -42,7 +42,7 @@ func (r *repo) GetAgencies(c context.Context) ([]*Agency, error) {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := getBaseQueryStatement(language).WHERE(AgenciesI18n.LanguageCode.EQ(String(language)))
+	stmt := getBaseQueryStatement(language)
 
 	var dest []*dbAgency
 	err = stmt.Query(r.database, &dest)
@@ -77,4 +77,17 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 	}
 
 	return dest.ToEntity(), err
+}
+
+func (r *repo) GetAgencyAgentByUserID(c context.Context, userID int) (AgencyAgent, error) {
+	stmt := SELECT(AgencyAgents.AllColumns).
+		WHERE(AgencyAgents.UserID.EQ(Int(int64(userID))))
+
+	var dest DBAgencyAgent
+	err := stmt.QueryContext(c, nil, &dest)
+	if err != nil {
+		return AgencyAgent{}, fmt.Errorf("failed to query the agency agent because %w", err)
+	}
+
+	return dest.ToEntity(), nil
 }

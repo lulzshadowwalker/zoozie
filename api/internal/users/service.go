@@ -33,6 +33,5 @@ func (s *service) GetUserById(c context.Context, id int) (*User, error) {
 		return nil, utils.NewApiError(http.StatusForbidden, "user has been deactivated")
 	}
 
-	user.PasswordHash = ""
 	return user, nil
 }

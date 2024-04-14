@@ -20,3 +20,15 @@ func (m *dbAgency) ToEntity() *Agency {
 		Description:  m.Translations.Description,
 	}
 }
+
+type DBAgencyAgent struct {
+	AgencyAgent model.AgencyAgents
+}
+
+func (m *DBAgencyAgent) ToEntity() AgencyAgent {
+	return AgencyAgent{
+		ID:       int(m.AgencyAgent.ID),
+		UserID:   int(m.AgencyAgent.UserID),
+		AgencyID: int(m.AgencyAgent.AgencyID),
+	}
+}

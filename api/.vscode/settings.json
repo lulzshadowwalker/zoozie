@@ -10,5 +10,10 @@
             "username": "lulz",
             "password": ""
         }
+    ],
+    "cSpell.words": [
+        "ABCDEFGHJKLMNOPQRSTUVWXYZ",
+        "pgconn",
+        "pgerrcode"
     ]
 }

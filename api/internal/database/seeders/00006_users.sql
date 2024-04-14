@@ -5,7 +5,6 @@ INSERT INTO
         id,
         name,
         email_address,
-        phone_number,
         active,
         profile_picture,
         role
@@ -17,7 +16,6 @@ VALUES
         -42069,
         'John Doe',
         '2YjZP@example.com',
-        '555-555-5555',
         true,
         'https://via.assets.so/album.png?id=1&q=95&w=360&h=360&fit=fill',
         -1
@@ -27,7 +25,6 @@ VALUES
         -42070,
         'Jane Doe',
         '3pCJy@example.com',
-        '444-444-4444',
         false,
         'https://via.assets.so/album.png?id=2&q=95&w=360&h=360&fit=fill',
         -1
@@ -37,7 +34,6 @@ VALUES
         -42071,
         'Agent Smith',
         'FegtF@example.com',
-        '111-111-1111',
         true,
         'https://via.assets.so/album.png?id=4&q=95&w=360&h=360&fit=fill',
         -2
@@ -47,7 +43,6 @@ VALUES
         -42072,
         'Agent Rock',
         'RE9gQ@example.com',
-        '222-222-2222',
         false,
         'https://via.assets.so/album.png?id=5&q=95&w=360&h=360&fit=fill',
         -2

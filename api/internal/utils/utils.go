@@ -13,12 +13,15 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
+type ContextKey string
+
 const (
-	ContextLocaleKey = "locale"
-	ContextUserKey   = "user"
+	ContextLocaleKey ContextKey = "locale"
+	ContextUserKey   ContextKey = "user"
 )
 
 type ApiError struct {
@@ -78,8 +81,8 @@ func ContainsAny(haystack string, needles ...string) bool {
 	return false
 }
 
-func GetUser(c context.Context) (int, error) {
-	u, ok := c.Value("user").(*jwt.Token)
+func GetUserID(c context.Context) (int, error) {
+	u, ok := c.Value(ContextUserKey).(*jwt.Token)
 	if !ok {
 		return -1, errors.New("echo.Context.Get(\"user\") is not *jwt.Token")
 	}
@@ -96,6 +99,10 @@ func GetUser(c context.Context) (int, error) {
 	}
 
 	return uid, nil
+}
+
+func SetUserID(c context.Context, id int) context.Context {
+	return context.WithValue(c, ContextUserKey, id)
 }
 
 type wrappedHandlerFunc func(c echo.Context) error
@@ -135,4 +142,26 @@ func (cv *ZoozieValidator) Validate(i interface{}) error {
 	}
 
 	return nil
+}
+
+func BindAndValidate(c echo.Context, i interface{}) error {
+	if err := c.Bind(i); err != nil {
+		return err
+	}
+
+	if err := c.Validate(i); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func IsUniquePostgresViolationErr(err error) bool {
+	pgErr, ok := err.(*pq.Error)
+	if !ok {
+		// Not a PostgreSQL error
+		return false
+	}
+
+	return pgErr.Code == "23505"
 }

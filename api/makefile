@@ -98,7 +98,7 @@ goose-version:
 
 # goose create NAME [sql|go] 
 goose-create:
-	@goose --dir ${GOOSE_DIR} create $(ARGS)
+	@goose --dir ${GOOSE_DIR} -s create $(ARGS)
 
 # goose fix
 goose-fix:
@@ -147,7 +147,7 @@ seeders-version:
 
 # seeders create NAME [sql|go] 
 seeders-create:
-	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" create $(ARGS)
+	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" -s create $(ARGS)
 
 # seeders fix
 seeders-fix:

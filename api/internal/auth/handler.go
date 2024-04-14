@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
+	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -16,8 +18,11 @@ type (
 	}
 
 	Service interface {
-		Login(c context.Context, email, password string) (*users.User, error)
+		Login(c context.Context, request loginRequest) (*users.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
+		RegisterCustomer(c context.Context, request registerCustomerRequest) (customers.Customer, error)
+		SendOTP(c context.Context) error
+		VerifyOTP(context.Context, string) error
 	}
 )
 
@@ -31,33 +36,28 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	auth := e.Group("/auth")
 	auth.POST("/login", utils.Unwrap(h.Login))
 	auth.POST("/refresh-token", utils.Unwrap(h.RefreshToken))
+	auth.POST("/register/customer", utils.Unwrap(h.RegisterCustomer))
+	auth.POST("/otp/send", utils.Unwrap(h.SendOTP), middleware.Auth())
+	auth.POST("/otp/verify", utils.Unwrap(h.VerifyOTP), middleware.Auth())
 }
 
 func (h *handler) Login(c echo.Context) error {
-	type Request struct {
-		Email    string `json:"email" form:"email" validate:"required,email"`
-		Password string `json:"password" form:"password" validate:"required,min=8"`
-	}
-
-	var request Request
-	if err := c.Bind(&request); err != nil {
+	var request loginRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
 		return err
 	}
 
-	if err := c.Validate(request); err != nil {
-		return err
-	}
-
-	user, err := h.service.Login(utils.TransformEchoContext(c), request.Email, request.Password)
+	user, err := h.service.Login(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}
 
-	h.setCookies(c, user.AccessToken, user.RefreshToken)
-
-	return c.JSON(http.StatusOK, map[string]any{
-		"data": map[string]any{
-			"user": user,
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"user": echo.Map{
+				"accessToken":  user.AccessToken,
+				"refreshToken": user.RefreshToken,
+			},
 		},
 	})
 }
@@ -84,11 +84,61 @@ func (h *handler) RefreshToken(c echo.Context) error {
 	h.setCookies(c, accessToken, refreshToken)
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"data": map[string]any{
+		"data": echo.Map{
 			"accessToken":  accessToken,
 			"refreshToken": refreshToken,
 		},
 	})
+}
+
+// TODO: handle profile picture uploads
+func (h *handler) RegisterCustomer(c echo.Context) error {
+	var request registerCustomerRequest
+	if err := c.Bind(&request); err != nil {
+		return err
+	}
+
+	if err := c.Validate(&request); err != nil {
+		return err
+	}
+
+	customer, err := h.service.RegisterCustomer(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "OTP has been sent to your phone number",
+		"data": echo.Map{
+			"user": echo.Map{
+				"accessToken":  customer.AccessToken,
+				"refreshToken": customer.RefreshToken,
+			},
+		},
+	})
+}
+
+func (h *handler) SendOTP(c echo.Context) error {
+	err := h.service.SendOTP(utils.TransformEchoContext(c))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"message": "OTP has been sent to your phone number"})
+}
+
+func (h *handler) VerifyOTP(c echo.Context) error {
+	var request verifyOTPRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	err := h.service.VerifyOTP(utils.TransformEchoContext(c), request.OTP)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"message": "OTP verified successfully"})
 }
 
 func (h *handler) setCookies(c echo.Context, accessToken, refreshToken string) {

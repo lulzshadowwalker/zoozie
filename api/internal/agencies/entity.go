@@ -9,3 +9,9 @@ type Agency struct {
 	Description  string `json:"description,omitempty"`
 	Logo         string `json:"logo"`
 }
+
+type AgencyAgent struct {
+	ID       int `json:"id,omitempty"`
+	UserID   int `json:"userId,omitempty"`
+	AgencyID int `json:"agencyId,omitempty"`
+}
