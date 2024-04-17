@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"net/http"
 
 	"github.com/go-jet/jet/qrm"
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -41,7 +41,7 @@ func (r *repo) CreateCustomer(c context.Context, customer Customer) (Customer, e
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return Customer{},
-				utils.NewApiError(http.StatusInternalServerError, fmt.Errorf("failed to get user role because %w", err).Error())
+				fmt.Errorf("failed to get user role because %w", err)
 		}
 
 		return Customer{}, err
@@ -95,7 +95,7 @@ func (r *repo) CreateCustomer(c context.Context, customer Customer) (Customer, e
 	}
 
 	customer.User = userModel.ToEntity()
-	customer.User.Role = dbUserRole.Name
+	customer.User.Role = entities.Role(dbUserRole.Name)
 	tx.Commit()
 	return customer, nil
 }

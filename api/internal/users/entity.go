@@ -1,10 +1,13 @@
 package users
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/entities"
+import (
+	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+)
 
 type User struct {
 	ID             int64
-	Role           string
+	Role           entities.Role
 	EmailAddress   string
 	PhoneNumber    entities.PhoneNumber
 	Name           string
@@ -12,4 +15,6 @@ type User struct {
 	ProfilePicture *string
 	AccessToken    string
 	RefreshToken   string
+
+	Agent *agencies.AgencyAgent
 }

@@ -18,12 +18,12 @@ func NewCountryCode(countryCode string) (string, error) {
 		return "", errors.New("country code cannot be empty")
 	}
 
-	if _, err := strconv.ParseInt(countryCode, 10, 64); err != nil {
-		return "", fmt.Errorf("country code can only contain numbers (%w)", err)
-	}
-
 	if len(countryCode) > 3 {
 		return "", errors.New("country code cannot be longer than 3 digits")
+	}
+
+	if _, err := strconv.ParseInt(countryCode, 10, 64); err != nil {
+		return "", fmt.Errorf("country code can only contain numbers (%w)", err)
 	}
 
 	return countryCode, nil
@@ -34,12 +34,13 @@ func validatePhoneNumber(phoneNumber string) error {
 		return errors.New("phone number cannot be empty")
 	}
 
-	if _, err := strconv.ParseInt(phoneNumber, 10, 64); err != nil {
-		return fmt.Errorf("phone number can only contain numbers")
-	}
-
+	// NOTE: order is important otherwise the strconv.ParseInt might fail on larger numbers
 	if len(phoneNumber) > 12 {
 		return errors.New("phone number cannot be longer than 12 digits")
+	}
+
+	if _, err := strconv.ParseInt(phoneNumber, 10, 64); err != nil {
+		return fmt.Errorf("phone number can only contain numbers")
 	}
 
 	return nil
@@ -78,9 +79,7 @@ func NewE164PhoneNumber(countryCode, phoneNumber string) (string, error) {
 		countryCode = "+" + countryCode
 	}
 
-	if strings.HasPrefix(phoneNumber, "0") {
-		phoneNumber = phoneNumber[1:]
-	}
+	phoneNumber = strings.TrimPrefix(phoneNumber, "0")
 
 	return (countryCode + phoneNumber), nil
 }

@@ -7,7 +7,7 @@ CREATE TABLE user_phone_numbers (
   phone_number TEXT NOT NULL CHECK (phone_number <> ''),
 
     -- FIXME: account for the case 
-    -- where e.g. a user registers with his new phone number which used to belong to another user on the platform
+    -- where e.g. a user registers with his new phone number which used to belong to another user on the platform (who the fuck cares .. )
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl,

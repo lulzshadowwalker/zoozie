@@ -14,7 +14,8 @@ type handler struct {
 }
 
 type Service interface {
-	GetAgencies(context.Context) ([]*Agency, error)
+	GetAgencies(context.Context) ([]Agency, error)
+	CreateAgency(c context.Context, request createAgencyRequest) (Agency, error)
 	GetAgencyBySlug(c context.Context, request getAgencyBySlugRequest) (*Agency, error)
 }
 
@@ -26,6 +27,7 @@ func NewHandler(s Service) *handler {
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/agencies", utils.Unwrap(h.GetAgencies))
+	e.POST("/agencies", utils.Unwrap(h.CreateAgency))
 }
 
 func (h *handler) GetAgencies(c echo.Context) error {
@@ -63,6 +65,24 @@ func (h *handler) GetAgencies(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]any{
 		"data": map[string]any{
 			"agencies": agencies,
+		},
+	})
+}
+
+func (h *handler) CreateAgency(c echo.Context) error {
+	var request createAgencyRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	agency, err := h.service.CreateAgency(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"agency": agency,
 		},
 	})
 }

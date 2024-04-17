@@ -3,12 +3,11 @@
 INSERT INTO agencies(
     id,
     slug,
-    phone_number,
     email_address,
     logo
 )
 VALUES
-(-42069, 'lulzie-housing', '+962791234567', 'lulzie@email.com', 'https://i.pinimg.com/564x/aa/15/98/aa1598985044de15e7623834aa8bdd33.jpg');
+(-42069, 'lulzie-housing', 'lulzie@email.com', 'https://i.pinimg.com/564x/aa/15/98/aa1598985044de15e7623834aa8bdd33.jpg');
 
 INSERT INTO agencies_i18n(
     language_code,

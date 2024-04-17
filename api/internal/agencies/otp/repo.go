@@ -10,6 +10,7 @@ import (
 	"github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -21,8 +22,12 @@ func NewRepo(database *sql.DB) *repo {
 	return &repo{database}
 }
 
-func (r *repo) StoreOTP(ctx context.Context, otp OTP) (OTP, error) {
+func (r *repo) StoreOTP(ctx context.Context, otp OTP, tx interfaces.Transaction) (OTP, error) {
 	var dbOTP DBOTP
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
 	err := Otps.INSERT(
 		Otps.UserID,
 		Otps.Code,
@@ -34,7 +39,7 @@ func (r *repo) StoreOTP(ctx context.Context, otp OTP) (OTP, error) {
 			otp.SentAt,
 		).
 		RETURNING(Otps.AllColumns).
-		QueryContext(ctx, r.database, &dbOTP)
+		QueryContext(ctx, db, &dbOTP)
 	if err != nil {
 		return OTP{}, fmt.Errorf("failed to insert otp because %w", err)
 	}

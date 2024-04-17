@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -18,6 +19,7 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/messaging"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
@@ -29,13 +31,18 @@ type (
 	}
 
 	Repo interface {
-		GetUserById(context.Context, int) (*users.User, error)
+		interfaces.Transactioner
+		GetUserById(context.Context, int, interfaces.Transaction) (*users.User, error)
 		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*users.User, error)
+
+		// TODO: use a transaction to the create the customer and other things ..
 		CreateCustomer(context.Context, customers.Customer) (customers.Customer, error)
+		CreateUser(context.Context, users.User, interfaces.Transaction) (users.User, error)
 		GetOTPByUserID(c context.Context, userID int) (otp.OTP, error)
-		StoreOTP(context.Context, otp.OTP) (otp.OTP, error)
+		StoreOTP(context.Context, otp.OTP, interfaces.Transaction) (otp.OTP, error)
 		UpdateOTP(c context.Context, otp otp.OTP) (otp.OTP, error)
-		GetAgencyAgentByUserID(c context.Context, userID int) (agencies.AgencyAgent, error)
+		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (agencies.AgencyAgent, error)
+		RegisterAgencyAgent(c context.Context, agent agencies.AgencyAgent, tx interfaces.Transaction) (agencies.AgencyAgent, error)
 	}
 )
 
@@ -65,7 +72,7 @@ func (s *service) Login(c context.Context, request loginRequest) (*users.User, e
 		return nil, err
 	}
 
-	accessToken, refreshToken, err := s.generateTokenPair(c, user)
+	accessToken, refreshToken, err := s.generateTokenPair(c, *user)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +105,7 @@ func (s *service) RefreshToken(c context.Context, token string) (accessToken, re
 		return "", "", fmt.Errorf("failed to parse the user id because %w", err)
 	}
 
-	user, err := s.repo.GetUserById(c, uid)
+	user, err := s.repo.GetUserById(c, uid, nil)
 	if err != nil {
 		return "", "", err
 	}
@@ -108,50 +115,7 @@ func (s *service) RefreshToken(c context.Context, token string) (accessToken, re
 		return "", "", err
 	}
 
-	return s.generateTokenPair(c, user)
-}
-
-func (s *service) generateTokenPair(c context.Context, user *users.User) (accessToken, refreshToken string, err error) {
-	uid := strconv.Itoa(int(user.ID))
-	customClaims := entities.JwtCustomClaims{
-		Name: user.Name,
-		Role: user.Role,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: uid,
-			// TODO: FIXME: set access_token expiration for production
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 42069)),
-		},
-	}
-	if user.Role == "agency_agent" {
-		agencyAgent, err := s.repo.GetAgencyAgentByUserID(c, int(user.ID))
-		if err != nil {
-			return "", "", err
-		}
-
-		customClaims.AgencyID = agencyAgent.AgencyID
-	}
-
-	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
-
-	accessToken, err = accessTok.SignedString([]byte(config.GetJwtSecret()))
-	if err != nil {
-		err = fmt.Errorf("failed to sign the access token because %w", err)
-		return
-	}
-
-	refreshTok := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   uid,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
-	},
-	)
-
-	refreshToken, err = refreshTok.SignedString([]byte(config.GetJwtSecret()))
-	if err != nil {
-		err = fmt.Errorf("failed to sign the access token because %w", err)
-		return
-	}
-
-	return
+	return s.generateTokenPair(c, *user)
 }
 
 func (s *service) RegisterCustomer(c context.Context, request registerCustomerRequest) (customers.Customer, error) {
@@ -173,14 +137,14 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 		return customers.Customer{}, err
 	}
 
-	err = s.sendOTP(c, int(customer.User.ID))
+	err = s.sendOTP(c, int(customer.User.ID), nil)
 	if err != nil {
 		return customers.Customer{}, err
 	}
 
-	accessToken, refreshToken, err := s.generateTokenPair(c, &customer.User)
+	accessToken, refreshToken, err := s.generateTokenPair(c, customer.User)
 	if err != nil {
-		return customers.Customer{}, nil
+		return customers.Customer{}, err
 	}
 	customer.User.AccessToken = accessToken
 	customer.User.RefreshToken = refreshToken
@@ -256,11 +220,11 @@ func (s *service) SendOTP(c context.Context) error {
 		return err
 	}
 
-	return s.sendOTP(c, userID)
+	return s.sendOTP(c, userID, nil)
 }
 
-func (s *service) sendOTP(c context.Context, userID int) error {
-	user, err := s.repo.GetUserById(c, userID)
+func (s *service) sendOTP(c context.Context, userID int, tx interfaces.Transaction) error {
+	user, err := s.repo.GetUserById(c, userID, tx)
 	if err != nil {
 		return err
 	}
@@ -272,7 +236,7 @@ func (s *service) sendOTP(c context.Context, userID int) error {
 	if err != nil {
 		return err
 	}
-	err = messaging.SendSMS(c, e164PhoneNumber, fmt.Sprintf("Thank you for registering with Zoozie\nYour OTP code is %s", code))
+	err = messaging.SendSMS(c, e164PhoneNumber, fmt.Sprintf("Your OTP code is %s", code))
 	if err != nil {
 		return fmt.Errorf("failed to send otp code because %w", err)
 	}
@@ -288,10 +252,112 @@ func (s *service) sendOTP(c context.Context, userID int) error {
 		SentAt: time.Now().UTC(),
 	}
 
-	_, err = s.repo.StoreOTP(c, otp)
+	_, err = s.repo.StoreOTP(c, otp, tx)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyAgentRequest) (users.User, error) {
+	tx, err := s.repo.Begin(c)
+	if err != nil {
+		return users.User{}, nil
+	}
+	defer tx.Rollback()
+
+	phoneNumber, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
+	if err != nil {
+		return users.User{}, nil
+	}
+
+	user := users.User{
+		EmailAddress:   request.EmailAddress,
+		Name:           request.Name,
+		PhoneNumber:    phoneNumber,
+		ProfilePicture: &request.ProfilePicture,
+		Role:           entities.RoleAgencyAgent,
+	}
+
+	log.Println("Created user successfully")
+	user, err = s.repo.CreateUser(c, user, tx)
+	if err != nil {
+		return users.User{}, err
+	}
+
+	agent := agencies.AgencyAgent{
+		UserID:   int(user.ID),
+		AgencyID: request.AgencyID,
+	}
+	log.Println("Creating agency agent successfully")
+	agent, err = s.repo.RegisterAgencyAgent(c, agent, tx)
+	if err != nil {
+		return users.User{}, err
+	}
+	user.Agent = &agent
+	log.Println("Created agency agent successfully")
+
+	log.Println("registered agency agent successfully .. sending otp ..")
+	err = s.sendOTP(c, int(user.ID), tx)
+	if err != nil {
+		return users.User{}, err
+	}
+	log.Println("finished sending otp")
+
+	accessToken, refreshToken, err := s.generateTokenPair(c, user)
+	if err != nil {
+		return users.User{}, err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return users.User{}, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	user.AccessToken = accessToken
+	user.RefreshToken = refreshToken
+	return user, nil
+}
+
+func (s *service) generateTokenPair(c context.Context, user users.User) (accessToken, refreshToken string, err error) {
+	uid := strconv.Itoa(int(user.ID))
+	customClaims := entities.JwtCustomClaims{
+		Name: user.Name,
+		Role: user.Role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: uid,
+			// TODO: FIXME: set access_token expiration for production
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 42069)),
+		},
+	}
+
+	if user.Role == entities.RoleAgencyAgent {
+		if user.Agent == nil {
+			err = fmt.Errorf("user.AgencyAgent cannot be null when role is %s", user.Role)
+			return
+		}
+
+		customClaims.AgencyID = user.Agent.AgencyID
+	}
+
+	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
+
+	accessToken, err = accessTok.SignedString([]byte(config.GetJwtSecret()))
+	if err != nil {
+		err = fmt.Errorf("failed to sign the access token because %w", err)
+		return
+	}
+
+	refreshTok := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   uid,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+	},
+	)
+
+	refreshToken, err = refreshTok.SignedString([]byte(config.GetJwtSecret()))
+	if err != nil {
+		err = fmt.Errorf("failed to sign the access token because %w", err)
+		return
+	}
+
+	return
 }

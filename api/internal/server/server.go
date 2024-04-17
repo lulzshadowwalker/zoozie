@@ -28,7 +28,7 @@ func NewServer(database *sql.DB, port int) *Server {
 	}
 }
 
-// TODO: graceful shutdown
+// TODO: graceful termination
 func (s *Server) Run() error {
 	router := echo.New()
 	router.Use(zoozieMiddlware.Logger())

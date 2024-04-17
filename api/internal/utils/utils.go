@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -101,8 +102,22 @@ func GetUserID(c context.Context) (int, error) {
 	return uid, nil
 }
 
-func SetUserID(c context.Context, id int) context.Context {
-	return context.WithValue(c, ContextUserKey, id)
+func GetUserClaims(c context.Context) (entities.JwtCustomClaims, error) {
+	u, ok := c.Value(ContextUserKey).(*jwt.Token)
+	if !ok {
+		return entities.JwtCustomClaims{}, errors.New("echo.Context.Get(\"user\") is not *jwt.Token")
+	}
+
+	if u == nil || !u.Valid {
+		return entities.JwtCustomClaims{}, echo.NewHTTPError(http.StatusUnauthorized)
+	}
+
+	claims, ok := u.Claims.(*entities.JwtCustomClaims)
+	if !ok {
+		return entities.JwtCustomClaims{}, fmt.Errorf("echo.Context.Get(\"user\") claims is not *entities.JwtCustomClaims")
+	}
+
+	return *claims, nil
 }
 
 type wrappedHandlerFunc func(c echo.Context) error
@@ -164,4 +179,24 @@ func IsUniquePostgresViolationErr(err error) bool {
 	}
 
 	return pgErr.Code == "23505"
+}
+
+func GenerateSlug(s string) string {
+	// Convert the string to lowercase
+	s = strings.ToLower(s)
+
+	// Replace spaces with hyphens
+	s = strings.ReplaceAll(s, " ", "-")
+
+	// Remove non-alphanumeric characters
+	reg := regexp.MustCompile("[^a-zA-Z0-9-]+")
+	s = reg.ReplaceAllString(s, "")
+
+	// Remove consecutive hyphens
+	s = strings.ReplaceAll(s, "--", "-")
+
+	// Remove leading and trailing hyphens
+	s = strings.Trim(s, "-")
+
+	return s
 }

@@ -9,8 +9,10 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -35,6 +37,62 @@ func NewRepo(database *sql.DB) *repo {
 		database: database,
 	}
 }
+func (r *repo) CreateUser(c context.Context, user User, tx interfaces.Transaction) (User, error) {
+	var dbUserRole model.UserRoles
+	err := UserRoles.SELECT(UserRoles.ID, UserRoles.Name).
+		WHERE(UserRoles.Name.EQ(String(string(user.Role)))).
+		QueryContext(c, tx, &dbUserRole)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return User{},
+
+				// NOTE: do not return status 404
+				fmt.Errorf("failed to get user role %q because it was not found", user.Role)
+		}
+
+		return User{}, err
+	}
+
+	userModel := DBUser{}
+	err = Users.INSERT(
+		Users.Name,
+		Users.EmailAddress,
+		Users.ProfilePicture,
+		Users.Role,
+	).VALUES(
+		user.Name,
+		user.EmailAddress,
+		user.ProfilePicture,
+		dbUserRole.ID,
+	).RETURNING(Users.ID).
+		QueryContext(c, tx, &userModel)
+	if err != nil {
+		return User{}, fmt.Errorf("failed to insert user because %w", err)
+	}
+	userID := userModel.User.ID
+
+	// user phone number
+	_, err = UserPhoneNumbers.INSERT(
+		UserPhoneNumbers.UserID,
+		UserPhoneNumbers.CountryCode,
+		UserPhoneNumbers.PhoneNumber,
+	).VALUES(
+		userID,
+		user.PhoneNumber.CountryCode,
+		user.PhoneNumber.PhoneNumber,
+	).ExecContext(c, tx)
+	if err != nil {
+		if utils.IsUniquePostgresViolationErr(err) {
+			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
+			return User{}, fmt.Errorf("failed to register user because phone number already in use")
+		}
+
+		return User{}, fmt.Errorf("failed to insert user phone number because %w", err)
+	}
+
+	user.ID = int64(userID)
+	return user, nil
+}
 
 func (r *repo) GetUserByPhoneNumber(c context.Context, phoneNumber entities.PhoneNumber) (*User, error) {
 	stmt := baseQueryStatement.
@@ -58,12 +116,16 @@ func (r *repo) GetUserByPhoneNumber(c context.Context, phoneNumber entities.Phon
 	return &entity, nil
 }
 
-func (r *repo) GetUserById(c context.Context, id int) (*User, error) {
+func (r *repo) GetUserById(c context.Context, id int, tx interfaces.Transaction) (*User, error) {
 	stmt := baseQueryStatement.
 		WHERE(Users.ID.EQ(Int(int64(id))))
 
 	var user DBUser
-	err := stmt.Query(r.database, &user)
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+	err := stmt.Query(db, &user)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, utils.NewApiError(http.StatusNotFound, fmt.Sprintf("user with id %d not found", id))

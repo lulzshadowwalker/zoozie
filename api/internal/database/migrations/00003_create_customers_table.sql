@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE customers (
     id BIGSERIAL PRIMARY KEY,
-    -- TODO: setup some archive tables 
+
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

@@ -19,7 +19,7 @@ func (u DBUser) ToEntity() User {
 
 	user := User{
 		ID:             int64(u.User.ID),
-		Role:           u.Role.Name,
+		Role:           entities.Role(u.Role.Name),
 		EmailAddress:   u.User.EmailAddress,
 		PhoneNumber:    phoneNumber,
 		Name:           u.User.Name,
