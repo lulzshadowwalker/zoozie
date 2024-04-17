@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
@@ -75,18 +76,21 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := getBaseQueryStatement(language)
+	stmt := getBaseQueryStatement(language).
+		WHERE(Agencies.Slug.EQ(String(slug)))
 
 	var dest dbAgency
 	err = stmt.Query(r.database, &dest)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, nil
+			return nil, err
 		}
 
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}
 
+	log.Println("\n\n", stmt.DebugSql(), "\n\n")
+	log.Println(dest.PhoneNumber)
 	agency, err := dest.ToEntity()
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert agency because %w", err)

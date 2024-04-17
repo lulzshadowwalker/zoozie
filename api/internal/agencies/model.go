@@ -7,13 +7,12 @@ import (
 
 type dbAgency struct {
 	Agency       model.Agencies
-	PhoneNumber  entities.PhoneNumber
+	PhoneNumber  model.AgencyPhoneNumbers
 	Translations model.AgenciesI18n
 }
 
 func (m *dbAgency) ToEntity() (Agency, error) {
-	// NOTE: technically this should never be the case since the value is coming from the database
-	phoneNumber, err := entities.NewPhoneNumber(m.PhoneNumber.CountryCode, m.PhoneNumber.CountryCode)
+	phoneNumber, err := entities.NewPhoneNumber(m.PhoneNumber.CountryCode, m.PhoneNumber.PhoneNumber)
 	if err != nil {
 		return Agency{}, err
 	}
