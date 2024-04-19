@@ -50,6 +50,6 @@ func main() {
 	)
 
 	if err != nil {
-		log.Fatalf("failed to migrate data beacuse %s", err)
+		log.Fatalf("failed to migrate data beacause %s", err)
 	}
 }

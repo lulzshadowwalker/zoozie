@@ -71,5 +71,8 @@
       "title-input": "Title",
       "additional-feature": "Additional Feature"
     }
+  },
+  "admin": {
+    "agencies": {}
   }
 }

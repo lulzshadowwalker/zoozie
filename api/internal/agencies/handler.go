@@ -27,7 +27,11 @@ func NewHandler(s Service) *handler {
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/agencies", utils.Unwrap(h.GetAgencies))
-	e.POST("/agencies", utils.Unwrap(h.CreateAgency))
+	e.POST(
+		"/agencies",
+		utils.Unwrap(h.CreateAgency),
+		//		middleware.WithZoozieAdmin,
+	)
 }
 
 func (h *handler) GetAgencies(c echo.Context) error {

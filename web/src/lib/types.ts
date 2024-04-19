@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Locale } from "@lib/i18n/config";
+import { z } from "zod";
 
 export interface IBasePageParams {
   params: {
@@ -36,3 +37,16 @@ export type TCoreFeature = {
   required?: boolean;
   dataType?: "text" | "number";
 };
+
+export const CreateAgencyFormSchema = z.object({
+  englishName: z.string(),
+  arabicName: z.string(),
+  arabicDescription: z.string(),
+  englishDescription: z.string(),
+  emailAddress: z.string().email(),
+  countryCode: z.number().min(1).max(3),
+  phoneNumber: z.number().max(12),
+  logo: z.string().url(),
+});
+
+export type TCreateAgencyForm = z.infer<typeof CreateAgencyFormSchema>;

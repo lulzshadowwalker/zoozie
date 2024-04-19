@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
@@ -89,8 +88,6 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}
 
-	log.Println("\n\n", stmt.DebugSql(), "\n\n")
-	log.Println(dest.PhoneNumber)
 	agency, err := dest.ToEntity()
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert agency because %w", err)
@@ -136,8 +133,18 @@ func (r *repo) CreateAgency(c context.Context, agency Agency, tx interfaces.Tran
 		).
 		RETURNING(Agencies.ID)
 
-	err := stmt.QueryContext(c, tx, &dest)
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+	err := stmt.QueryContext(c, db, &dest)
 	if err != nil {
+		if utils.IsUniquePostgresViolationErr(err) {
+
+			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
+			return Agency{}, fmt.Errorf("failed to register agency because phone number already in use")
+		}
+
 		return Agency{}, fmt.Errorf("failed to insert agency because %w", err)
 	}
 

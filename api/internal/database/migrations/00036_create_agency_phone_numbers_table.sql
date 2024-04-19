@@ -7,7 +7,8 @@ CREATE TABLE agency_phone_numbers (
     phone_number TEXT NOT NULL CHECK (phone_number <> ''),
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UNIQUE(country_code, phone_number)
 );
 
 CREATE FUNCTION update_updated_at_agency_phone_numbers() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();
