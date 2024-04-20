@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes } from "react";
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   typ?: "primary" | "secondary";
   square?: boolean;
 }
@@ -13,11 +13,11 @@ export default function Button({
   disabled,
   typ = "primary",
   ...rest
-}: Props) {
+}: ButtonProps) {
   return (
     <button
       className={cn(
-        "rounded-2xl text-lg font-medium transition-all outline-none ",
+        "block rounded-2xl text-lg font-medium outline-none transition-all ",
         {
           "bg-gray-200 hover:bg-gray-300 focus:bg-gray-300":
             typ === "secondary" && !disabled,
@@ -26,11 +26,11 @@ export default function Button({
         },
         {
           "px-m-l py-2xs-xs": !square,
-          "p-2xs-xs aspect-square": square,
+          "aspect-square p-2xs-xs": square,
         },
         {
           "active:scale-[0.98]": !disabled,
-          "saturate-[0.6] pointer-evenets-none": disabled,
+          "pointer-events-none text-gray-500 saturate-[0.6]": disabled,
         },
         className,
       )}

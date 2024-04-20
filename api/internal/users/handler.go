@@ -36,9 +36,14 @@ func (h *handler) GetUser(c echo.Context) error {
 		return err
 	}
 
+	response, err := newResponseFromEntity(user)
+	if err != nil {
+		return err
+	}
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
-			"user": newResponseFromEntity(user),
+			"user": response,
 		},
 	})
 }

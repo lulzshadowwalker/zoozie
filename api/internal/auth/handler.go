@@ -2,10 +2,13 @@ package auth
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
@@ -40,7 +43,11 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	auth.POST("/otp/send", utils.Unwrap(h.SendOTP), middleware.Auth())
 	auth.POST("/otp/verify", utils.Unwrap(h.VerifyOTP), middleware.Auth())
 
-	auth.POST("/register/customer", utils.Unwrap(h.RegisterCustomer))
+	auth.POST(
+		"/register/customer",
+		utils.Unwrap(h.RegisterCustomer),
+		echoMiddleware.BodyLimit("4M"),
+	)
 	auth.POST(
 		"/register/agent", utils.Unwrap(h.RegisterAgencyAgent),
 
@@ -108,6 +115,16 @@ func (h *handler) RegisterCustomer(c echo.Context) error {
 	if err := c.Validate(&request); err != nil {
 		return err
 	}
+
+	profilePicture, err := c.FormFile("profilePicture")
+	if err != nil {
+		if errors.Is(err, http.ErrContentLength) {
+			return c.JSON(http.StatusBadRequest, echo.Map{"message": "profilePicture file is too large"})
+		}
+
+		return fmt.Errorf("failed to get profilePicture because %w", err)
+	}
+	request.ProfilePicture = profilePicture
 
 	customer, err := h.service.RegisterCustomer(utils.TransformEchoContext(c), request)
 	if err != nil {

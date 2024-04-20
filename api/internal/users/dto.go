@@ -1,6 +1,9 @@
 package users
 
-import "fmt"
+import (
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
+)
 
 type response struct {
 	ID             int64   `json:"id,omitempty"`
@@ -13,14 +16,26 @@ type response struct {
 	RefreshToken   string  `json:"refreshToken,omitempty"`
 }
 
-func newResponseFromEntity(user *User) *response {
-	phoneNumber := fmt.Sprintf("%s%s", user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
-	return &response{
+func newResponseFromEntity(user *User) (response, error) {
+	phoneNumber, err := entities.NewE164PhoneNumber(user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
+	if err != nil {
+		return response{}, err
+	}
+
+	var profilePicture string
+	if user.ProfilePicture != nil {
+		profilePicture, err = utils.GetFileURL(*user.ProfilePicture)
+		if err != nil {
+			return response{}, err
+		}
+	}
+
+	return response{
 		ID:             user.ID,
 		EmailAddress:   user.EmailAddress,
 		PhoneNumber:    phoneNumber,
 		Name:           user.Name,
 		IsActive:       user.Active,
-		ProfilePicture: user.ProfilePicture,
-	}
+		ProfilePicture: &profilePicture,
+	}, nil
 }

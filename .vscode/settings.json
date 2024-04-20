@@ -1,0 +1,18 @@
+{
+    "cSpell.words": [
+        "zooz"
+    ],
+    "editor.formatOnSave": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "zoozie",
+            "database": "zoozie",
+            "username": "lulz",
+            "password": ""
+        }
+    ]
+}

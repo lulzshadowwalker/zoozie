@@ -50,3 +50,12 @@ export const CreateAgencyFormSchema = z.object({
 });
 
 export type TCreateAgencyForm = z.infer<typeof CreateAgencyFormSchema>;
+
+export const RegisterCustomerFormSchema = z.object({
+  name: z.string(),
+  countryCode: z.number().min(1).max(999),
+  phoneNumber: z.number().max(999999999999),
+  email: z.string().email().nullable(),
+});
+
+export type TRegisterCustomerForm = z.infer<typeof RegisterCustomerFormSchema>;

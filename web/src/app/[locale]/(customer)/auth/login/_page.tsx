@@ -6,7 +6,7 @@ import { useFormState } from "react-dom";
 import { showToast } from "@/lib/utils";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import SubmitButton from "@/components/customer/auth/login/submit-button";
+import SubmitButton from "@/components/shared/submit-button";
 import Button from "@/components/shared/button";
 import { Link } from "@/lib/i18n/navigation";
 
@@ -55,12 +55,15 @@ export default function Login() {
         />
 
         <div className="flex items-center gap-s-m max-md:flex-col max-md:items-stretch">
-          <SubmitButton className="flex-grow-[2] basis-0" />
-          <Button typ="secondary" className="flex-grow basis-0">
-            <Link href="/auth/register">
+          <SubmitButton className="flex-grow-[2] basis-0">
+            {t("sign-in")}
+          </SubmitButton>
+
+          <Link href="/auth/register" className="flex-grow basis-0">
+            <Button type="button" typ="secondary" className="w-full">
               {t("sign-up")}
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </form>
     </main>

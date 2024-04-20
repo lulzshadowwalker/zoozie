@@ -3,5 +3,8 @@
   "singleQuote": false,
   "semi": true,
   "useTabs": false,
-  "max_line_length": 70
+  "max_line_length": 70,
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ]
 }

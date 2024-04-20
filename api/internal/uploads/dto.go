@@ -1,12 +1,9 @@
 package uploads
 
 import (
-	"fmt"
 	"mime/multipart"
-	"net/url"
-	"strings"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/config"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type (
@@ -27,10 +24,9 @@ type (
 )
 
 func newResponseFromEntity(entity *Upload) (response, error) {
-	sanitized := strings.TrimPrefix(entity.File, "public/")
-	url, err := url.JoinPath(config.GetAppUrl(), sanitized)
+	url, err := utils.GetFileURL(entity.File)
 	if err != nil {
-		return response{}, fmt.Errorf("failed to join path because %w", err)
+		return response{}, err
 	}
 
 	return response{

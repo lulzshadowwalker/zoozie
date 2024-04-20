@@ -4,17 +4,26 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
+	"mime/multipart"
 	"net/http"
+	"net/url"
+	"os"
+	"path"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/go-jet/jet/qrm"
 	qrmV2 "github.com/go-jet/jet/v2/qrm"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
+	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
@@ -36,6 +45,11 @@ func (e *ApiError) Error() string {
 
 func NewApiError(status int, message string) error {
 	return &ApiError{status, message}
+}
+
+type FileInfo struct {
+	Path     string
+	MimeType string
 }
 
 // GetLocale extracts the locale value from the given context.
@@ -199,4 +213,62 @@ func GenerateSlug(s string) string {
 	s = strings.Trim(s, "-")
 
 	return s
+}
+
+// returns the destination file, the destination file path, and the error if any
+func StoreFile(file *multipart.FileHeader) (FileInfo, error) {
+	id := uuid.NewString()
+	destPath := fmt.Sprintf("public/%s/%s/%s/", id[0:1], id[0:2], id[0:3])
+
+	err := os.MkdirAll(destPath, os.ModePerm)
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to create directory because %w", err)
+	}
+
+	filepath := path.Join(destPath, id+path.Ext(file.Filename))
+	dest, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, 0o666)
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to open file because %w", err)
+	}
+	defer dest.Close()
+
+	source, err := file.Open()
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to open file because %w", err)
+	}
+	defer source.Close()
+
+	_, err = io.Copy(dest, source)
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to copy file because %w", err)
+	}
+
+	buffer := make([]byte, 512)
+	_, err = dest.Seek(0, 0)
+	if err != nil {
+		slog.Error("failed to seek to file origin", "err", err)
+	}
+
+	_, err = dest.Read(buffer)
+	if err != nil {
+		slog.Error("failed to detect mime type", "err", err)
+	}
+
+	mime := mimetype.Detect(buffer).String()
+
+	info := FileInfo{
+		Path:     filepath,
+		MimeType: mime,
+	}
+
+	return info, nil
+}
+
+func GetFileURL(path string) (string, error) {
+	sanitized := strings.TrimPrefix(path, "public/")
+	url, err := url.JoinPath(config.GetAppUrl(), sanitized)
+	if err != nil {
+		return "", fmt.Errorf("failed to join path because %w", err)
+	}
+	return url, err
 }

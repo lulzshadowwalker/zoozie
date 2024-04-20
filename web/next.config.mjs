@@ -10,6 +10,7 @@ const nextConfig = {
     },
   },
   images: {
+    domains: ["localhost"],
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,6 +19,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**.unsplash.com',
+      },
+      {
+        protocol: 'http',
+        hostname: '**.localhost',
       },
     ],
   },

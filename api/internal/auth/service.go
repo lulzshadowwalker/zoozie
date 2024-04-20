@@ -126,12 +126,21 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 
 	customer := customers.Customer{
 		User: users.User{
-			EmailAddress:   request.EmailAddress,
-			Name:           request.Name,
-			PhoneNumber:    phoneNumber,
-			ProfilePicture: &request.ProfilePicture,
+			EmailAddress: request.EmailAddress,
+			Name:         request.Name,
+			PhoneNumber:  phoneNumber,
 		},
 	}
+
+	if request.ProfilePicture != nil {
+		uploadInfo, err := utils.StoreFile(request.ProfilePicture)
+		if err != nil {
+			return customers.Customer{}, err
+		}
+
+		customer.ProfilePicture = &uploadInfo.Path
+	}
+
 	customer, err = s.repo.CreateCustomer(c, customer)
 	if err != nil {
 		return customers.Customer{}, err

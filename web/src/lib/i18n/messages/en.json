@@ -15,7 +15,26 @@
       "welcome-back": "Welcome back, login to your account",
       "enter-credentials": "enter your credentials to continue",
       "sign-in": "Sign in",
-      "sign-up": "Sign up"
+      "sign-up": "Sign up",
+      "name": "Name",
+      "name-placeholder": "John Doe",
+      "email": "Email address",
+      "country-code": "Country code",
+      "phone-number": "Phone number",
+      "bad-request": "Please enter the details correctly",
+      "customer-register-success": "Thank you for registering, Please check your phone for verification.",
+      "verification-code": "Verification Code",
+      "enter-verification-code": "Enter the code sent to your phone number",
+      "verify": "Verify",
+      "resend-code": "Resend",
+      "otp-sent-successfully": "Verification code sent successfully",
+      "otp-sent-failure": "Failed to send verification code. Please try again later.",
+      "otp-expired": "Verification code has expired. Please request a new code.",
+      "otp-invalid": "Invalid verification code. Please try again.",
+      "otp-verified-successfully": "Phone number verified successfully.",
+      "seconds": "s",
+      "discover-your-dream-home": "Discover Your Dream Home",
+      "fill-in-your-details": "Step Inside, Your Details Open the Door"
     },
     "header-navigation-bar": {
       "avatar": "avatar"

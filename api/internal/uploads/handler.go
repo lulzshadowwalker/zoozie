@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -26,7 +27,7 @@ func NewHandler(service Service) *handler {
 }
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
-	e.POST("/uploads", utils.Unwrap(h.Upload))
+	e.POST("/uploads", utils.Unwrap(h.Upload), middleware.Auth())
 }
 
 func (h *handler) Upload(c echo.Context) error {
