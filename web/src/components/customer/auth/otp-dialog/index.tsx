@@ -22,11 +22,19 @@ export type TOtpDialogHandle = {
   isOpen: boolean;
 };
 
-const OtpDialog = forwardRef<TOtpDialogHandle>(function OtpDialog({}, ref) {
+type TProps = {
+  verifier?: (prompt: string) => void;
+};
+
+const OtpDialog = forwardRef<TOtpDialogHandle, TProps>(function OtpDialog(
+  { verifier },
+  ref,
+) {
   const t = useTranslations("customer.auth");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [message, dispatch] = useFormState(verifyOtp, undefined);
+  const [prompt, setPrompt] = useState("");
 
   function open() {
     setIsOpen(true);
@@ -96,7 +104,7 @@ const OtpDialog = forwardRef<TOtpDialogHandle>(function OtpDialog({}, ref) {
           {t("enter-verification-code")}
         </p>
 
-        <form action={dispatch}>
+        <form action={verifier ? undefined : dispatch}>
           <ZoozInput
             id="otp"
             label={t("verification-code")}
@@ -107,10 +115,20 @@ const OtpDialog = forwardRef<TOtpDialogHandle>(function OtpDialog({}, ref) {
             inputClassName="text-center focus:placeholder:text-transparent"
             labelClassName="text-center"
             required
+            onChange={({ target: { value } }) => setPrompt(value)}
           />
 
           <div className="flex items-center gap-xs-s">
-            <SubmitButton>{t("verify")}</SubmitButton>
+            <SubmitButton
+              type={verifier ? "button" : "submit"}
+              onClick={() => {
+                if (verifier) {
+                  verifier(prompt);
+                }
+              }}
+            >
+              {t("verify")}
+            </SubmitButton>
             <ResendButton />
           </div>
         </form>

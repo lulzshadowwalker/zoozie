@@ -24,8 +24,8 @@ type (
 		Login(c context.Context, request loginRequest) (*users.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
 		RegisterCustomer(c context.Context, request registerCustomerRequest) (customers.Customer, error)
-		SendOTP(c context.Context) error
-		VerifyOTP(context.Context, string) error
+		SendOTP(context.Context, sendOTPRequest) error
+		VerifyOTP(context.Context, verifyOTPRequest) error
 		RegisterAgencyAgent(context.Context, registerAgencyAgentRequest) (users.User, error)
 	}
 )
@@ -40,8 +40,8 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	auth := e.Group("/auth")
 	auth.POST("/login", utils.Unwrap(h.Login))
 	auth.POST("/refresh-token", utils.Unwrap(h.RefreshToken))
-	auth.POST("/otp/send", utils.Unwrap(h.SendOTP), middleware.Auth())
-	auth.POST("/otp/verify", utils.Unwrap(h.VerifyOTP), middleware.Auth())
+	auth.POST("/otp/send", utils.Unwrap(h.SendOTP), middleware.PreferAuth())
+	auth.POST("/otp/verify", utils.Unwrap(h.VerifyOTP), middleware.PreferAuth())
 
 	auth.POST(
 		"/register/customer",
@@ -143,7 +143,19 @@ func (h *handler) RegisterCustomer(c echo.Context) error {
 }
 
 func (h *handler) SendOTP(c echo.Context) error {
-	err := h.service.SendOTP(utils.TransformEchoContext(c))
+	var request sendOTPRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	_, err := utils.GetUserID(utils.TransformEchoContext(c))
+	if err != nil {
+		if request.CountryCode == "" || request.PhoneNumber == "" {
+			return c.JSON(http.StatusBadRequest, echo.Map{"message": "either provide an access token or country code and phone number"})
+		}
+	}
+
+	err = h.service.SendOTP(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}
@@ -157,7 +169,14 @@ func (h *handler) VerifyOTP(c echo.Context) error {
 		return err
 	}
 
-	err := h.service.VerifyOTP(utils.TransformEchoContext(c), request.OTP)
+	_, err := utils.GetUserID(utils.TransformEchoContext(c))
+	if err != nil {
+		if request.CountryCode == "" || request.PhoneNumber == "" {
+			return c.JSON(http.StatusBadRequest, echo.Map{"message": "either provide an access token or country code and phone number"})
+		}
+	}
+
+	err = h.service.VerifyOTP(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}

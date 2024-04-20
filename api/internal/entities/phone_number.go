@@ -56,6 +56,9 @@ func NewPhoneNumber(countryCode, phoneNumber string) (PhoneNumber, error) {
 		return PhoneNumber{}, err
 	}
 
+	phoneNumber = strings.Trim(phoneNumber, " ")
+	phoneNumber = strings.TrimPrefix(phoneNumber, "0")
+
 	return PhoneNumber{
 		CountryCode: countryCode,
 		PhoneNumber: phoneNumber,
@@ -74,6 +77,7 @@ func NewE164PhoneNumber(countryCode, phoneNumber string) (string, error) {
 	}
 
 	phoneNumber = strings.Trim(phoneNumber, " ")
+	phoneNumber = strings.TrimPrefix(phoneNumber, "0")
 
 	if !strings.HasPrefix(countryCode, "+") {
 		countryCode = "+" + countryCode

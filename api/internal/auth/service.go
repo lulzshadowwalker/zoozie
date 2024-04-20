@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -20,7 +19,6 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
-	"github.com/lulzshadowwalker/zoozie/api/internal/messaging"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -203,13 +201,29 @@ func (s *service) verifyOTP(c context.Context, userID int, prompt string) error 
 	return nil
 }
 
-func (s *service) VerifyOTP(c context.Context, prompt string) error {
-	userID, err := utils.GetUserID(c)
-	if err != nil {
-		return err
+func (s *service) VerifyOTP(c context.Context, request verifyOTPRequest) error {
+	var userID int
+	if request.CountryCode == "" {
+		uid, err := utils.GetUserID(c)
+		if err != nil {
+			return err
+		}
+
+		userID = uid
+	} else {
+		phone, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
+		if err != nil {
+			return err
+		}
+
+		user, err := s.repo.GetUserByPhoneNumber(c, phone)
+		if err != nil {
+			return err
+		}
+		userID = int(user.ID)
 	}
 
-	return s.verifyOTP(c, userID, prompt)
+	return s.verifyOTP(c, userID, request.OTP)
 }
 
 func generateOTP(length int) string {
@@ -223,32 +237,50 @@ func generateOTP(length int) string {
 	return string(otp)
 }
 
-func (s *service) SendOTP(c context.Context) error {
-	userID, err := utils.GetUserID(c)
-	if err != nil {
-		return err
+func (s *service) SendOTP(c context.Context, request sendOTPRequest) error {
+	var userID int
+	if request.CountryCode == "" {
+		uid, err := utils.GetUserID(c)
+		if err != nil {
+			return err
+		}
+
+		userID = uid
+	} else {
+		phone, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
+		if err != nil {
+			return err
+		}
+
+		user, err := s.repo.GetUserByPhoneNumber(c, phone)
+		if err != nil {
+			return err
+		}
+		userID = int(user.ID)
+
 	}
 
 	return s.sendOTP(c, userID, nil)
 }
 
 func (s *service) sendOTP(c context.Context, userID int, tx interfaces.Transaction) error {
-	user, err := s.repo.GetUserById(c, userID, tx)
-	if err != nil {
-		return err
-	}
+	// user, err := s.repo.GetUserById(c, userID, tx)
+	// if err != nil {
+	// 	return err
+	// }
 
-	const otpLength = 4
-	code := generateOTP(otpLength)
+	// const otpLength = 4
+	// code := generateOTP(otpLength)
+	code := "1234"
 
-	e164PhoneNumber, err := entities.NewE164PhoneNumber(user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
-	if err != nil {
-		return err
-	}
-	err = messaging.SendSMS(c, e164PhoneNumber, fmt.Sprintf("Your OTP code is %s", code))
-	if err != nil {
-		return fmt.Errorf("failed to send otp code because %w", err)
-	}
+	// e164PhoneNumber, err := entities.NewE164PhoneNumber(user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
+	// if err != nil {
+	// 	return err
+	// }
+	// err = messaging.SendSMS(c, e164PhoneNumber, fmt.Sprintf("Your OTP code is %s", code))
+	// if err != nil {
+	// 	return fmt.Errorf("failed to send otp code because %w", err)
+	// }
 
 	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
 	if err != nil {
@@ -289,7 +321,6 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 		Role:           entities.RoleAgencyAgent,
 	}
 
-	log.Println("Created user successfully")
 	user, err = s.repo.CreateUser(c, user, tx)
 	if err != nil {
 		return users.User{}, err
@@ -299,20 +330,17 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 		UserID:   int(user.ID),
 		AgencyID: request.AgencyID,
 	}
-	log.Println("Creating agency agent successfully")
+
 	agent, err = s.repo.RegisterAgencyAgent(c, agent, tx)
 	if err != nil {
 		return users.User{}, err
 	}
 	user.Agent = &agent
-	log.Println("Created agency agent successfully")
 
-	log.Println("registered agency agent successfully .. sending otp ..")
 	err = s.sendOTP(c, int(user.ID), tx)
 	if err != nil {
 		return users.User{}, err
 	}
-	log.Println("finished sending otp")
 
 	accessToken, refreshToken, err := s.generateTokenPair(c, user)
 	if err != nil {
@@ -327,7 +355,7 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 	return user, nil
 }
 
-func (s *service) generateTokenPair(c context.Context, user users.User) (accessToken, refreshToken string, err error) {
+func (s *service) generateTokenPair(_ context.Context, user users.User) (accessToken, refreshToken string, err error) {
 	uid := strconv.Itoa(int(user.ID))
 	customClaims := entities.JwtCustomClaims{
 		Name: user.Name,

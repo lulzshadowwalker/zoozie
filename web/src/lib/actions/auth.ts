@@ -1,18 +1,32 @@
 "use server";
 
 import { fetchApi } from "@/lib/api";
-import { RegisterCustomerFormSchema, TUser, ZoozieUserMessage } from "../types";
+import {
+  RegisterCustomerFormSchema,
+  TPhoneNumber,
+  TUser,
+  ZoozieUserMessage,
+} from "../types";
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
+import { redirect } from "../i18n/navigation";
 
-export async function login(
-  initialState: ZoozieUserMessage | undefined,
-  form: FormData,
-): Promise<ZoozieUserMessage> {
+export async function login({
+  phoneNumber,
+  otp,
+}: {
+  phoneNumber?: TPhoneNumber;
+  otp?: string;
+}): Promise<ZoozieUserMessage | undefined> {
   const t = await getTranslations("customer.auth");
+  console.table(phoneNumber);
 
-  const email = form.get("email") as string;
-  const password = form.get("password") as string;
+  if (!phoneNumber?.countryCode || !phoneNumber?.phoneNumber || !otp) {
+    return {
+      status: "failure",
+      message: t("bad-request"),
+    };
+  }
 
   const res = await fetchApi("/auth/login", {
     init: {
@@ -21,8 +35,9 @@ export async function login(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email,
-        password,
+        countryCode: phoneNumber.countryCode,
+        phoneNumber: phoneNumber.phoneNumber,
+        otp,
       }),
     },
   });
@@ -35,16 +50,19 @@ export async function login(
   if (!res.ok) {
     let message: ZoozieUserMessage | undefined;
     switch (res.status) {
+      // TODO: handle conflicting status 403 (otp expired,user deactivated)
       case 403:
         message = {
           status: "failure",
-          message: t("user-deactivated"),
+          message: t("otp-expired"),
         };
         break;
+
+      // invalid-otp
       case 401:
         message = {
           status: "failure",
-          message: t("invalid-credentials"),
+          message: t("otp-invalid"),
         };
         break;
       case 400:
@@ -56,7 +74,10 @@ export async function login(
     return message;
   }
 
-  const user = (await res.json())?.data as TUser | undefined;
+  const payload = (await res.json()) as
+    | TRegisterCustomerResponsePayload
+    | undefined;
+  const user = payload?.data?.user;
   if (!user || !user.accessToken || !user.refreshToken) {
     console.error("invalid api user response");
     return unknownError;
@@ -64,16 +85,13 @@ export async function login(
 
   updateCookies(user.accessToken, user.refreshToken);
 
-  return {
-    status: "success",
-    message: t("success"),
-  };
+  redirect("/");
 }
 
 export async function registerCustomer(
   initialState: ZoozieUserMessage | undefined,
   form: FormData,
-): Promise<ZoozieUserMessage> {
+): Promise<ZoozieUserMessage | undefined> {
   const t = await getTranslations("customer.auth");
 
   const payload = {
@@ -131,13 +149,12 @@ export async function registerCustomer(
 
   updateCookies(user.accessToken, user.refreshToken);
 
-  return {
-    status: "success",
-    message: t("customer-register-success"),
-  };
+  redirect("/");
 }
 
-export async function sendOtp(): Promise<ZoozieUserMessage> {
+export async function sendOtp(
+  phoneNumber?: TPhoneNumber,
+): Promise<ZoozieUserMessage> {
   const t = await getTranslations("customer.auth");
   const unknownError: ZoozieUserMessage = {
     status: "failure",
@@ -145,17 +162,27 @@ export async function sendOtp(): Promise<ZoozieUserMessage> {
   };
 
   const accessToken = cookies().get("access-token")?.value;
-  if (!accessToken) {
-    console.error("sendOtp: no access token");
+  if (!phoneNumber && !accessToken) {
+    console.error("sendOtp: either provide an access token or phone number");
     return unknownError;
+  }
+
+  let headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
   const res = await fetchApi("/auth/otp/send", {
     init: {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: headers,
+      body: JSON.stringify({
+        countryCode: phoneNumber?.countryCode,
+        phoneNumber: phoneNumber?.phoneNumber,
+      }),
     },
   });
 

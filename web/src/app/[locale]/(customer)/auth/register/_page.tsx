@@ -12,7 +12,7 @@ import ProfilePictureInput from "@/components/customer/auth/profile-picture-inpu
 import Button from "@/components/shared/button";
 import SubmitButton from "@/components/shared/submit-button";
 import ZoozInput from "@/components/shared/zooz-input";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 
 export default function Register() {
   const t = useTranslations("customer.auth");

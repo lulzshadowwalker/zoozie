@@ -8,7 +8,7 @@ type registerCustomerRequest struct {
 	PhoneNumber string `json:"phoneNumber" form:"phoneNumber" validate:"required,number,max=12"`
 
 	EmailAddress   string `json:"emailAddress,omitempty" form:"emailAddress" validate:"omitempty,email"`
-	ProfilePicture *multipart.FileHeader 
+	ProfilePicture *multipart.FileHeader
 }
 
 type registerAgencyAgentRequest struct {
@@ -22,10 +22,20 @@ type registerAgencyAgentRequest struct {
 
 type verifyOTPRequest struct {
 	OTP string `json:"otp" form:"otp" validate:"required"`
+
+	// required if the access token is absent
+	CountryCode string `json:"countryCode" form:"countryCode" validate:"required_with=PhoneNumber,len=0|number,len=0|min=1,len=0|max=3"`
+	PhoneNumber string `json:"phoneNumber" form:"phoneNumber" validate:"required_with=CountryCode,len=0|number,len=0|max=12"`
+}
+
+type sendOTPRequest struct {
+	// required if the access token is absent
+	CountryCode string `json:"countryCode" form:"countryCode" validate:"required_with=PhoneNumber,len=0|number,len=0|min=1,len=0|max=3"`
+	PhoneNumber string `json:"phoneNumber" form:"phoneNumber" validate:"required_with=CountryCode,len=0|number,len=0|max=12"`
 }
 
 type loginRequest struct {
 	OTP         string `json:"otp" form:"otp" validate:"required"`
-	CountryCode string `json:"country_code" form:"country_code" validate:"required,number,min=1,max=3"`
-	PhoneNumber string `json:"phone_number" form:"phone_number" validate:"required,number,max=12"`
+	CountryCode string `json:"countryCode" form:"countryCode" validate:"required,number,min=1,max=3"`
+	PhoneNumber string `json:"phoneNumber" form:"phoneNumber" validate:"required,number,max=12"`
 }

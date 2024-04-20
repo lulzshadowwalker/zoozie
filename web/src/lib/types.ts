@@ -59,3 +59,8 @@ export const RegisterCustomerFormSchema = z.object({
 });
 
 export type TRegisterCustomerForm = z.infer<typeof RegisterCustomerFormSchema>;
+
+export type TPhoneNumber = {
+  countryCode: string;
+  phoneNumber: string;
+};
