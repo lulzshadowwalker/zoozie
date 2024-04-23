@@ -15,7 +15,7 @@ type (
 	}
 
 	Service interface {
-		CreateListing(context.Context, createListingRequest) (Listing, error)
+		CreateListing(context.Context, createListingRequest) error
 		GetListing(context.Context, getListingRequest) (Listing, error)
 		GetAllListings(context.Context) ([]Listing, error)
 	}
@@ -28,8 +28,7 @@ func NewHandler(service Service) *handler {
 }
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
-	// TODO: admin middleware also per agency
-	e.POST("/listings", utils.Unwrap(h.CreateListings), middleware.Auth())
+	e.POST("/listings", utils.Unwrap(h.CreateListings), middleware.Auth(), middleware.WithAgencyAgent)
 	e.GET("/listings", utils.Unwrap(h.GetAllListings))
 	e.GET("/listings/:id", utils.Unwrap(h.GetListing))
 }
@@ -37,11 +36,7 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 // TODO: write unit test
 func (h *handler) CreateListings(c echo.Context) error {
 	var request createListingRequest
-	if err := c.Bind(&request); err != nil {
-		return err
-	}
-
-	if err := c.Validate(&request); err != nil {
+	if err := utils.BindAndValidate(c, &request); err != nil {
 		return err
 	}
 
@@ -49,16 +44,12 @@ func (h *handler) CreateListings(c echo.Context) error {
 		return c.JSON(400, echo.Map{"message": "pictures must not be empty"})
 	}
 
-	entity, err := h.service.CreateListing(utils.TransformEchoContext(c), request)
+	err := h.service.CreateListing(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"data": echo.Map{
-			"listing": entity,
-		},
-	})
+	return c.JSON(http.StatusOK, echo.Map{"message": "listing created successfully"})
 }
 
 func (h *handler) GetListing(c echo.Context) error {

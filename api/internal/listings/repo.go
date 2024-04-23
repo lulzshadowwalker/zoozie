@@ -4,9 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"net/http"
 
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -18,6 +22,288 @@ func NewRepo(database *sql.DB) *repo {
 	return &repo{
 		database: database,
 	}
+}
+
+func (r *repo) Begin(context.Context) (interfaces.Transaction, error) {
+	return r.database.Begin()
+}
+
+func (r *repo) CreateListingLocation(c context.Context, location Location, tx interfaces.Transaction) (Location, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbLocation DBLocation
+	stmt := ListingLocations.INSERT(
+		ListingLocations.CountryID,
+		ListingLocations.CityID,
+		ListingLocations.AreaID,
+	).VALUES(
+		location.Country.ID,
+		location.City.ID,
+		location.Area.ID,
+	).RETURNING(ListingLocations.ID)
+
+	if err := stmt.QueryContext(c, db, &dbLocation); err != nil {
+		slog.ErrorContext(c, "failed to insert listing location", "err", err)
+		return Location{}, utils.NewApiError(http.StatusBadRequest, "")
+	}
+
+	location.ID = int(dbLocation.Location.ID)
+	return location, nil
+}
+
+func (r *repo) CreateListingAvailability(c context.Context, listingAvailability Availability, tx interfaces.Transaction) (Availability, error) {
+	var db interfaces.Transaction
+	if tx != nil {
+		db = tx
+	} else {
+		db, err := r.database.Begin()
+		if err != nil {
+			return Availability{}, fmt.Errorf("failed to begin transaction because %w", err)
+		}
+
+		defer db.Rollback()
+	}
+
+	var dbAvailability DBAvailability
+	stmt := ListingAvailabilities.INSERT(ListingAvailabilities.AvailabilityID).
+		VALUES(
+			Availabilities.SELECT(Availabilities.ID).WHERE(Availabilities.Code.EQ(String(listingAvailability.Availability))),
+		).
+		RETURNING(ListingAvailabilities.ID)
+
+	if err := stmt.QueryContext(c, db, &dbAvailability); err != nil {
+		if utils.IsForeignKeyPostgresViolationErr(err) {
+			return Availability{}, utils.NewApiError(http.StatusBadRequest, fmt.Sprintf("availability with code %s does not exist", listingAvailability.Availability))
+		}
+
+		return Availability{}, fmt.Errorf("failed to insert listing availability because %w", err)
+	}
+	listingAvailability.ID = int(dbAvailability.ListingAvailability.ID)
+
+	stmt = ListingAvailabilityPrices.INSERT(
+		ListingAvailabilityPrices.ListingAvailabilityID,
+		ListingAvailabilityPrices.Amount,
+		ListingAvailabilityPrices.Currency,
+	).VALUES(
+		listingAvailability.ID,
+		listingAvailability.Price.Amount,
+		listingAvailability.Price.Currency,
+	)
+
+	if _, err := stmt.ExecContext(c, db); err != nil {
+		return Availability{}, fmt.Errorf("failed to insert listing availability price because %w", err)
+	}
+
+	if tx == nil {
+		db.Commit()
+	}
+
+	return listingAvailability, nil
+}
+
+func (r *repo) CreateListingExtraFeature(c context.Context, feature ExtraFeature, tx interfaces.Transaction) (ExtraFeature, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	stmt := ListingExtraFeatures.INSERT(
+		ListingExtraFeatures.ListingID,
+		ListingExtraFeatures.Available,
+	).VALUES(
+		feature.ListingID,
+		feature.Available,
+	).RETURNING(ListingExtraFeatures.ID)
+
+	var dbFeature DBExtraFeature
+	if err := stmt.QueryContext(c, db, &dbFeature); err != nil {
+		return ExtraFeature{}, fmt.Errorf("failed to insert listing extra feature because %w", err)
+	}
+	feature.ID = int(dbFeature.ExtraFeature.ID)
+
+	return feature, nil
+}
+
+func (r *repo) CreateListingExtraFeatureI18n(c context.Context, translations ExtraFeatureI18n, tx interfaces.Transaction) (ExtraFeatureI18n, error) {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	stmt := ListingExtraFeaturesI18n.INSERT(
+		ListingExtraFeaturesI18n.LanguageCode,
+		ListingExtraFeaturesI18n.ListingExtraFeaturesID,
+		ListingExtraFeaturesI18n.Title,
+	).VALUES(
+		translations.LanguageCode,
+		translations.ExtraFeatureID,
+		translations.Title,
+	)
+
+	if _, err := stmt.ExecContext(c, db); err != nil {
+		return ExtraFeatureI18n{}, fmt.Errorf("failed to insert listing extra feature i18n because %w", err)
+	}
+
+	return translations, nil
+}
+
+func (r *repo) CreateListingPictures(c context.Context, pictures []Picture, tx interfaces.Transaction) ([]Picture, error) {
+	if len(pictures) == 0 {
+		return make([]Picture, 0), nil
+	}
+
+	stmt := ListingPictures.INSERT(
+		ListingPictures.ListingID,
+		ListingPictures.URL,
+		ListingPictures.Highlighted,
+		ListingPictures.Title,
+	)
+
+	for _, picture := range pictures {
+		stmt = stmt.VALUES(
+			picture.ListingID,
+			picture.URL,
+			picture.Highlighted,
+			picture.Title,
+		)
+	}
+
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := stmt.ExecContext(c, db); err != nil {
+		return nil, fmt.Errorf("failed to insert listing pictures because %w", err)
+	}
+
+	return pictures, nil
+}
+
+func (r *repo) CreateListing(c context.Context, listing Listing, tx interfaces.Transaction) (Listing, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbListingType DBType
+	typeStmt := SELECT(ListingTypes.ID).
+		FROM(ListingTypes).
+		WHERE(ListingTypes.Code.EQ(String(listing.Type)))
+
+	if err := typeStmt.QueryContext(c, db, &dbListingType); err != nil {
+		slog.ErrorContext(c, "failed to query listing type", "err", err)
+		return Listing{}, utils.NewApiError(http.StatusBadRequest, "")
+	}
+
+	var dbListing dbListing
+	stmt := Listings.INSERT(
+		Listings.AgencyID,
+		Listings.LocationID,
+		Listings.TypeID,
+	).VALUES(
+		listing.AgencyID,
+		listing.Location.ID,
+		dbListingType.Type.ID,
+	).RETURNING(Listings.ID)
+
+	if err := stmt.QueryContext(c, db, &dbListing); err != nil {
+		return Listing{}, fmt.Errorf("failed to insert listing because %w", err)
+	}
+
+	listing.ID = int(dbListing.Listing.ID)
+	return listing, nil
+}
+
+func (r *repo) CreateListingI18n(c context.Context, translations ListingI18n, tx interfaces.Transaction) (ListingI18n, error) {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	stmt := ListingsI18n.INSERT(
+		ListingsI18n.LanguageCode,
+		ListingsI18n.ListingID,
+		ListingsI18n.Description,
+	).
+		VALUES(
+			translations.LanguageCode,
+			translations.ListingID,
+			translations.Description,
+		)
+
+	if _, err := stmt.ExecContext(c, db); err != nil {
+		return ListingI18n{}, fmt.Errorf("failed to insert listing because %w", err)
+	}
+
+	return translations, nil
+}
+
+func (r *repo) CreateProperty(c context.Context, property Property, tx interfaces.Transaction) (Property, error) {
+	stmt := Properties.INSERT(
+		Properties.ListingID,
+		Properties.Bedrooms,
+		Properties.Bathrooms,
+		Properties.Area,
+		Properties.Furnished,
+		Properties.YearBuilt,
+		Properties.PropertyStatusID,
+	).VALUES(
+		property.ListingID,
+		property.Bedrooms.Value,
+		property.Bathrooms.Value,
+		property.Area.Value,
+		property.Furnished.Value,
+		property.YearBuilt.Value,
+		PropertyStatuses.SELECT(PropertyStatuses.ID).WHERE(PropertyStatuses.Code.EQ(String("ACTIVE"))),
+	).RETURNING(Properties.ID)
+
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbProperty DBProperty
+	if err := stmt.QueryContext(c, db, &dbProperty); err != nil {
+		return Property{}, fmt.Errorf("failed to insert property because %w", err)
+	}
+	property.ID = int(dbProperty.Property.ID)
+
+	return property, nil
+}
+
+func (r *repo) CreatePropertyI18n(c context.Context, translations PropertyI18n, tx interfaces.Transaction) (PropertyI18n, error) {
+	stmt := PropertiesI18n.INSERT(
+		PropertiesI18n.PropertyID,
+		PropertiesI18n.LanguageCode,
+		PropertiesI18n.BedroomsDescription,
+		PropertiesI18n.BathroomsDescription,
+		PropertiesI18n.AreaDescription,
+		PropertiesI18n.FurnishedDescription,
+		PropertiesI18n.YearBuiltDescription,
+	).VALUES(
+		translations.PropertyID,
+		translations.LanguageCode,
+		translations.BedroomsDescription,
+		translations.BathroomsDescription,
+		translations.AreaDescription,
+		translations.FurnishedDescription,
+		translations.YearBuiltDescription,
+	).RETURNING(PropertiesI18n.ID)
+
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := stmt.ExecContext(c, db); err != nil {
+		return PropertyI18n{}, fmt.Errorf("failed to insert property i18n because %w", err)
+	}
+
+	return translations, nil
 }
 
 func getBaseQueryStatement(language string) SelectStatement {
@@ -65,11 +351,6 @@ func getBaseQueryStatement(language string) SelectStatement {
 	)
 }
 
-func (r *repo) CreateListing(c context.Context, listing Listing) (Listing, error) {
-	panic("unimplemented: listings.repo.CreateListing")
-	return Listing{}, nil
-}
-
 func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
 	language, err := utils.GetLocale(c)
 	if err != nil {
@@ -95,6 +376,9 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 	}
 
 	stmt := getBaseQueryStatement(language)
+
+	fmt.Println("\n\n\n", stmt.DebugSql(), "\n\n\n")
+
 	var dest []dbListing
 	err = stmt.QueryContext(c, r.database, &dest)
 	if err != nil {

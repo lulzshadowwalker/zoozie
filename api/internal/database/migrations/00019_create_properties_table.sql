@@ -9,7 +9,7 @@ CREATE TABLE properties (
     area NUMERIC(10, 2) NOT NULL,
     -- square feet
     furnished BOOLEAN NOT NULL,
-    year_built DATE NOT NULL,
+    year_built INTEGER NOT NULL,
     property_status_id BIGINT NOT NULL REFERENCES property_statuses(id) ON UPDATE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

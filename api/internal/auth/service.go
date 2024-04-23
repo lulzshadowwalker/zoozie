@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -374,6 +375,7 @@ func (s *service) generateTokenPair(_ context.Context, user users.User) (accessT
 		}
 
 		customClaims.AgencyID = user.Agent.AgencyID
+		log.Println("setting custom claims for agency agent", user.Agent.AgencyID, customClaims.AgencyID)
 	}
 
 	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)

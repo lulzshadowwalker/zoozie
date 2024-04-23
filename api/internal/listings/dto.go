@@ -1,61 +1,66 @@
 package listings
 
 type (
-	ResponseExtraFeature struct {
-		Title  string `json:"title,omitempty" validate:"required"`
-		Exists bool   `json:"exists,omitempty" validate:"boolean"`
+	requestExtraFeature struct {
+		TitleEnglish string `json:"titleEnglish" form:"titleEnglish" validate:"required"`
+		TitleArabic  string `json:"titleArabic" form:"titleArabic" validate:"required"`
+		Exists       bool   `json:"exists" form:"exists" validate:"boolean"`
 	}
 
-	ResponseCoreFeature struct {
-		CoreFeatureID int    `json:"coreFeatureId,omitempty" validate:"required,number,gt=0"`
-		Title         string `json:"title,omitempty" validate:"required"`
-		Description   string `json:"description"`
+	requestPrice struct {
+		Currency string  `json:"currency" form:"currency" validate:"required,oneof=JOD USD"`
+		Amount   float64 `json:"amount" form:"amount" validate:"required,number,gt=0"`
 	}
 
-	ResponseFile struct {
-		Title *string `json:"title,omitempty" validate:"required"`
-		Url   string  `json:"url,omitempty" validate:"required,url"`
+	requestAvailability struct {
+		Availability string       `json:"availability" form:"availability" validate:"required,oneof=RENT SALE"`
+		Price        requestPrice `json:"price" form:"price" validate:"required"`
 	}
 
-	ResponsePrice struct {
-		Amount   float64 `json:"amount,omitempty" validate:"required,number,gt=0"`
-		Currency string  `json:"currency,omitempty" validate:"required,oneof=JOD USD"`
+	requestPicture struct {
+		URL   string `json:"url" form:"url" validate:"required,url"`
+		Title string `json:"title" form:"title"`
+	}
+
+	requestLocation struct {
+		CountryID int `json:"countryId" form:"countryId" validate:"required,number"`
+		CityID    int `json:"cityId" form:"cityId" validate:"required,number"`
+		AreaID    int `json:"areaId" form:"areaId" validate:"required,number"`
 	}
 
 	createListingRequest struct {
-		Price         Price          `json:"price,omitempty" validate:"required"`
-		Description   string         `json:"description,omitempty" validate:"required"`
-		ExtraFeatures []ExtraFeature `json:"extraFeatures,omitempty" validate:"dive"`
-		Pictures      []File         `json:"pictures,omitempty" validate:"required,dive"`
-	}
+		Type     string          `json:"type" form:"type" validate:"required,oneof=PROPERTY COMMERCIAL_PROPERTY OFFICE_SPACE RETAIL_SPACE INDUSTRIAL_SPACE MIXED_USE_PROPERTY RESIDENTIAL_PROPERTY APARTMENT VILLA TOWNHOUSE CONDOMINIUM"`
+		Location requestLocation `json:"location" form:"location" validate:"required"`
 
-	responseListing = createListingRequest
+		DescriptionEnglish string `json:"descriptionEnglish" form:"descriptionEnglish" validate:"required"`
+		DescriptionArabic  string `json:"descriptionArabic" form:"descriptionArabic" validate:"required"`
 
-	getListingRequest struct {
-		ID int `param:"id" validate:"required,number"`
+		Bedrooms                   int    `json:"bedrooms" form:"bedrooms" validate:"required,number,gte=0"`
+		BedroomsDescriptionEnglish string `json:"bedroomsDescriptionEnglish" form:"bedroomsDescriptionEnglish" validate:"required"`
+		BedroomsDescriptionArabic  string `json:"bedroomsDescriptionArabic" form:"bedroomsDescriptionArabic" validate:"required"`
+
+		Bathrooms                   int    `json:"bathrooms" form:"bathrooms" validate:"required,number,gte=0"`
+		BathroomsDescriptionEnglish string `json:"bathroomsDescriptionEnglish" form:"bathroomsDescriptionEnglish" validate:"required"`
+		BathroomsDescriptionArabic  string `json:"bathroomsDescriptionArabic" form:"bathroomsDescriptionArabic" validate:"required"`
+
+		YearBuilt                   int    `json:"yearBuilt" form:"yearBuilt" validate:"required,number,min=1900,max=2030"`
+		YearBuiltDescriptionEnglish string `json:"yearBuiltDescriptionEnglish" form:"yearBuiltDescriptionEnglish" validate:"required"`
+		YearBuiltDescriptionArabic  string `json:"yearBuiltDescriptionArabic" form:"yearBuiltDescriptionArabic" validate:"required"`
+
+		Area                   float64 `json:"area" form:"area" validate:"required,number,gte=0"`
+		AreaDescriptionEnglish string  `json:"areaDescriptionEnglish" form:"areaDescriptionEnglish" validate:"required"`
+		AreaDescriptionArabic  string  `json:"areaDescriptionArabic" form:"areaDescriptionArabic" validate:"required"`
+
+		Furnished                   bool   `json:"furnished" form:"furnished" validate:"boolean,required"`
+		FurnishedDescriptionEnglish string `json:"furnishedDescriptionEnglish" form:"furnishedDescriptionEnglish" validate:"required"`
+		FurnishedDescriptionArabic  string `json:"furnishedDescriptionArabic" form:"furnishedDescriptionArabic" validate:"required"`
+
+		ExtraFeatures  []requestExtraFeature `json:"extraFeatures" form:"extraFeatures" validate:"dive,required"`
+		Availabilities []requestAvailability `json:"availabilities" form:"availabilities" validate:"dive,required"`
+		Pictures       []requestPicture      `json:"pictures" form:"pictures" validate:"dive,required"`
 	}
 )
 
-func (r *createListingRequest) ToEntity() Listing {
-	listing := Listing{
-		Description:   r.Description,
-		ExtraFeatures: make([]ExtraFeature, len(r.ExtraFeatures)),
-		Pictures:      make([]File, len(r.Pictures)),
-	}
-
-	for i, extraFeature := range r.ExtraFeatures {
-		listing.ExtraFeatures[i] = ExtraFeature{
-			Title:     extraFeature.Title,
-			Available: extraFeature.Available,
-		}
-	}
-
-	for i, picture := range r.Pictures {
-		listing.Pictures[i] = File{
-			Title: picture.Title,
-			Url:   picture.Url,
-		}
-	}
-
-	return listing
+type getListingRequest struct {
+	ID int `param:"id" validate:"required,number"`
 }

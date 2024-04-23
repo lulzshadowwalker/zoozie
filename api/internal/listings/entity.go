@@ -1,7 +1,5 @@
 package listings
 
-import "time"
-
 type ListingAvailability string
 
 const (
@@ -19,15 +17,18 @@ const (
 
 type (
 	ExtraFeature struct {
-		ID        int    `json:"id,omitempty"`
+		ID        int `json:"id,omitempty"`
+		ListingID int
 		Title     string `json:"title,omitempty"`
 		Available bool   `json:"available"`
 	}
 
-	File struct {
-		ID    int     `json:"id,omitempty"`
-		Title *string `json:"title,omitempty"`
-		Url   string  `json:"url,omitempty"`
+	Picture struct {
+		ID          int `json:"id,omitempty"`
+		ListingID   int
+		Title       *string `json:"title,omitempty"`
+		URL         string  `json:"url,omitempty"`
+		Highlighted bool    `json:"highlighted"`
 	}
 
 	Price struct {
@@ -36,14 +37,21 @@ type (
 	}
 
 	Availability struct {
+		ID           int
 		Availability string `json:"availability,omitempty"`
 		Price        Price  `json:"price,omitempty"`
 	}
 
 	Location struct {
-		Country string `json:"country,omitempty"`
-		City    string `json:"city,omitempty"`
-		Area    string `json:"area,omitempty"`
+		ID      int        `json:"id,omitempty"`
+		Country NamedValue `json:"country,omitempty"`
+		City    NamedValue `json:"city,omitempty"`
+		Area    NamedValue `json:"area,omitempty"`
+	}
+
+	NamedValue struct {
+		ID   int    `json:"id,omitempty"`
+		Name string `json:"name,omitempty"`
 	}
 
 	DescribedValue[T any] struct {
@@ -52,20 +60,23 @@ type (
 	}
 
 	Property struct {
-		Bedrooms  DescribedValue[int]       `json:"bedrooms,omitempty"`
-		Bathrooms DescribedValue[int]       `json:"bathrooms,omitempty"`
-		Area      DescribedValue[float64]   `json:"area,omitempty"`
-		Furnished DescribedValue[bool]      `json:"furnished,omitempty"`
-		YearBuilt DescribedValue[time.Time] `json:"yearBuilt,omitempty"`
-		Status    string                    `json:"status,omitempty"`
+		ID        int                     `json:"-"`
+		ListingID int                     `json:"-"`
+		Bedrooms  DescribedValue[int]     `json:"bedrooms,omitempty"`
+		Bathrooms DescribedValue[int]     `json:"bathrooms,omitempty"`
+		Area      DescribedValue[float64] `json:"area,omitempty"`
+		Furnished DescribedValue[bool]    `json:"furnished,omitempty"`
+		YearBuilt DescribedValue[int]     `json:"yearBuilt,omitempty"`
+		Status    string                  `json:"status,omitempty"`
 	}
 
 	Listing struct {
 		ID             int            `json:"id,omitempty"`
+		AgencyID       int            `json:"agencyId,omitempty"`
 		Type           string         `json:"type"`
 		Description    string         `json:"description,omitempty"`
 		ExtraFeatures  []ExtraFeature `json:"extraFeatures,omitempty"`
-		Pictures       []File         `json:"pictures,omitempty"`
+		Pictures       []Picture      `json:"pictures,omitempty"`
 		Availabilities []Availability `json:"availabilities,omitempty"`
 		Location       Location       `json:"location,omitempty"`
 		Property       *Property      `json:"property,omitempty"`
@@ -75,7 +86,29 @@ type (
 func NewListing() Listing {
 	return Listing{
 		ExtraFeatures:  make([]ExtraFeature, 0),
-		Pictures:       make([]File, 0),
+		Pictures:       make([]Picture, 0),
 		Availabilities: make([]Availability, 0),
 	}
+}
+
+type ListingI18n struct {
+	ListingID    int
+	LanguageCode string
+	Description  string
+}
+
+type ExtraFeatureI18n struct {
+	ExtraFeatureID int
+	LanguageCode   string
+	Title          string
+}
+
+type PropertyI18n struct {
+	PropertyID           int
+	LanguageCode         string
+	BedroomsDescription  string
+	BathroomsDescription string
+	AreaDescription      string
+	FurnishedDescription string
+	YearBuiltDescription string
 }

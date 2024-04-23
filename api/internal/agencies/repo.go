@@ -140,7 +140,6 @@ func (r *repo) CreateAgency(c context.Context, agency Agency, tx interfaces.Tran
 	err := stmt.QueryContext(c, db, &dest)
 	if err != nil {
 		if utils.IsUniquePostgresViolationErr(err) {
-
 			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
 			return Agency{}, fmt.Errorf("failed to register agency because phone number already in use")
 		}
@@ -197,5 +196,24 @@ func (r *repo) CreateAgencyI18n(c context.Context, i18n AgencyI18n, tx interface
 }
 
 func (r *repo) RegisterAgencyAgent(c context.Context, agent AgencyAgent, tx interfaces.Transaction) (AgencyAgent, error) {
-	return AgencyAgent{}, nil
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbAgent DBAgencyAgent
+	stmt := AgencyAgents.INSERT(
+		AgencyAgents.UserID,
+		AgencyAgents.AgencyID,
+	).VALUES(
+		agent.UserID,
+		agent.AgencyID,
+	).RETURNING(AgencyAgents.ID)
+
+	if err := stmt.QueryContext(c, db, &dbAgent); err != nil {
+		return AgencyAgent{}, fmt.Errorf("failed to insert agency agent because %w", err)
+	}
+	agent.ID = int(dbAgent.AgencyAgent.ID)
+
+	return agent, nil
 }

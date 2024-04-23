@@ -134,6 +134,19 @@ func GetUserClaims(c context.Context) (entities.JwtCustomClaims, error) {
 	return *claims, nil
 }
 
+func GetAgencyID(c context.Context) (int, error) {
+	claims, err := GetUserClaims(c)
+	if err != nil {
+		return -1, err
+	}
+
+	if role := claims.Role; role != entities.RoleAgencyAgent {
+		return -1, fmt.Errorf("user is not an agency agent")
+	}
+
+	return claims.AgencyID, nil
+}
+
 type wrappedHandlerFunc func(c echo.Context) error
 
 func Unwrap(fn wrappedHandlerFunc) echo.HandlerFunc {
@@ -193,6 +206,11 @@ func IsUniquePostgresViolationErr(err error) bool {
 	}
 
 	return pgErr.Code == "23505"
+}
+
+func IsForeignKeyPostgresViolationErr(err error) bool {
+	pgErr, ok := err.(*pq.Error)
+	return ok && pgErr.Code.Name() == "foreign_key_violation"
 }
 
 func GenerateSlug(s string) string {

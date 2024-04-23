@@ -1,52 +1,60 @@
 package listings
 
 import (
-	"time"
-
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 )
+
+type DBLocation struct {
+	Location  model.ListingLocations
+	DBCountry struct {
+		Country      model.Countries
+		Translations model.CountriesI18n
+	}
+
+	DBCity struct {
+		City         model.Cities
+		Translations model.CitiesI18n
+	}
+
+	DBArea struct {
+		Area         model.Areas
+		Translations model.AreasI18n
+	}
+}
+
+type DBType struct {
+	Type         model.ListingTypes
+	Translations model.ListingTypesI18n
+}
+
+type DBAvailability struct {
+	Availability        model.Availabilities
+	Price               model.ListingAvailabilityPrices
+	ListingAvailability model.ListingAvailabilities
+}
+
+type DBExtraFeature struct {
+	ExtraFeature model.ListingExtraFeatures
+	Translations model.ListingExtraFeaturesI18n
+}
+
+type DBProperty struct {
+	Property     model.Properties
+	Translations model.PropertiesI18n
+}
 
 type dbListing struct {
 	Listing             model.Listings
 	ListingTranslations model.ListingsI18n
 
-	ExtraFeatures []struct {
-		ExtraFeature model.ListingExtraFeatures
-		Translations model.ListingExtraFeaturesI18n
-	}
+	ExtraFeatures []DBExtraFeature
 
-	Availabilities []struct {
-		Availability        model.Availabilities
-		Price               model.ListingAvailabilityPrices
-		ListingAvailability model.ListingAvailabilities
-	}
+	Availabilities []DBAvailability
+	Location       DBLocation
 
-	Location struct {
-		Country struct {
-			Country      model.Countries
-			Translations model.CountriesI18n
-		}
+	Property *DBProperty
 
-		City struct {
-			City         model.Cities
-			Translations model.CitiesI18n
-		}
-
-		Area struct {
-			Area         model.Areas
-			Translations model.AreasI18n
-		}
-	}
-
-	Property *struct {
-		Property     model.Properties
-		Translations model.PropertiesI18n
-	}
-
-	Type struct {
-		Type         model.ListingTypes
-		Translations model.ListingTypesI18n
-	}
+	Type DBType
 
 	Pictures []model.ListingPictures
 }
@@ -62,12 +70,12 @@ func (l *dbListing) ToEntity() Listing {
 		}
 	}
 
-	pictures := make([]File, len(l.Pictures))
+	pictures := make([]Picture, len(l.Pictures))
 	for index, picture := range l.Pictures {
-		pictures[index] = File{
+		pictures[index] = Picture{
 			ID:    int(picture.ID),
 			Title: picture.Title,
-			Url:   picture.URL,
+			URL:   picture.URL,
 		}
 	}
 
@@ -90,9 +98,9 @@ func (l *dbListing) ToEntity() Listing {
 		Pictures:       pictures,
 		Availabilities: availabilities,
 		Location: Location{
-			Country: l.Location.Country.Translations.Name,
-			City:    l.Location.City.Translations.Name,
-			Area:    l.Location.Area.Translations.Name,
+			Country: NamedValue{Name: l.Location.DBCountry.Translations.Name},
+			City:    NamedValue{Name: l.Location.DBCity.Translations.Name},
+			Area:    NamedValue{Name: l.Location.DBArea.Translations.Name},
 		},
 	}
 
@@ -114,8 +122,8 @@ func (l *dbListing) ToEntity() Listing {
 				Value:       l.Property.Property.Furnished,
 				Description: l.Property.Translations.FurnishedDescription,
 			},
-			YearBuilt: DescribedValue[time.Time]{
-				Value:       l.Property.Property.YearBuilt,
+			YearBuilt: DescribedValue[int]{
+				Value:       int(l.Property.Property.YearBuilt),
 				Description: l.Property.Translations.YearBuiltDescription,
 			},
 		}
