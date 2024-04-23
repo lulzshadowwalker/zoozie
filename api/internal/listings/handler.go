@@ -19,6 +19,7 @@ type (
 		GetListing(context.Context, getListingRequest) (Listing, error)
 		GetAllListings(context.Context) ([]Listing, error)
 		GetListingTypes(context.Context) ([]ListingType, error)
+		GetListingLocations(context.Context) ([]Location, error)
 	}
 )
 
@@ -33,6 +34,7 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/listings", utils.Unwrap(h.GetAllListings))
 	e.GET("/listings/:id", utils.Unwrap(h.GetListing))
 	e.GET("/listings/types", utils.Unwrap(h.GetListingTypes))
+	e.GET("/listings/locations", utils.Unwrap(h.GetListingLocations))
 }
 
 // TODO: write unit test
@@ -98,6 +100,19 @@ func (h *handler) GetListingTypes(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"types": types,
+		},
+	})
+}
+
+func (h *handler) GetListingLocations(c echo.Context) error {
+	locations, err := h.service.GetListingLocations(utils.TransformEchoContext(c))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"locations": locations,
 		},
 	})
 }

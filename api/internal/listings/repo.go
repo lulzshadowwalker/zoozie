@@ -425,3 +425,43 @@ func (r *repo) GetListingTypes(c context.Context, tx interfaces.Transaction) ([]
 
 	return listingTypes, nil
 }
+
+func (r *repo) GetListingLocations(c context.Context, tx interfaces.Transaction) ([]Location, error) {
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt := SELECT(
+		Countries.ID,
+		Countries.Code,
+		CountriesI18n.Name,
+		Cities.ID,
+		CitiesI18n.Name,
+		Areas.ID,
+		AreasI18n.Name,
+	).FROM(
+		Areas.LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Cities, Areas.CityID.EQ(Cities.ID)).
+			LEFT_JOIN(CitiesI18n, Cities.ID.EQ(CitiesI18n.CityID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Countries, Cities.CountryID.EQ(Countries.ID)).
+			LEFT_JOIN(CountriesI18n, Countries.ID.EQ(CountriesI18n.CountryID).AND(CountriesI18n.LanguageCode.EQ(String(language)))),
+	)
+
+	var dbLocation []DBLocation
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if err := stmt.QueryContext(c, db, &dbLocation); err != nil {
+		return nil, fmt.Errorf("failed to query listing locations because %w", err)
+	}
+
+	locations := make([]Location, len(dbLocation))
+	for index, dbLocation := range dbLocation {
+		locations[index] = dbLocation.ToEntity()
+	}
+
+	return locations, nil
+}

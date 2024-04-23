@@ -20,6 +20,7 @@ type (
 		GetListing(c context.Context, id int) (Listing, error)
 		GetAllListings(c context.Context) ([]Listing, error)
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
+		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
 
 		CreateListing(context.Context, Listing, interfaces.Transaction) (Listing, error)
 		CreateListingI18n(context.Context, ListingI18n, interfaces.Transaction) (ListingI18n, error)
@@ -55,13 +56,13 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 	log.Println("agent follows agency: ", agencyID)
 
 	location := Location{
-		Country: NamedValue{
+		Country: Country{
 			ID: request.Location.CountryID,
 		},
-		City: NamedValue{
+		City: City{
 			ID: request.Location.CityID,
 		},
-		Area: NamedValue{
+		Area: Area{
 			ID: request.Location.AreaID,
 		},
 	}
@@ -225,4 +226,8 @@ func (s *service) GetAllListings(c context.Context) ([]Listing, error) {
 
 func (s *service) GetListingTypes(c context.Context) ([]ListingType, error) {
 	return s.repo.GetListingTypes(c, nil)
+}
+
+func (s *service) GetListingLocations(c context.Context) ([]Location, error) {
+	return s.repo.GetListingLocations(c, nil)
 }

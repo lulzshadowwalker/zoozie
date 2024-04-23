@@ -42,16 +42,25 @@ type (
 		Price        Price  `json:"price,omitempty"`
 	}
 
-	Location struct {
-		ID      int        `json:"id,omitempty"`
-		Country NamedValue `json:"country,omitempty"`
-		City    NamedValue `json:"city,omitempty"`
-		Area    NamedValue `json:"area,omitempty"`
-	}
-
 	NamedValue struct {
 		ID   int    `json:"id,omitempty"`
 		Name string `json:"name,omitempty"`
+	}
+
+	Country struct {
+		ID   int    `json:"id,omitempty"`
+		Name string `json:"name,omitempty"`
+		Code string `json:"code,omitempty"`
+	}
+
+	City NamedValue
+	Area NamedValue
+
+	Location struct {
+		ID      int     `json:"id,omitempty"`
+		Country Country `json:"country,omitempty"`
+		City    City    `json:"city,omitempty"`
+		Area    Area    `json:"area,omitempty"`
 	}
 
 	DescribedValue[T any] struct {

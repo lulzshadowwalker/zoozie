@@ -98,9 +98,9 @@ func (l *dbListing) ToEntity() Listing {
 		Pictures:       pictures,
 		Availabilities: availabilities,
 		Location: Location{
-			Country: NamedValue{Name: l.Location.DBCountry.Translations.Name},
-			City:    NamedValue{Name: l.Location.DBCity.Translations.Name},
-			Area:    NamedValue{Name: l.Location.DBArea.Translations.Name},
+			Country: Country{Name: l.Location.DBCountry.Translations.Name},
+			City:    City{Name: l.Location.DBCity.Translations.Name},
+			Area:    Area{Name: l.Location.DBArea.Translations.Name},
 		},
 	}
 
@@ -136,5 +136,24 @@ func (t *DBType) ToEntity() ListingType {
 	return ListingType{
 		Code: t.Type.Code,
 		Name: t.Translations.Name,
+	}
+}
+
+func (l *DBLocation) ToEntity() Location {
+	return Location{
+		ID: int(l.Location.ID),
+		Country: Country{
+			ID:   int(l.DBCountry.Country.ID),
+			Name: l.DBCountry.Translations.Name,
+			Code: l.DBCountry.Country.Code,
+		},
+		City: City{
+			ID:   int(l.DBCity.City.ID),
+			Name: l.DBCity.Translations.Name,
+		},
+		Area: Area{
+			ID:   int(l.DBArea.Area.ID),
+			Name: l.DBArea.Translations.Name,
+		},
 	}
 }
