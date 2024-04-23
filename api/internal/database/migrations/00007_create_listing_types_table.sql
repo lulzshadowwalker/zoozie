@@ -9,13 +9,13 @@ CREATE TABLE listing_types (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE FUNCTION update_updated_at_listing_types() RETURNS TRIGGER AS $ $ BEGIN NEW.updated_at = now();
+CREATE FUNCTION update_updated_at_listing_types() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();
 
 RETURN NEW;
 
 END;
 
-$ $ language 'plpgsql';
+$$ language 'plpgsql';
 
 CREATE TRIGGER update_listing_types_updated_at BEFORE
 UPDATE

@@ -17,15 +17,15 @@ const (
 
 type (
 	ExtraFeature struct {
-		ID        int `json:"id,omitempty"`
-		ListingID int
+		ID        int    `json:"id,omitempty"`
+		ListingID int    `json:"-"`
 		Title     string `json:"title,omitempty"`
 		Available bool   `json:"available"`
 	}
 
 	Picture struct {
-		ID          int `json:"id,omitempty"`
-		ListingID   int
+		ID          int     `json:"id,omitempty"`
+		ListingID   int     `json:"-"`
 		Title       *string `json:"title,omitempty"`
 		URL         string  `json:"url,omitempty"`
 		Highlighted bool    `json:"highlighted"`
@@ -37,7 +37,7 @@ type (
 	}
 
 	Availability struct {
-		ID           int
+		ID           int    `json:"-"`
 		Availability string `json:"availability,omitempty"`
 		Price        Price  `json:"price,omitempty"`
 	}
@@ -111,4 +111,9 @@ type PropertyI18n struct {
 	AreaDescription      string
 	FurnishedDescription string
 	YearBuiltDescription string
+}
+
+type ListingType struct {
+	Name string `json:"name,omitempty"`
+	Code string `json:"code,omitempty"`
 }

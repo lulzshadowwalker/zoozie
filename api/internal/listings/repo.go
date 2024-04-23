@@ -392,3 +392,36 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 
 	return listings, nil
 }
+
+func (r *repo) GetListingTypes(c context.Context, tx interfaces.Transaction) ([]ListingType, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt := SELECT(
+		ListingTypes.AllColumns,
+		ListingTypesI18n.AllColumns,
+	).FROM(
+		ListingTypes.LEFT_JOIN(ListingTypesI18n, ListingTypes.ID.EQ(ListingTypesI18n.ListingTypeID).AND(ListingTypesI18n.LanguageCode.EQ(String(language)))),
+	).WHERE(
+		ListingTypes.ParentTypeID.IS_NOT_NULL(),
+	)
+
+	var dbListingType []DBType
+	if err := stmt.QueryContext(c, db, &dbListingType); err != nil {
+		return nil, fmt.Errorf("failed to query listing types because %w", err)
+	}
+
+	listingTypes := make([]ListingType, len(dbListingType))
+	for index, dbListingType := range dbListingType {
+		listingTypes[index] = dbListingType.ToEntity()
+	}
+
+	return listingTypes, nil
+}

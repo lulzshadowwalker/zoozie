@@ -131,3 +131,10 @@ func (l *dbListing) ToEntity() Listing {
 
 	return listing
 }
+
+func (t *DBType) ToEntity() ListingType {
+	return ListingType{
+		Code: t.Type.Code,
+		Name: t.Translations.Name,
+	}
+}

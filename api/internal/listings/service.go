@@ -19,6 +19,7 @@ type (
 		Begin(context.Context) (interfaces.Transaction, error)
 		GetListing(c context.Context, id int) (Listing, error)
 		GetAllListings(c context.Context) ([]Listing, error)
+		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 
 		CreateListing(context.Context, Listing, interfaces.Transaction) (Listing, error)
 		CreateListingI18n(context.Context, ListingI18n, interfaces.Transaction) (ListingI18n, error)
@@ -220,4 +221,8 @@ func (s *service) GetListing(c context.Context, request getListingRequest) (List
 
 func (s *service) GetAllListings(c context.Context) ([]Listing, error) {
 	return s.repo.GetAllListings(c)
+}
+
+func (s *service) GetListingTypes(c context.Context) ([]ListingType, error) {
+	return s.repo.GetListingTypes(c, nil)
 }
