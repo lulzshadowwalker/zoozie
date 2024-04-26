@@ -2,9 +2,8 @@
 
 import ZoozInput from "@/components/shared/zooz-input";
 import { login, sendOtp } from "@/lib/actions/auth";
-import { useFormState } from "react-dom";
 import { showToast } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import SubmitButton from "@/components/shared/submit-button";
 import Button from "@/components/shared/button";

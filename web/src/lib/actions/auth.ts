@@ -19,7 +19,6 @@ export async function login({
   otp?: string;
 }): Promise<ZoozieUserMessage | undefined> {
   const t = await getTranslations("customer.auth");
-  console.table(phoneNumber);
 
   if (!phoneNumber?.countryCode || !phoneNumber?.phoneNumber || !otp) {
     return {

@@ -23,13 +23,13 @@ export function useFetchApi(
     return fetch(url).then((res) => res.json());
   });
   const endTime = performance.now();
-  if (Config.environment === "development") {
-    console.info(
-      "%s (elapsed time: %f)",
-      url,
-      (endTime - startTime).toFixed(2),
-    );
-  }
+  // if (Config.environment === "development") {
+  //   console.info(
+  //     "%s (elapsed time: %f)",
+  //     url,
+  //     (endTime - startTime).toFixed(2),
+  //   );
+  // }
 
   return res;
 }

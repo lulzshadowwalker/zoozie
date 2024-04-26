@@ -1,213 +1,238 @@
 "use client";
 
 import ZoozInput from "@/components/shared/zooz-input";
-import { useFetchApi } from "@/lib/api";
-import { TCoreFeature } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBed,
+  faCalendarDays,
+  faCouch,
+  faToilet,
+  faUpRightAndDownLeftFromCenter,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { useCreateListing } from "@/lib/context/create-listing";
-import Button from "@/components/shared/button";
-
-// TODO: label translations
+import ZoozCheckbox from "@/components/shared/zooz-checkbox";
+import { useCreateListingStore } from "@/lib/store/create-listing";
+import { useParams } from "next/navigation";
+import { Locale } from "@/lib/i18n/config";
 
 export default function CoreFeatures() {
-  // FIXME: `useFetchApi("/listings/core-features")` doesn't seem to actually cache the response
-  const {
-    data: payload,
-    isLoading,
-    error,
-  } = useFetchApi("/listings/core-features");
   const t = useTranslations("dashboard.create-listing");
-
-  // NOTE: features: data from the api, coreFeatures: state from the useCreatiListingContext
+  const params = useParams();
+  const locale = params.locale as Locale;
   const {
-    coreFeatures,
-    addCoreFeatures,
-    updateCoreFeature,
-    removeCoreFeature,
-  } = useCreateListing();
-  const features = payload?.data?.coreFeatures as TCoreFeature[] | undefined;
+    bedrooms,
+    furnished,
+    bathrooms,
+    yearBuilt,
+    area,
 
-  const [requiredFeatures, optionalFeatures] = useMemo(() => {
-    const required = features?.filter((a) => a.required);
-    const optional = features?.filter((a) => !a.required);
+    arBedroomsDescription: bedroomsDescriptionAr,
+    enBedroomsDescription: bedroomsDescriptionEn,
+    arFurnishedDescription: furnishedDescriptionAr,
+    enFurnishedDescription: furnishedDescriptionEn,
+    arBathroomsDescription: bathroomsDescriptionAr,
+    enBathroomsDescription: bathroomsDescriptionEn,
+    arYearBuiltDescription: yearBuiltDescriptionAr,
+    enYearBuiltDescription: yearBuiltDescriptionEn,
+    arAreaDescription: areaDescriptionAr,
+    enAreaDescription: areaDescriptionEn,
 
-    return [required, optional];
-  }, [features]);
+    setBedrooms,
+    setBathrooms,
+    setFurnished,
+    setYearBuilt,
+    setArea,
+    setBedroomsDescription,
+    setBathroomsDescription,
+    setFurnishedDescription,
+    setYearBuiltDescription,
+    setAreaDescription,
+  } = useCreateListingStore();
 
-  useEffect(
-    function setCoreFeaturesState() {
-      // NOTE: this check if the `CreateListningContext` is already intialized with `coreFeatures`
-      // if not add the required coreFeatures from the api
-      if (!coreFeatures?.[0] && requiredFeatures) {
-        addCoreFeatures(...requiredFeatures);
-      }
-    },
-    [requiredFeatures, coreFeatures, addCoreFeatures],
-  );
-
-  if (isLoading) {
-    return <h1>Shimmer</h1>;
+  function getBedroomsDescription() {
+    return locale === "en" ? bedroomsDescriptionEn : bedroomsDescriptionAr;
   }
 
-  if (error) {
-    throw new Error("failed to fetch core features because " + error);
+  function getBathroomsDescription() {
+    return locale === "en" ? bathroomsDescriptionEn : bathroomsDescriptionAr;
   }
 
-  if (!features) {
-    throw new Error("core features cannot be empty");
+  function getYearBuiltDescription() {
+    return locale === "en" ? yearBuiltDescriptionEn : yearBuiltDescriptionAr;
+  }
+
+  function getAreaDescription() {
+    return locale === "en" ? areaDescriptionEn : areaDescriptionAr;
+  }
+
+  function getFurnishedDescription() {
+    return locale === "en" ? furnishedDescriptionEn : furnishedDescriptionAr;
   }
 
   return (
-    <section className="mt-l-xl pt-l-xl border-t flex items-start">
+    <section className="mt-l-xl flex items-start border-t pt-l-xl">
       <div className="flex-grow">
-        <h2 className="text-xl font-medium">What this place offers</h2>
-        <ul className="flex flex-col gap-m-l mt-m-l">
-          {coreFeatures?.map((feature, index) => {
-            const { name, description, required, icon } = feature;
+        <h2 className="text-xl font-medium">{t("what-this-place-offers")}</h2>
+        <ul className="mt-m-l flex flex-col gap-m-l">
+          <li className="relative flex items-start gap-s-m">
+            <div className="flex items-center justify-center rounded-2xl border border-gray-400 bg-gray-300/5 p-xs-s text-gray-400">
+              <FontAwesomeIcon icon={faCalendarDays} size="lg" />
+            </div>
+            <div className="flex-grow space-y-[0.8rem] self-center">
+              <ZoozInput
+                id="year-built-title"
+                type="number"
+                max={2030}
+                min={1900}
+                labelClassName="sr-only"
+                label={`${t("year-built")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                placeholder="2000"
+                required
+                value={yearBuilt}
+                onChange={({ target: { value } }) => setYearBuilt(value)}
+              />
 
-            return (
-              <li className="flex items-start gap-s-m relative" key={index}>
-                <div className="border border-gray-400 bg-gray-300/5 rounded-2xl p-xs-s text-gray-400 flex items-center justify-center">
-                  <Image
-                    src={icon ?? ""}
-                    title={name ?? ""}
-                    alt={name ?? ""}
-                    width={32}
-                    height={32}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="self-center space-y-[0.8rem] flex-grow">
-                  <ZoozInput
-                    id={`core-feature-title-${index}`}
-                    label={`${name} ${t("title")}`}
-                    labelClassName="sr-only"
-                    containerClassName="border-2 border-gray-300 border-dashed"
-                    placeholder={
-                      description ??
-                      `${name ?? ""} ⎯ ${t("core-feature-title")}`
-                    }
-                    required={required}
-                    onChange={({ target: { value } }) =>
-                      // TODO: use an id instead of name
-                      updateCoreFeature({ ...feature, titleInput: value })
-                    }
-                  />
-                  <ZoozInput
-                    id={`core-feature-description-${index}`}
-                    label={`${name} ${t("description")}`}
-                    containerClassName="border-2 border-gray-300 border-dashed"
-                    labelClassName="sr-only"
-                    placeholder={`${name} - ${t("core-feature-description")} (optional)`}
-                    onChange={({ target: { value } }) =>
-                      // TODO: use an id instead of name
-                      updateCoreFeature({ ...feature, descriptionInput: value })
-                    }
-                  />
-                </div>
+              <ZoozInput
+                id="year-built-description"
+                label={`${t("year-built")} ${t("description")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                labelClassName="sr-only"
+                placeholder={`${t("description")} (${t("optional")}) `}
+                value={getYearBuiltDescription()}
+                onChange={({ target: { value } }) =>
+                  setYearBuiltDescription(locale, value)
+                }
+              />
+            </div>
+          </li>
 
-                {!feature.required && (
-                  <Button
-                    typ="secondary"
-                    square
-                    className="absolute end-0 translate-x-1/2 -translate-y-1/2 h-[3rem] w-[3rem] flex items-center justify-center hover:bg-red-400 hover:text-gray-50 focus:bg-red-200 focus:text-gray-50"
-                    onClick={() => removeCoreFeature(feature)}
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </Button>
-                )}
-              </li>
-            );
-          })}
+          <li className="relative flex items-start gap-s-m">
+            <div className="flex items-center justify-center rounded-2xl border border-gray-400 bg-gray-300/5 p-xs-s text-gray-400">
+              <FontAwesomeIcon icon={faToilet} size="lg" />
+            </div>
+            <div className="flex-grow space-y-[0.8rem] self-center">
+              <ZoozInput
+                id="bathrooms-title"
+                type="number"
+                label={`${t("bathrooms")} ${t("title")}`}
+                labelClassName="sr-only"
+                containerClassName="border-2 border-gray-300 border-dashed"
+                placeholder={`${t("bathrooms")} ⎯ ${t("bathrooms-title-description")}`}
+                required
+                value={bathrooms}
+                onChange={({ target: { value } }) =>
+                  setBathrooms(Number(value))
+                }
+              />
 
-          {optionalFeatures && (
-            <li
-              className="flex items-start gap-s-m"
-              title={t("add-core-feature")}
-            >
-              <CoreFeaturesDropdown features={optionalFeatures} />
-            </li>
-          )}
+              <ZoozInput
+                id="bathrooms-description"
+                label={`${t("bathrooms")}} ${t("description")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                labelClassName="sr-only"
+                placeholder={`${t("description")} (${t("optional")}) `}
+                value={getBathroomsDescription()}
+                onChange={({ target: { value } }) =>
+                  setBathroomsDescription(locale, value)
+                }
+              />
+            </div>
+          </li>
 
-          <li title={t("add-core-feature")}></li>
+          <li className="relative flex items-start gap-s-m">
+            <div className="flex items-center justify-center rounded-2xl border border-gray-400 bg-gray-300/5 p-xs-s text-gray-400">
+              <FontAwesomeIcon icon={faBed} size="lg" />
+            </div>
+            <div className="flex-grow space-y-[0.8rem] self-center">
+              <ZoozInput
+                id="bedrooms-title"
+                type="number"
+                label={`${t("bedrooms")} ${t("title")}`}
+                labelClassName="sr-only"
+                containerClassName="border-2 border-gray-300 border-dashed"
+                placeholder={`${t("bedrooms")} ⎯ ${t("bedrooms-title-description")}`}
+                required
+                value={bedrooms}
+                onChange={({ target: { value } }) => setBedrooms(Number(value))}
+              />
+
+              <ZoozInput
+                id="bedrooms-description"
+                label={`${t("bedrooms")} ${t("description")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                labelClassName="sr-only"
+                placeholder={`${t("description")} (${t("optional")}) `}
+                value={getBedroomsDescription()}
+                onChange={({ target: { value } }) =>
+                  setBedroomsDescription(locale, value)
+                }
+              />
+            </div>
+          </li>
+
+          <li className="relative flex items-start gap-s-m">
+            <div className="flex items-center justify-center rounded-2xl border border-gray-400 bg-gray-300/5 p-xs-s text-gray-400">
+              <FontAwesomeIcon
+                icon={faUpRightAndDownLeftFromCenter}
+                size="lg"
+              />
+            </div>
+            <div className="flex-grow space-y-[0.8rem] self-center">
+              <ZoozInput
+                id="area-title"
+                type="number"
+                label={`${t("area")} ${t("title")}`}
+                labelClassName="sr-only"
+                containerClassName="border-2 border-gray-300 border-dashed"
+                placeholder={`${t("area")} ⎯ ${t("area-title-description")}`}
+                required
+                value={area}
+                onChange={({ target: { value } }) => setArea(Number(value))}
+              />
+
+              <ZoozInput
+                id="area-description"
+                label={`${t("area")} ${t("description")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                labelClassName="sr-only"
+                placeholder={`${t("description")} (${t("optional")}) `}
+                value={getAreaDescription()}
+                onChange={({ target: { value } }) =>
+                  setAreaDescription(locale, value)
+                }
+              />
+            </div>
+          </li>
+
+          <li className="relative flex items-start gap-s-m">
+            <div className="flex items-center justify-center rounded-2xl border border-gray-400 bg-gray-300/5 p-xs-s text-gray-400">
+              <FontAwesomeIcon icon={faCouch} size="lg" />
+            </div>
+            <div className="flex-grow space-y-[0.8rem] self-center">
+              <ZoozCheckbox
+                id="furnished-title"
+                label={t("furnished")}
+                required
+                checked={furnished}
+                onChange={({ target: { checked } }) => setFurnished(!!checked)}
+              />
+
+              <ZoozInput
+                id="furnished-description"
+                label={`${t("furnished")} ${t("description")}`}
+                containerClassName="border-2 border-gray-300 border-dashed"
+                labelClassName="sr-only"
+                placeholder={`${t("description")} (${t("optional")}) `}
+                value={getFurnishedDescription()}
+                onChange={({ target: { value } }) =>
+                  setFurnishedDescription(locale, value)
+                }
+              />
+            </div>
+          </li>
         </ul>
       </div>
     </section>
-  );
-}
-
-function CoreFeaturesDropdown({
-  features,
-}: {
-  features: Partial<TCoreFeature>[];
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { coreFeatures, addCoreFeatures } = useCreateListing();
-
-  const notIncludedFeatures = useMemo(() => {
-    return features.filter(
-      (feature) => !coreFeatures?.find((a) => a.name === feature.name),
-    );
-  }, [coreFeatures, features]);
-
-  function toggleMenu() {
-    setIsOpen((prev) => !prev);
-  }
-
-  function insertFeature(feature: Partial<TCoreFeature>) {
-    addCoreFeatures(feature);
-    toggleMenu();
-  }
-
-  if (!notIncludedFeatures?.length) {
-    return <></>;
-  }
-
-  return (
-    <div className="relative">
-      <button
-        id="optional-features-dropdown"
-        className="outline-none transition-all text-gray-400 border-gray-300 focus:text-on-primary-1 focus:border-on-primary-1"
-        type="button"
-        onClick={toggleMenu}
-      >
-        <FontAwesomeIcon
-          icon={faPlus}
-          size="lg"
-          className="border-inherit border-2 border-dashed bg-gray-50 rounded-2xl p-xs-s flex items-center justify-center transition-all hover:bg-gray-100 cursor-pointer"
-        />
-      </button>
-
-      <div
-        id="dropdown"
-        className={cn(
-          "absolute start-[6rem] top-0 z-10 bg-primary-1 divide-y divide-gray-100 rounded-lg shadow w-[28rem] dark:shadow-none dark:bg-gray-700",
-          {
-            hidden: !isOpen,
-          },
-        )}
-      >
-        <ul
-          className="py-4 text-lg text-on-primary-1/80"
-          aria-labelledby="optional-features-dropdown"
-        >
-          {notIncludedFeatures?.map((feature, index) => (
-            <li key={index} className="block">
-              <button
-                className="w-full flex px-4 py-3 outline-none transition-all hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white focus:bg-gray-100 dark:focus:bg-gray-600 dark:focus:text-white"
-                onClick={() => insertFeature(feature)}
-              >
-                {feature.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
   );
 }

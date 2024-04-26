@@ -51,7 +51,7 @@ type (
 		AreaDescriptionEnglish string  `json:"areaDescriptionEnglish" form:"areaDescriptionEnglish" validate:"required"`
 		AreaDescriptionArabic  string  `json:"areaDescriptionArabic" form:"areaDescriptionArabic" validate:"required"`
 
-		Furnished                   bool   `json:"furnished" form:"furnished" validate:"boolean,required"`
+		Furnished                   bool   `json:"furnished" form:"furnished" validate:"boolean"`
 		FurnishedDescriptionEnglish string `json:"furnishedDescriptionEnglish" form:"furnishedDescriptionEnglish" validate:"required"`
 		FurnishedDescriptionArabic  string `json:"furnishedDescriptionArabic" form:"furnishedDescriptionArabic" validate:"required"`
 

@@ -2,6 +2,7 @@ package uploads
 
 import (
 	"context"
+	"log"
 	"mime/multipart"
 	"strings"
 
@@ -29,6 +30,8 @@ func (s *service) Upload(c context.Context, files []*multipart.FileHeader) ([]Up
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("user id uploads", uid)
 
 	entities := make([]Upload, len(files))
 	for index, file := range files {

@@ -9,17 +9,17 @@ export default async function PriceCard() {
   const t = await getTranslations("dashboard.create-listing");
 
   return (
-    <div className="w-full border border-gray-400 bg-gray-300/20 rounded-2xl px-s-m py-m-l top-[3rem] mt-l-xl lg:sticky lg:max-w-[34rem]">
+    <div className="top-[3rem] mt-l-xl w-full rounded-2xl border border-gray-400 bg-gray-300/20 px-s-m py-m-l lg:sticky lg:max-w-[34rem]">
       <Price />
 
       <article>
         <h2 className="text-xl font-medium">{t("contact-information")}</h2>
-        <ul className="flex flex-col gap-2xs-xs mt-xs-s">
+        <ul className="mt-xs-s flex flex-col gap-2xs-xs">
           <li className="flex items-center gap-3xs-2xs">
             <FontAwesomeIcon icon={faEnvelope} />
             <a
               href="mailto:email@example.com"
-              className="text-lg text-gray-600 font-light"
+              className="text-lg font-light text-gray-600"
             >
               email@example.com
             </a>
@@ -29,7 +29,7 @@ export default async function PriceCard() {
             <FontAwesomeIcon icon={faMobile} />
             <a
               href="tel:07912345678"
-              className="text-lg text-gray-600 font-light"
+              className="text-lg font-light text-gray-600"
             >
               079 982 0981
             </a>
@@ -37,7 +37,7 @@ export default async function PriceCard() {
         </ul>
       </article>
 
-      <Button className="w-full mt-xl-2xl py-xs-s lg:py-3xs-2xs">
+      <Button className="mt-xl-2xl w-full py-xs-s lg:py-3xs-2xs">
         {t("message")}
       </Button>
     </div>

@@ -21,11 +21,13 @@ var baseQueryStatement = SELECT(
 	UserPhoneNumbers.CountryCode,
 	UserPhoneNumbers.PhoneNumber,
 	UserRoles.Name,
+	AgencyAgents.AllColumns,
 ).
 	FROM(
 		Users.
 			LEFT_JOIN(UserPhoneNumbers, Users.ID.EQ(UserPhoneNumbers.UserID)).
-			LEFT_JOIN(UserRoles, Users.Role.EQ(UserRoles.ID)),
+			LEFT_JOIN(UserRoles, Users.Role.EQ(UserRoles.ID)).
+			LEFT_JOIN(AgencyAgents, Users.ID.EQ(AgencyAgents.UserID)),
 	)
 
 type repo struct {

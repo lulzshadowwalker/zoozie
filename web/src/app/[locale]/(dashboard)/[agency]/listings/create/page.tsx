@@ -9,8 +9,8 @@ import CoreFeatures from "@/components/dashboard/listings/core-features";
 import PriceCard from "@/components/dashboard/listings/price-card";
 import DescriptionInput from "@/components/dashboard/listings/core-features/description-input";
 import ExtraFeatures from "@/components/dashboard/listings/extra-features";
-
-export const dynamic = "force-static";
+import BasicInfo from "@/components/dashboard/listings/basic-info";
+import SaveButton from "@/components/dashboard/listings/save-button";
 
 export default async function Listing({ params: { locale } }: IBasePageParams) {
   unstable_setRequestLocale(locale);
@@ -22,8 +22,10 @@ export default async function Listing({ params: { locale } }: IBasePageParams) {
 
       <div className="my-xl-2xl">
         <ImageInput />
-        <section className="max-w-page mx-auto px-page flex flex-col-reverse lg:flex-row lg:gap-m-l lg:items-start">
+
+        <section className="mx-auto flex max-w-page flex-col-reverse px-page lg:flex-row lg:items-start lg:gap-m-l">
           <section className="flex-grow">
+            <BasicInfo />
             <CoreFeatures />
             <DescriptionInput />
 
@@ -34,14 +36,13 @@ export default async function Listing({ params: { locale } }: IBasePageParams) {
           <PriceCard />
         </section>
 
-        {/* FIXME: I think the padding needs to be fixed on this on or above */}
-        <section className="max-w-page mx-duto px-page">
-          <article className="mt-l-xl pt-l-xl border-t">
-            <h2 className="text-xl font-medium">About this agency</h2>
+        <section className="mx-auto max-w-page px-page">
+          <article className="mt-l-xl border-t pt-l-xl">
+            <h2 className="text-xl font-medium"> {t("about-this-agency")} </h2>
 
             <div className="flex flex-col items-stretch gap-xs-s md:flex-row md:items-center">
-              <div className="flex items-center gap-xs-s my-m-l">
-                <div className="md:w-[15rem] w-[10rem] aspect-square rounded-full relative overflow-hidden">
+              <div className="my-m-l flex items-center gap-xs-s">
+                <div className="relative aspect-square w-[10rem] overflow-hidden rounded-full md:w-[15rem]">
                   <ZoozImage
                     src="https://images.unsplash.com/photo-1709418354495-fc4e5dd6d1f3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     alt=""
@@ -56,28 +57,28 @@ export default async function Listing({ params: { locale } }: IBasePageParams) {
 
                 <div>
                   <Link href="/agencies/foo">
-                    <h3 className="text-xl font-light cursor-pointer">
+                    <h3 className="cursor-pointer text-xl font-light">
                       Railway Real-estate™
                     </h3>
                   </Link>
                   <Link
                     href="/agencies/foo#reviews"
-                    className="text-base text-gray-500 font-light underline-offset-4 hover:underline cursor-pointer"
+                    className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline"
                   >
-                    5.0 (12 reviews)
+                    5.0 (12 {t("reviews")})
                   </Link>
                 </div>
               </div>
 
               <Button
                 typ="secondary"
-                className="ms-0 py-xs-s md:py-3xs-2xs md:ms-auto"
+                className="ms-0 py-xs-s md:ms-auto md:py-3xs-2xs"
               >
                 Follow
               </Button>
             </div>
 
-            <p className="text-lg text-gray-500 max-w-readable mt-s-m">
+            <p className="mt-s-m max-w-readable text-lg text-gray-500">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Est
               minima odio quod mollitia optio ipsum iusto cumque laboriosam
               officia fuga dolorum vel eos reprehenderit ab excepturi harum
@@ -89,6 +90,7 @@ export default async function Listing({ params: { locale } }: IBasePageParams) {
           </article>
         </section>
       </div>
+      <SaveButton />
     </main>
   );
 }

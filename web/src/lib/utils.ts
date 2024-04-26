@@ -1,8 +1,12 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, ClassValue } from "clsx";
 import { ZoozieUserMessage } from "@types";
+import { StoreApi, UseBoundStore } from "zustand";
 import { toast } from "react-toastify";
 import { getTranslations } from "next-intl/server";
+import { Locale } from "./i18n/config";
+import path from "path";
+import Config from "./config";
 
 /**
  * intelligently applies your tailwind overrides and conditional classes
@@ -62,5 +66,59 @@ function showToastSync(message: ZoozieUserMessage): void {
       break;
     default:
       console.error("utils.showToast: unknown message status", message);
+  }
+}
+
+/**
+ * Translates text from one language to another using the internal API
+ * @param input Text to be translated
+ * @param from Source language code
+ * @param to Destination language code
+ * @returns Promise that resolves to the translated text if successful, or undefined if there was an error
+ */
+export async function translate(
+  input: string,
+  from: Locale,
+  to: Locale,
+): Promise<string | undefined> {
+  try {
+    console.info("translate: translating", input, from, to);
+    const uri = Config.translationApiBaseUrl;
+    if (!uri) {
+      console.error("translationApiBaseUrl is not set");
+      return undefined;
+    }
+
+    const url = path.join(uri, "translate");
+    const res = await fetch(new URL(url).href, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        q: input,
+        source: from,
+        target: to,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("translate: failed to translate", res.statusText);
+      return undefined;
+    }
+
+    const payload = await res.json();
+    const translatedText = payload?.translatedText as string | undefined;
+
+    if (!translatedText) {
+      console.error("translatedText cannot be empty");
+      return undefined;
+    }
+
+    console.info("translate: translated", translatedText);
+    return translatedText;
+  } catch (e) {
+    console.error("translate: failed to translate", e);
+    return undefined;
   }
 }

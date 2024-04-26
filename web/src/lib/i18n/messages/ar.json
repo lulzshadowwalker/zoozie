@@ -1,35 +1,127 @@
 {
-    "currency": {
-        "jod": "JOD"
+  "currency": {
+    "jod": "دينار أردني"
+  },
+  "listing-card": {
+    "edit": "تحرير"
+  },
+  "customer": {
+    "auth": {
+      "user-not-found": "المستخدم غير موجود. الرجاء التحقق من بريدك الإلكتروني والمحاولة مرة أخرى.",
+      "user-deactivated": "تم تعطيل حسابك. الرجاء التواصل مع الدعم لمزيد من المعلومات.",
+      "invalid-credentials": "البريد الإلكتروني أو كلمة المرور غير صالحة. الرجاء المحاولة مرة أخرى.",
+      "failure": "حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى في وقت لاحق.",
+      "success": "تم تسجيل الدخول بنجاح! مرحبًا بك مجددًا.",
+      "welcome-back": "مرحبًا مجددًا، سجل الدخول إلى حسابك",
+      "enter-credentials": "أدخل بيانات الاعتماد الخاصة بك للمتابعة",
+      "enter-phone-number-to-continue": "أدخل رقم هاتفك للمتابعة",
+      "sign-in": "تسجيل الدخول",
+      "sign-up": "التسجيل",
+      "name": "الاسم",
+      "name-placeholder": "جون دو",
+      "email": "عنوان البريد الإلكتروني",
+      "country-code": "رمز البلد",
+      "phone-number": "رقم الهاتف",
+      "bad-request": "الرجاء إدخال التفاصيل بشكل صحيح",
+      "customer-register-success": "شكرًا لتسجيلك، يرجى التحقق من هاتفك للتحقق.",
+      "verification-code": "رمز التحقق",
+      "enter-verification-code": "أدخل الرمز المرسل إلى رقم هاتفك",
+      "verify": "تحقق",
+      "resend-code": "إعادة إرسال",
+      "otp-sent-successfully": "تم إرسال رمز التحقق بنجاح",
+      "otp-sent-failure": "فشل في إرسال رمز التحقق. الرجاء المحاولة مرة أخرى في وقت لاحق.",
+      "otp-expired": "انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد.",
+      "otp-invalid": "رمز التحقق غير صالح. الرجاء المحاولة مرة أخرى.",
+      "otp-verified-successfully": "تم التحقق من رقم الهاتف بنجاح.",
+      "seconds": "ث",
+      "discover-your-dream-home": "اكتشف منزل أحلامك",
+      "fill-in-your-details": "ادخل تفاصيلك لتفتح الباب"
     },
-    "customer": {
-        "header-navigation-bar": {
-            "avatar": "الصورة الرمزية"
-        },
-        "home": {
-            "featured-listings": "القوائم المميزة",
-            "partners": "شركاؤنا",
-            "appreciate-trust": "شكرا لثقتكم",
-            "view-more": "عرض المزيد",
-            "total-visits": "إجمالي الزيارات"
-        },
-        "agency": {
-            "view-more": "عرض المزيد",
-            "view-listings": "عرض القوائم"
-        },
-        "account-favorites": {
-            "your-favorites": "مفضلاتك"
-        },
-        "listings": {
-            "filters": "مرشحات",
-            "minimum": "الحد الأدنى",
-            "maximum": "الحد الأقصى",
-            "clear": "مسح الكل"
-        }
+    "header-navigation-bar": {
+      "avatar": "الصورة الرمزية"
     },
-    "dashboard": {
-        "home": {
-            "test": "هل يعمل!"
-        }
+    "home": {
+      "featured-listings": "القوائم المميزة",
+      "partners": "شركاؤنا",
+      "appreciate-trust": "شكرًا لثقتك",
+      "view-more": "عرض المزيد",
+      "total-visits": "إجمالي الزيارات"
+    },
+    "agency": {
+      "view-more": "عرض المزيد",
+      "view-listings": "عرض القوائم"
+    },
+    "account-favorites": {
+      "your-favorites": "المفضلة لديك"
+    },
+    "listings": {
+      "filters": "مرشحات",
+      "minimum": "الحد الأدنى",
+      "maximum": "الحد الأقصى",
+      "clear": "مسح الكل"
     }
+  },
+  "dashboard": {
+    "side-navigation-bar": {
+      "home": "الرئيسية",
+      "listings": "القوائم",
+      "market-insights": "رؤى السوق",
+      "ad-center": "مركز الإعلانات",
+      "messages": "الرسائل",
+      "agency-information": "معلومات الوكالة",
+      "settings": "الإعدادات",
+      "sign-out": "تسجيل الخروج"
+    },
+    "create-listing": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "create-listing": "إنشاء القائمة",
+      "click-to-upload": "انقر للتحميل",
+      "or-drag-and-drop": "أو اسحب وأسقط",
+      "core-feature-title": "العنوان",
+      "core-feature-description": "الوصف",
+      "add-core-feature": "إضافة ميزة",
+      "contact-information": "معلومات الاتصال",
+      "message": "رسالة",
+      "price": "السعر",
+      "listing-description": "وصف القائمة",
+      "about-this-home": "حول هذا المنزل",
+      "extra-features": "ميزات ووسائل راحة إضافية",
+      "extra-feature": "ميزة إضافية",
+      "title-input": "العنوان",
+      "additional-feature": "ميزة إضافية",
+      "what-this-place-offers": "ما يقدمه هذا المكان",
+      "optional": "اختياري",
+      "bedrooms": "غرف النوم",
+      "bedrooms-title-description": "كم غرفة نوم تقدمها هذه الشقة",
+      "bathrooms": "الحمامات",
+      "bathrooms-title-description": "كم حمام تقدمه هذه الشقة",
+      "year-built": "سنة البناء",
+      "year-built-title-description": "في أي سنة تم بناء هذه العقار؟",
+      "square-feet": "قدم مربع",
+      "availability": "التوفر",
+      "availability-description": "هل تريد بيع أم تأجير هذا العقار؟",
+      "rent": "للإيجار",
+      "sale": "للبيع",
+      "rent-price": "سعر الإيجار",
+      "sale-price": "سعر البيع",
+      "area": "المساحة",
+      "area-title-description": "ما هي مساحة هذا العقار؟ (قدم مربع)",
+      "furnished": "مفروش",
+      "furnished-title-description": "هل هذا العقار مفروش؟",
+      "about-this-agency": "عن هذه الوكالة",
+      "reviews": "التقييمات",
+      "basic-info": "المعلومات الأساسية",
+      "approximate-location": "الموقع التقريبي",
+      "choose-an-area": "اختر منطقة",
+      "property-type": "نوع العقار",
+      "choose-a-type": "اختر نوعًا",
+      "unknown-area": "منطقة غير معروفة",
+      "unknown-type": "نوع غير معروف",
+      "save": "حفظ"
+    }
+  },
+  "admin": {
+    "agencies": {}
+  }
 }

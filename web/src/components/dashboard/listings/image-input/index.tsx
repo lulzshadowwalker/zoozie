@@ -7,10 +7,11 @@ import ZoozImage from "@/components/shared/zooz-image";
 import Marquee from "react-fast-marquee";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { useCreateListing } from "@/lib/context/create-listing";
+import { useCreateListingStore } from "@/lib/store/create-listing";
 
 export default function ImageInput() {
-  const { pictures, addPictures } = useCreateListing();
+  const pictures = useCreateListingStore((state) => state.pictures);
+  const addPictures = useCreateListingStore((state) => state.addPictures);
 
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
@@ -29,7 +30,7 @@ export default function ImageInput() {
         name="pictures[]"
         onChange={handleInputChange}
       />
-      <div className="min-h-[55rem] relative mx-auto max-w-page rounded-xl overflow-hidden cursor-pointer bg-blue-200">
+      <div className="relative mx-auto min-h-[55rem] max-w-page cursor-pointer overflow-hidden rounded-xl bg-blue-200">
         {pictures?.[0] ? (
           <_HightlightedImagePreview image={pictures[0]} />
         ) : (
@@ -39,15 +40,15 @@ export default function ImageInput() {
 
       {/* NOTE: for some reason `<Marquee>` doesn't seem to load until all the children are loaded or something of sorts 
         so this wrapper div is to prevent cls */}
-      <div className="md:min-h-[26rem] min-h-[16rem] mt-m-l">
+      <div className="mt-m-l min-h-[16rem] md:min-h-[26rem]">
         <Marquee autoFill speed={30}>
           {(pictures ?? [...Array(5)]).map((image, index) => (
             <div
               key={index}
               className={cn(
-                "relative md:min-h-[26rem] min-h-[16rem] aspect-square mx-2xs-xs rounded-xl overflow-hidden bg-gray-50",
+                "relative mx-2xs-xs aspect-square min-h-[16rem] overflow-hidden rounded-xl bg-gray-50 md:min-h-[26rem]",
                 {
-                  "flex items-center justify-center border-2 border-gray-300 border-dashed":
+                  "flex items-center justify-center border-2 border-dashed border-gray-300":
                     !pictures?.[0],
                 },
               )}
@@ -81,14 +82,14 @@ function _ImageInput() {
   const t = useTranslations("dashboard.create-listing");
 
   return (
-    <div className="flex items-center justify-center w-full absolute inset-0">
+    <div className="absolute inset-0 flex w-full items-center justify-center">
       <label
         htmlFor="dropzone-file"
-        className="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 transition-all dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+        className="dark:hover:bg-bray-800 flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 transition-all hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
       >
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+        <div className="flex flex-col items-center justify-center pb-6 pt-5">
           <svg
-            className="w-[8rem] h-[8rem] mb-[1.6rem] text-gray-500 dark:text-gray-400"
+            className="mb-[1.6rem] h-[8rem] w-[8rem] text-gray-500 dark:text-gray-400"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
