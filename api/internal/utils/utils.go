@@ -147,6 +147,19 @@ func GetAgencyID(c context.Context) (int, error) {
 	return claims.AgencyID, nil
 }
 
+func GetCustomerID(c context.Context) (int, error) {
+	claims, err := GetUserClaims(c)
+	if err != nil {
+		return -1, err
+	}
+
+	if role := claims.Role; role != entities.RoleCustomer {
+		return -1, fmt.Errorf("user is not a customer")
+	}
+
+	return claims.CustomerID, nil
+}
+
 type wrappedHandlerFunc func(c echo.Context) error
 
 func Unwrap(fn wrappedHandlerFunc) echo.HandlerFunc {

@@ -8,7 +8,7 @@ import (
 	"github.com/google/wire"
 )
 
-func Init(databse *sql.DB) *handler {
+func Init(database *sql.DB) *handler {
 	wire.Build(
 		NewHandler,
 		NewService,

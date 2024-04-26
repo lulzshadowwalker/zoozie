@@ -28,7 +28,7 @@ type (
 	}
 
 	customersRepo interface {
-		CreateCustomer(context.Context, customers.Customer) (customers.Customer, error)
+		CreateCustomer(context.Context, customers.Customer, interfaces.Transaction) (customers.Customer, error)
 	}
 
 	otpRepo interface {

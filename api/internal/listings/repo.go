@@ -465,3 +465,70 @@ func (r *repo) GetListingLocations(c context.Context, tx interfaces.Transaction)
 
 	return locations, nil
 }
+
+func (r *repo) GetListingsByCustomerID(c context.Context, customerID int, tx interfaces.Transaction) ([]Listing, error) {
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: refactor into a view
+	stmt := SELECT(
+		Listings.AllColumns,
+		ListingsI18n.AllColumns,
+		Availabilities.AllColumns,
+		ListingAvailabilities.AllColumns,
+		ListingAvailabilityPrices.AllColumns,
+		ListingExtraFeatures.AllColumns,
+		ListingExtraFeaturesI18n.AllColumns,
+		ListingPictures.AllColumns,
+		ListingTypes.AllColumns,
+		ListingTypesI18n.AllColumns,
+		ListingLocations.AllColumns,
+		Countries.AllColumns,
+		CountriesI18n.AllColumns,
+		Cities.AllColumns,
+		CitiesI18n.AllColumns,
+		Areas.AllColumns,
+		AreasI18n.AllColumns,
+		Properties.AllColumns,
+		PropertiesI18n.AllColumns,
+	).FROM(
+		Listings.
+			LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID).AND(ListingsI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingExtraFeatures, Listings.ID.EQ(ListingExtraFeatures.ListingID)).
+			LEFT_JOIN(ListingExtraFeaturesI18n, ListingExtraFeatures.ID.EQ(ListingExtraFeaturesI18n.ListingExtraFeaturesID).AND(ListingExtraFeaturesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)).
+			LEFT_JOIN(ListingAvailabilities, Listings.ID.EQ(ListingAvailabilities.ListingID)).
+			LEFT_JOIN(Availabilities, ListingAvailabilities.AvailabilityID.EQ(Availabilities.ID)).
+			LEFT_JOIN(ListingAvailabilityPrices, ListingAvailabilities.ID.EQ(ListingAvailabilityPrices.ListingAvailabilityID)).
+			LEFT_JOIN(ListingTypes, Listings.TypeID.EQ(ListingTypes.ID)).
+			LEFT_JOIN(ListingTypesI18n, ListingTypes.ID.EQ(ListingTypesI18n.ListingTypeID).AND(ListingTypesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(ListingLocations, Listings.LocationID.EQ(ListingLocations.ID)).
+			LEFT_JOIN(Countries, ListingLocations.CountryID.EQ(Countries.ID)).
+			LEFT_JOIN(CountriesI18n, Countries.ID.EQ(CountriesI18n.CountryID).AND(CountriesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Cities, ListingLocations.CityID.EQ(Cities.ID)).
+			LEFT_JOIN(CitiesI18n, Cities.ID.EQ(CitiesI18n.CityID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Areas, ListingLocations.AreaID.EQ(Areas.ID)).
+			LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Properties, Listings.ID.EQ(Properties.ListingID)).
+			LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language)))).
+			INNER_JOIN(CustomerFavoriteListings, Listings.ID.EQ(CustomerFavoriteListings.ListingID).AND(CustomerFavoriteListings.CustomerID.EQ(Int(int64(customerID))))),
+	)
+
+	var dbListing []dbListing
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+	if err := stmt.QueryContext(c, db, &dbListing); err != nil {
+		return nil, fmt.Errorf("failed to query listings because %w", err)
+	}
+
+	listings := make([]Listing, len(dbListing))
+	for index, listing := range dbListing {
+		listings[index] = listing.ToEntity()
+	}
+
+	return listings, nil
+}

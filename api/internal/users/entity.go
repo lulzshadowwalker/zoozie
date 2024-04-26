@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
@@ -16,5 +17,6 @@ type User struct {
 	AccessToken    string
 	RefreshToken   string
 
-	Agent *agencies.AgencyAgent
+	Agent    *agencies.AgencyAgent
+	Customer *customers.Customer
 }

@@ -35,7 +35,7 @@ type (
 		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*users.User, error)
 
 		// TODO: use a transaction to the create the customer and other things ..
-		CreateCustomer(context.Context, customers.Customer) (customers.Customer, error)
+		CreateCustomer(context.Context, customers.Customer, interfaces.Transaction) (customers.Customer, error)
 		CreateUser(context.Context, users.User, interfaces.Transaction) (users.User, error)
 		GetOTPByUserID(c context.Context, userID int) (otp.OTP, error)
 		StoreOTP(context.Context, otp.OTP, interfaces.Transaction) (otp.OTP, error)
@@ -117,46 +117,61 @@ func (s *service) RefreshToken(c context.Context, token string) (accessToken, re
 	return s.generateTokenPair(c, *user)
 }
 
-func (s *service) RegisterCustomer(c context.Context, request registerCustomerRequest) (customers.Customer, error) {
+func (s *service) RegisterCustomer(c context.Context, request registerCustomerRequest) (users.User, error) {
+	tx, err := s.repo.Begin(c)
+	if err != nil {
+		return users.User{}, nil
+	}
+	defer tx.Rollback()
+
 	phoneNumber, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
 	if err != nil {
-		return customers.Customer{}, nil
+		return users.User{}, nil
 	}
 
-	customer := customers.Customer{
-		User: users.User{
-			EmailAddress: request.EmailAddress,
-			Name:         request.Name,
-			PhoneNumber:  phoneNumber,
-		},
+	user := users.User{
+		EmailAddress: request.EmailAddress,
+		Name:         request.Name,
+		PhoneNumber:  phoneNumber,
+		Role:         entities.RoleCustomer,
 	}
 
 	if request.ProfilePicture != nil {
 		uploadInfo, err := utils.StoreFile(request.ProfilePicture)
 		if err != nil {
-			return customers.Customer{}, err
+			return users.User{}, err
 		}
 
-		customer.ProfilePicture = &uploadInfo.Path
+		user.ProfilePicture = &uploadInfo.Path
+	}
+	user, err = s.repo.CreateUser(c, user, tx)
+	if err != nil {
+		return users.User{}, err
 	}
 
-	customer, err = s.repo.CreateCustomer(c, customer)
+	customer := customers.Customer{UserID: int(user.ID)}
+	customer, err = s.repo.CreateCustomer(c, customer, tx)
 	if err != nil {
-		return customers.Customer{}, err
+		return users.User{}, err
+	}
+	user.Customer = &customer
+
+	err = s.sendOTP(c, int(user.ID), tx)
+	if err != nil {
+		return users.User{}, err
 	}
 
-	err = s.sendOTP(c, int(customer.User.ID), nil)
+	accessToken, refreshToken, err := s.generateTokenPair(c, user)
 	if err != nil {
-		return customers.Customer{}, err
+		return users.User{}, err
+	}
+	if err = tx.Commit(); err != nil {
+		return users.User{}, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
-	accessToken, refreshToken, err := s.generateTokenPair(c, customer.User)
-	if err != nil {
-		return customers.Customer{}, err
-	}
-	customer.User.AccessToken = accessToken
-	customer.User.RefreshToken = refreshToken
-	return customer, nil
+	user.AccessToken = accessToken
+	user.RefreshToken = refreshToken
+	return user, nil
 }
 
 func checkUserActiveStatus(user *users.User) error {
@@ -376,6 +391,13 @@ func (s *service) generateTokenPair(_ context.Context, user users.User) (accessT
 
 		customClaims.AgencyID = user.Agent.AgencyID
 		log.Println("setting custom claims for agency agent", user.Agent.AgencyID, customClaims.AgencyID)
+	} else if user.Role == entities.RoleCustomer {
+		if user.Customer == nil {
+			err = fmt.Errorf("user.Customer cannot be null when role is %s", user.Role)
+			return
+		}
+
+		customClaims.CustomerID = user.Customer.ID
 	}
 
 	accessTok := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)

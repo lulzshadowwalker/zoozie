@@ -9,7 +9,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
-	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
@@ -23,7 +22,7 @@ type (
 	Service interface {
 		Login(c context.Context, request loginRequest) (*users.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
-		RegisterCustomer(c context.Context, request registerCustomerRequest) (customers.Customer, error)
+		RegisterCustomer(c context.Context, request registerCustomerRequest) (users.User, error)
 		SendOTP(context.Context, sendOTPRequest) error
 		VerifyOTP(context.Context, verifyOTPRequest) error
 		RegisterAgencyAgent(context.Context, registerAgencyAgentRequest) (users.User, error)
@@ -120,6 +119,10 @@ func (h *handler) RegisterCustomer(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, http.ErrContentLength) {
 			return c.JSON(http.StatusBadRequest, echo.Map{"message": "profilePicture file is too large"})
+		}
+
+		if errors.Is(err, http.ErrMissingFile) {
+			return utils.NewApiError(http.StatusBadRequest, "profilePicture file is required")
 		}
 
 		return fmt.Errorf("failed to get profilePicture because %w", err)

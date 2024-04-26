@@ -20,6 +20,7 @@ type (
 		GetAllListings(context.Context) ([]Listing, error)
 		GetListingTypes(context.Context) ([]ListingType, error)
 		GetListingLocations(context.Context) ([]Location, error)
+		GetCustomerFavorites(context.Context) ([]Listing, error)
 	}
 )
 
@@ -35,6 +36,10 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/listings/:id", utils.Unwrap(h.GetListing))
 	e.GET("/listings/types", utils.Unwrap(h.GetListingTypes))
 	e.GET("/listings/locations", utils.Unwrap(h.GetListingLocations))
+	e.GET("/listings/favorites", utils.Unwrap(h.GetCustomerFavoriteListings),
+		middleware.Auth(),
+		middleware.WithCustomer,
+	)
 }
 
 // TODO: write unit test
@@ -113,6 +118,19 @@ func (h *handler) GetListingLocations(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"locations": locations,
+		},
+	})
+}
+
+func (h *handler) GetCustomerFavoriteListings(c echo.Context) error {
+	listings, err := h.service.GetCustomerFavorites(utils.TransformEchoContext(c))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"listings": listings,
 		},
 	})
 }

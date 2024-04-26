@@ -1,8 +1,6 @@
 package customers
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/users"
-
-// TODO: might wanna refactor this into User.Customer & User.Agent{}
 type Customer struct {
-	users.User
+	ID     int `json:"id,omitempty"`
+	UserID int `json:"userId,omitempty"`
 }

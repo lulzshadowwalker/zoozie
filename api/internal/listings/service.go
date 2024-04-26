@@ -21,6 +21,7 @@ type (
 		GetAllListings(c context.Context) ([]Listing, error)
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
+		GetListingsByCustomerID(context.Context, int, interfaces.Transaction) ([]Listing, error)
 
 		CreateListing(context.Context, Listing, interfaces.Transaction) (Listing, error)
 		CreateListingI18n(context.Context, ListingI18n, interfaces.Transaction) (ListingI18n, error)
@@ -230,4 +231,13 @@ func (s *service) GetListingTypes(c context.Context) ([]ListingType, error) {
 
 func (s *service) GetListingLocations(c context.Context) ([]Location, error) {
 	return s.repo.GetListingLocations(c, nil)
+}
+
+func (s *service) GetCustomerFavorites(c context.Context) ([]Listing, error) {
+	customerID, err := utils.GetCustomerID(c)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.repo.GetListingsByCustomerID(c, customerID, nil)
 }
