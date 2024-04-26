@@ -96,6 +96,38 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 	return &agency, err
 }
 
+func (r *repo) GetAgencyByID(c context.Context, id int, tx interfaces.Transaction) (*Agency, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get locale because %w", err)
+	}
+
+	stmt := getBaseQueryStatement(language).
+		WHERE(Agencies.ID.EQ(Int(int64(id))))
+
+	var dest dbAgency
+	err = stmt.QueryContext(c, db, &dest)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+
+		return nil, fmt.Errorf("failed to query the agencies because %w", err)
+	}
+
+	agency, err := dest.ToEntity()
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert agency because %w", err)
+	}
+
+	return &agency, err
+}
+
 func (r *repo) GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (AgencyAgent, error) {
 	stmt := SELECT(AgencyAgents.AllColumns).
 		FROM(AgencyAgents).

@@ -62,7 +62,24 @@
       "square-meter-unit": "m",
       "2": "2",
       "RENT": "Rent",
-      "SALE": "Sale"
+      "SALE": "Sale",
+      "contact-info": "Contact Information",
+      "what-this-place-offers": "What this place offers",
+      "about-this-home": "About this home",
+      "message": "Message",
+      "about-this-agency": "About this agency",
+      "reviews": "Reviews",
+      "follow": "Follow",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "year-built": "Year Built",
+      "square-meter": "Square meter",
+      "furnished": "Furnished",
+      "agency-logo": "Agency Logo",
+      "JOD": "JOD",
+      "USD": "USD",
+      "rent-price": "Rent Price",
+      "sale-price": "Sale Price"
     }
   },
   "dashboard": {

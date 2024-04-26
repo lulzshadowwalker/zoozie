@@ -97,6 +97,7 @@ func (l *dbListing) ToEntity() Listing {
 		ExtraFeatures:  extraFeatures,
 		Pictures:       pictures,
 		Availabilities: availabilities,
+		AgencyID:       int(l.Listing.AgencyID),
 		Location: Location{
 			Country: Country{Name: l.Location.DBCountry.Translations.Name},
 			City:    City{Name: l.Location.DBCity.Translations.Name},

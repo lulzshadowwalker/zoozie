@@ -9,18 +9,28 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-type repo struct {
-	database *sql.DB
-}
+type (
+	repo struct {
+		database *sql.DB
+		agenciesRepo
+	}
+
+	agenciesRepo interface {
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
+	}
+)
 
 func NewRepo(database *sql.DB) *repo {
+	agenciesRepoImpl := agencies.NewRepo(database)
 	return &repo{
-		database: database,
+		database:     database,
+		agenciesRepo: agenciesRepoImpl,
 	}
 }
 
@@ -376,8 +386,6 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 	}
 
 	stmt := getBaseQueryStatement(language)
-
-	fmt.Println("\n\n\n", stmt.DebugSql(), "\n\n\n")
 
 	var dest []dbListing
 	err = stmt.QueryContext(c, r.database, &dest)

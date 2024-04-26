@@ -62,7 +62,8 @@ type (
 )
 
 type getListingRequest struct {
-	ID int `param:"id" validate:"required,number"`
+	ID     int      `param:"id" validate:"required,number"`
+	Expand []string `query:"expand"`
 }
 
 type toggleListingFavoriteRequest struct {

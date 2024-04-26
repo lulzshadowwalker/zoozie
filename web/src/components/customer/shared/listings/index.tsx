@@ -56,7 +56,7 @@ export default async function Listings({ listings }: Props) {
                 key={index}
                 className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl shadow-md dark:shadow-none"
               >
-                <Link href="/listings/foo" className="group">
+                <Link href={`/listings/${listing.id}`} className="group">
                   <ZoozImage
                     src={highlightedPicture?.url ?? ""}
                     alt={highlightedPicture?.title ?? ""}

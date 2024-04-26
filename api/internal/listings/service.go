@@ -2,13 +2,23 @@ package listings
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"log/slog"
+	"net/http"
+	"slices"
 	"strings"
 
+	"github.com/go-jet/jet/v2/qrm"
+	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
+
+type listingOptions struct {
+	expand []string
+}
 
 type (
 	service struct {
@@ -22,6 +32,7 @@ type (
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
 		GetListingsByCustomerID(context.Context, int, interfaces.Transaction) ([]Listing, error)
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
 
 		ToggleListingFavorite(c context.Context, customerID, listingID int, tx interfaces.Transaction) (bool, error)
 
@@ -220,7 +231,23 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 }
 
 func (s *service) GetListing(c context.Context, request getListingRequest) (Listing, error) {
-	return s.repo.GetListing(c, request.ID)
+	listing, err := s.repo.GetListing(c, request.ID)
+	if err != nil {
+		return Listing{}, err
+	}
+
+	if res := slices.Index(request.Expand, "agency"); res != -1 {
+		listing.Agency, err = s.repo.GetAgencyByID(c, listing.AgencyID, nil)
+		if err != nil {
+			if errors.Is(err, qrm.ErrNoRows) {
+				slog.ErrorContext(c, "failed to get agency", "err", err)
+				return Listing{}, utils.NewApiError(http.StatusInternalServerError, "")
+			}
+			return Listing{}, err
+		}
+	}
+
+	return listing, nil
 }
 
 func (s *service) GetAllListings(c context.Context) ([]Listing, error) {

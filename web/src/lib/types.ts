@@ -155,6 +155,8 @@ export type TListing = {
   id?: number;
   type?: string;
   description?: string;
+  agencyId?: number;
+  agency?: TAgency;
   extraFeatures?: Array<{
     id?: number;
     title?: string;
@@ -191,16 +193,32 @@ export type TListing = {
     };
     bathrooms?: {
       value?: number;
+      description?: string;
     };
     area?: {
       value?: number;
+      description?: string;
     };
     furnished?: {
       value?: boolean;
+      description?: string;
     };
     yearBuilt?: {
       value?: number;
       description?: string;
     };
   };
+};
+
+export type TAgency = {
+  id?: number;
+  phoneNumber?: {
+    countryCode?: string;
+    phoneNumber?: string;
+  };
+  emailAddress?: string;
+  logo?: string;
+  slug?: string;
+  name?: string;
+  description?: string;
 };

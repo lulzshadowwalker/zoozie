@@ -1,5 +1,7 @@
 package listings
 
+import "github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+
 type ListingAvailability string
 
 const (
@@ -80,15 +82,16 @@ type (
 	}
 
 	Listing struct {
-		ID             int            `json:"id,omitempty"`
-		AgencyID       int            `json:"agencyId,omitempty"`
-		Type           string         `json:"type"`
-		Description    string         `json:"description,omitempty"`
-		ExtraFeatures  []ExtraFeature `json:"extraFeatures,omitempty"`
-		Pictures       []Picture      `json:"pictures,omitempty"`
-		Availabilities []Availability `json:"availabilities,omitempty"`
-		Location       Location       `json:"location,omitempty"`
-		Property       *Property      `json:"property,omitempty"`
+		ID             int              `json:"id,omitempty"`
+		AgencyID       int              `json:"agencyId,omitempty"`
+		Agency         *agencies.Agency `json:"agency,omitempty"`
+		Type           string           `json:"type"`
+		Description    string           `json:"description,omitempty"`
+		ExtraFeatures  []ExtraFeature   `json:"extraFeatures,omitempty"`
+		Pictures       []Picture        `json:"pictures,omitempty"`
+		Availabilities []Availability   `json:"availabilities,omitempty"`
+		Location       Location         `json:"location,omitempty"`
+		Property       *Property        `json:"property,omitempty"`
 	}
 )
 

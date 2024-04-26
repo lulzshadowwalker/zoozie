@@ -8,8 +8,8 @@ import (
 )
 
 type PhoneNumber struct {
-	CountryCode string
-	PhoneNumber string
+	CountryCode string `json:"countryCode"`
+	PhoneNumber string `json:"phoneNumber"`
 }
 
 func NewCountryCode(countryCode string) (string, error) {
