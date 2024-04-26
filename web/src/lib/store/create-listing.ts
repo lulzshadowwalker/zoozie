@@ -66,7 +66,7 @@ type TActions = {
   setFurnishedDescription(locale: Locale, description: string): void;
   addAvailability(availability: TAvailability): void;
   removeAvailability(availability: TAvailability["availability"]): void;
-  addExtraFeature(): void;
+  addExtraFeature(locale: Locale): void;
   updateExtraFeature(extraFeature: TExtraFeature): void;
   removeExtraFeature(extraFeature: TExtraFeature): void;
   addPictures(...pictures: TPicture[]): void;
@@ -139,13 +139,17 @@ export const useCreateListingStore = create<TState & TActions>(
             (picture) => !pictures.includes(picture),
           ),
         })),
-      addExtraFeature: () => {
+      addExtraFeature: (locale: Locale) => {
         set((state) => {
           if (state.translated) return {};
 
           const hasFeatures = !!state.extraFeatures?.length;
           const lastFeatureHasValue =
-            !!state.extraFeatures?.[state.extraFeatures?.length - 1]?.enTitle;
+            locale === "en"
+              ? !!state.extraFeatures?.[state.extraFeatures?.length - 1]
+                  ?.enTitle
+              : !!state.extraFeatures?.[state.extraFeatures?.length - 1]
+                  ?.arTitle;
 
           if (hasFeatures && (!lastFeatureHasValue ?? true)) {
             return {};

@@ -70,7 +70,7 @@ export default function ExtraFeatures() {
             <Button
               typ="secondary"
               square
-              className="absolute end-0 flex h-[3rem] w-[3rem] -translate-y-1/2 translate-x-1/2 rtl:-translate-x-1/2 items-center justify-center hover:bg-red-400 hover:text-gray-50 focus:bg-red-200 focus:text-gray-50"
+              className="absolute end-0 flex h-[3rem] w-[3rem] -translate-y-1/2 translate-x-1/2 items-center justify-center hover:bg-red-400 hover:text-gray-50 focus:bg-red-200 focus:text-gray-50 rtl:-translate-x-1/2"
               onClick={() => removeExtraFeature(feature)}
             >
               <FontAwesomeIcon icon={faXmark} />
@@ -82,7 +82,7 @@ export default function ExtraFeatures() {
           <button
             className="border-gray-300 text-gray-400 outline-none transition-all focus:border-on-primary-1 focus:text-on-primary-1"
             type="button"
-            onClick={addExtraFeature}
+            onClick={() => addExtraFeature(locale)}
             disabled={hasFeatures && (!lastFeatureHasValue ?? false)}
           >
             <FontAwesomeIcon
