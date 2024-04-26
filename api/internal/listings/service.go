@@ -23,6 +23,8 @@ type (
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
 		GetListingsByCustomerID(context.Context, int, interfaces.Transaction) ([]Listing, error)
 
+		ToggleListingFavorite(c context.Context, customerID, listingID int, tx interfaces.Transaction) (bool, error)
+
 		CreateListing(context.Context, Listing, interfaces.Transaction) (Listing, error)
 		CreateListingI18n(context.Context, ListingI18n, interfaces.Transaction) (ListingI18n, error)
 
@@ -240,4 +242,13 @@ func (s *service) GetCustomerFavorites(c context.Context) ([]Listing, error) {
 	}
 
 	return s.repo.GetListingsByCustomerID(c, customerID, nil)
+}
+
+func (s *service) ToggleListingFavorite(c context.Context, request toggleListingFavoriteRequest) (bool, error) {
+	customerID, err := utils.GetCustomerID(c)
+	if err != nil {
+		return false, err
+	}
+
+	return s.repo.ToggleListingFavorite(c, customerID, request.ListingID, nil)
 }

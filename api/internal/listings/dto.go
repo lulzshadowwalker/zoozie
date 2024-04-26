@@ -64,3 +64,7 @@ type (
 type getListingRequest struct {
 	ID int `param:"id" validate:"required,number"`
 }
+
+type toggleListingFavoriteRequest struct {
+	ListingID int `param:"id" validate:"required,number"`
+}

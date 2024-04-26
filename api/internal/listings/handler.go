@@ -21,6 +21,7 @@ type (
 		GetListingTypes(context.Context) ([]ListingType, error)
 		GetListingLocations(context.Context) ([]Location, error)
 		GetCustomerFavorites(context.Context) ([]Listing, error)
+		ToggleListingFavorite(context.Context, toggleListingFavoriteRequest) (bool, error)
 	}
 )
 
@@ -37,6 +38,10 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/listings/types", utils.Unwrap(h.GetListingTypes))
 	e.GET("/listings/locations", utils.Unwrap(h.GetListingLocations))
 	e.GET("/listings/favorites", utils.Unwrap(h.GetCustomerFavoriteListings),
+		middleware.Auth(),
+		middleware.WithCustomer,
+	)
+	e.POST("/listings/:id/favorite", utils.Unwrap(h.ToggleListingFavorite),
 		middleware.Auth(),
 		middleware.WithCustomer,
 	)
@@ -131,6 +136,24 @@ func (h *handler) GetCustomerFavoriteListings(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"listings": listings,
+		},
+	})
+}
+
+func (h *handler) ToggleListingFavorite(c echo.Context) error {
+	var request toggleListingFavoriteRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	status, err := h.service.ToggleListingFavorite(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"favorite": status,
 		},
 	})
 }

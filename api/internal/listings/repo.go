@@ -532,3 +532,46 @@ func (r *repo) GetListingsByCustomerID(c context.Context, customerID int, tx int
 
 	return listings, nil
 }
+
+func (r *repo) ToggleListingFavorite(c context.Context, customerID, listingID int, tx interfaces.Transaction) (bool, error) {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := CustomerFavoriteListings.INSERT(
+		CustomerFavoriteListings.CustomerID,
+		CustomerFavoriteListings.ListingID,
+	).VALUES(
+		Int(int64(customerID)),
+		Int(int64(listingID)),
+	).ExecContext(c, db); err != nil {
+		if utils.IsUniquePostgresViolationErr(err) {
+			if err := r.DeleteListingFavorite(c, customerID, listingID, tx); err != nil {
+				return false, fmt.Errorf("failed to delete listing favorite because %w", err)
+			}
+
+			return false, nil
+		}
+
+		return false, fmt.Errorf("failed to insert listing favorite because %w", err)
+	}
+
+	return true, nil
+}
+
+func (r *repo) DeleteListingFavorite(c context.Context, customerID, listingID int, tx interfaces.Transaction) error {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := CustomerFavoriteListings.DELETE().WHERE(
+		CustomerFavoriteListings.CustomerID.EQ(Int(int64(customerID))).AND(
+			CustomerFavoriteListings.ListingID.EQ(Int(int64(listingID)))),
+	).ExecContext(c, db); err != nil {
+		return fmt.Errorf("failed to delete listing favorite because %w", err)
+	}
+
+	return nil
+}

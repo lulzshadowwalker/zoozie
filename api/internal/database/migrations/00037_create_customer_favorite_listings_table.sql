@@ -10,7 +10,9 @@ CREATE TABLE customer_favorite_listings (
     listing_id BIGINT NOT NULL REFERENCES listings(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULl,
+
+    UNIQUE(customer_id, listing_id)
 );
 
 CREATE FUNCTION update_updated_at_customer_favorite_listings() RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = now();
