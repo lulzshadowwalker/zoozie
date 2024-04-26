@@ -58,7 +58,11 @@
       "filters": "Filters",
       "minimum": "minimum",
       "maximum": "maximum",
-      "clear": "Clear all"
+      "clear": "Clear all",
+      "square-meter-unit": "m",
+      "2": "2",
+      "RENT": "Rent",
+      "SALE": "Sale"
     }
   },
   "dashboard": {
@@ -98,7 +102,7 @@
       "bathrooms-title-description": "How many bathrooms does this place offer",
       "year-built": "Year Built",
       "year-built-title-description": "What year was this property built?",
-      "square-feet": "Square Feet",
+      "square-meter": "Square Meter",
       "availability": "Availability",
       "availability-description": "Are you selling or renting this property?",
       "rent": "Rent",
@@ -106,7 +110,7 @@
       "rent-price": "Rent Price",
       "sale-price": "Sale Price",
       "area": "Area",
-      "area-title-description": "What is the area of this property? (square feet)",
+      "area-title-description": "What is the area of this property? (square meter)",
       "furnished": "Furnished",
       "furnished-title-description": "Is this property furnished?",
       "about-this-agency": "About This Agency",
@@ -123,7 +127,8 @@
       "please-add-pictures": "Please add some pictures to your listing",
       "enter-arabic-first": "Please fill in the arabic details for your listing first",
       "bad-request": "Please enter the details correctly",
-      "failure": "An unexpected error occurred. Please try again later."
+      "failure": "An unexpected error occurred. Please try again later.",
+      "square-meter-unit": "m"
     }
   },
   "admin": {

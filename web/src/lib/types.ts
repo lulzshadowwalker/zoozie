@@ -150,3 +150,57 @@ export type TFileUpload = {
   fileType?: string;
   url?: string;
 };
+
+export type TListing = {
+  id?: number;
+  type?: string;
+  description?: string;
+  extraFeatures?: Array<{
+    id?: number;
+    title?: string;
+    available?: boolean;
+  }>;
+  pictures?: Array<{
+    id?: number;
+    title?: string;
+    url?: string;
+    highlighted?: boolean;
+  }>;
+  availabilities?: Array<{
+    availability?: "SALE" | "RENT";
+    price?: {
+      amount?: number;
+      currency?: string;
+    };
+  }>;
+  location?: {
+    country?: {
+      name?: string;
+    };
+    city?: {
+      name?: string;
+    };
+    area?: {
+      name?: string;
+    };
+  };
+  property?: {
+    bedrooms?: {
+      value?: number;
+      description?: string;
+    };
+    bathrooms?: {
+      value?: number;
+    };
+    area?: {
+      value?: number;
+    };
+    furnished?: {
+      value?: boolean;
+    };
+    yearBuilt?: {
+      value?: number;
+      description?: string;
+    };
+  };
+};

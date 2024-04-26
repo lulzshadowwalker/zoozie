@@ -1,8 +1,9 @@
-import { IBasePageParams } from "@types";
+import { IBasePageParams, TListing } from "@types";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import ListingsComponent from "@/components/customer/shared/listings";
 import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
+import { fetchApi } from "@/lib/api";
 
 export default async function Listings({
   params: { locale },
@@ -10,12 +11,24 @@ export default async function Listings({
   unstable_setRequestLocale(locale);
   const t = await getTranslations("listings");
 
+  const res = await fetchApi("/listings");
+  if (!res.ok) {
+    console.error("utils.FeaturedListings: ", res.statusText);
+    return <></>;
+  }
+
+  const listings = (await res.json())?.data?.listings as TListing[] | undefined;
+  if (!listings?.length) {
+    console.error("utils.FeaturedListings: listings are empty");
+    return <></>;
+  }
+
   return (
     <main className="my-2xl-3xl">
       <Search />
       <Filters />
-      <section className="max-w-page mx-auto px-page my-l-xl">
-        <ListingsComponent />
+      <section className="mx-auto my-l-xl max-w-page px-page">
+        <ListingsComponent listings={listings} />
       </section>
     </main>
   );
