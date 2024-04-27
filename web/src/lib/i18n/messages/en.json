@@ -58,7 +58,9 @@
       "square-meters": "Square meters",
       "square-meters-unit": "m",
       "rent": "Rent",
-      "sale": "Sale"
+      "sale": "Sale",
+      "empty-state-title": "Start by adding some favorites!",
+      "empty-state-description": "Empty now, but not for long! Take a moment to explore our offerings and add some new favorites to your list."
     },
     "listings": {
       "filters": "Filters",

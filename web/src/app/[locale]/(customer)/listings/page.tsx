@@ -23,13 +23,13 @@ export default async function Listings({
     init: { headers },
   });
   if (!res.ok) {
-    console.error("utils.FeaturedListings: ", res.statusText);
+    console.error("listings: ", res.statusText);
     return <></>;
   }
 
   const listings = (await res.json())?.data?.listings as TListing[] | undefined;
   if (!listings?.length) {
-    console.error("utils.FeaturedListings: listings are empty");
+    console.error("listings: listings are empty");
     return <></>;
   }
 

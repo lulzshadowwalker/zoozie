@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { getAccessToken } from "@/lib/actions/auth";
 import { fetchApi } from "@/lib/api";
+import EmptyState from "@/components/customer/account/favorites/components/empty-state";
 
 export default async function Favorites({
   params: { locale },
@@ -19,13 +20,17 @@ export default async function Favorites({
 
   const res = await fetchApi("/listings/favorites", { init: { headers } });
   if (!res.ok) {
-    console.error("account.favorites: ", res.statusText);
-    return <></>;
+    throw new Error("account.favorites: " + res.statusText);
   }
   const listings = (await res.json())?.data?.listings as TListing[] | undefined;
-  if (!listings?.length) {
-    console.error("account.favorites: listings are empty");
-    return <></>;
+  if (!listings) {
+    throw new Error(
+      "account.favorites: API response is not in the expected format",
+    );
+  }
+
+  if (!listings.length) {
+    return <EmptyState />;
   }
 
   // TODO: customer favorites tab filter
@@ -65,7 +70,7 @@ export default async function Favorites({
 
         <section>
           <ul className="space-y-m-l">
-            {listings.map((listing, index) => (
+            {listings?.map((listing, index) => (
               <li key={index}>
                 <Card listing={listing} />
               </li>
