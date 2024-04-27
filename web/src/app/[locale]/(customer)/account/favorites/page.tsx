@@ -1,19 +1,41 @@
 import Card from "@/components/customer/listings/card";
-import { IBasePageParams } from "@types";
+import { IBasePageParams, TListing } from "@types";
 import { cn } from "@/lib/utils";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import { getAccessToken } from "@/lib/actions/auth";
+import { fetchApi } from "@/lib/api";
 
 export default async function Favorites({
   params: { locale },
 }: IBasePageParams) {
   unstable_setRequestLocale(locale);
-  const t = await getTranslations("account-favorites");
+  const t = await getTranslations("customer.account-favorites");
 
-  const sampleFilters: string[] = ["All", "Property", "Agencies"];
+  const accessToken = await getAccessToken();
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  const res = await fetchApi("/listings/favorites", { init: { headers } });
+  if (!res.ok) {
+    console.error("account.favorites: ", res.statusText);
+    return <></>;
+  }
+  const listings = (await res.json())?.data?.listings as TListing[] | undefined;
+  if (!listings?.length) {
+    console.error("account.favorites: listings are empty");
+    return <></>;
+  }
+
+  // TODO: customer favorites tab filter
+  const sampleFilters: string[] = [
+    // "All", "Property", "Agencies"
+  ];
 
   return (
     <main className="my-2xl-3xl">
-      <section className="max-w-page mx-auto px-page">
+      <section className="mx-auto max-w-page px-page">
         <article>
           <h2 className="text-3xl font-semibold">{t("your-favorites")}</h2>
 
@@ -23,7 +45,7 @@ export default async function Favorites({
                 <li key={index}>
                   <button
                     className={cn(
-                      "text-xl font-bold outline-none transition-all focus:translate-y-[-0.25rem] pb-s-m",
+                      "pb-s-m text-xl font-bold outline-none transition-all focus:translate-y-[-0.25rem]",
                       {
                         "font-medium text-gray-500 hover:text-on-primary-1 focus:text-on-primary-1":
                           index !== 0, // in case of inactive
@@ -43,9 +65,9 @@ export default async function Favorites({
 
         <section>
           <ul className="space-y-m-l">
-            {[...Array(5)].map((_, index) => (
+            {listings.map((listing, index) => (
               <li key={index}>
-                <Card />
+                <Card listing={listing} />
               </li>
             ))}
           </ul>

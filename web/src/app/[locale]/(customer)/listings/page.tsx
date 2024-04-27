@@ -5,14 +5,15 @@ import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
 import { fetchApi } from "@/lib/api";
 import { useUser } from "@/lib/context/user-context";
+import { getAccessToken } from "@/lib/actions/auth";
 
 export default async function Listings({
   params: { locale },
 }: IBasePageParams) {
   unstable_setRequestLocale(locale);
-  const { accessToken } = useUser();
   const t = await getTranslations("listings");
 
+  const accessToken = await getAccessToken();
   const headers: Record<string, string> = {};
   if (accessToken) {
     headers["Authorization"] = `Bearer ${accessToken}`;

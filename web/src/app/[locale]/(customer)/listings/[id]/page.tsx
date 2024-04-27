@@ -22,19 +22,13 @@ import { getAccessToken } from "@/lib/actions/auth";
 export const dynamic = "force-static";
 
 export async function generateStaticParams() {
-  const accessToken = await getAccessToken();
-  const headers: Record<string, string> = {};
-  if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
-  }
-
-  const res = await fetchApi("/listings", { locale: "en", init: { headers } });
+  const res = await fetchApi("/listings", { locale: "en" });
   if (!res.ok) {
     console.error(
       "listings/[id].generateStaticParams: failed to fetch listings",
       res.statusText,
     );
-    return <></>;
+    return;
   }
 
   const listings = (await res.json())?.data?.listings as TListing[] | undefined;
@@ -42,7 +36,7 @@ export async function generateStaticParams() {
     console.error(
       "listings/[id].generateStaticParams: listings are not in the expected format or are empty",
     );
-    return <></>;
+    return;
   }
 
   return listings.map((listing) => ({
@@ -57,17 +51,11 @@ interface Props extends Omit<IBasePageParams, "params"> {
 export default async function Listing({ params: { locale, id } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.listings");
-  const accessToken = await getAccessToken();
-  const headers: Record<string, string> = {};
-  if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
-  }
 
   const res = await fetchApi("/listings/" + id, {
     queryParams: {
       expand: "agency",
     },
-    init: { headers },
   });
   if (!res.ok) {
     if (res.status === 404) notFound();

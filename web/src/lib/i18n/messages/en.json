@@ -52,7 +52,13 @@
       "view-listings": "View Listings"
     },
     "account-favorites": {
-      "your-favorites": "Your Favorites"
+      "your-favorites": "Your Favorites",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "square-meters": "Square meters",
+      "square-meters-unit": "m",
+      "rent": "Rent",
+      "sale": "Sale"
     },
     "listings": {
       "filters": "Filters",
