@@ -17,11 +17,18 @@ import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
+import { getAccessToken } from "@/lib/actions/auth";
 
 export const dynamic = "force-static";
 
 export async function generateStaticParams() {
-  const res = await fetchApi("/listings", { locale: "en" });
+  const accessToken = await getAccessToken();
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  const res = await fetchApi("/listings", { locale: "en", init: { headers } });
   if (!res.ok) {
     console.error(
       "listings/[id].generateStaticParams: failed to fetch listings",
@@ -50,11 +57,17 @@ interface Props extends Omit<IBasePageParams, "params"> {
 export default async function Listing({ params: { locale, id } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.listings");
+  const accessToken = await getAccessToken();
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
 
   const res = await fetchApi("/listings/" + id, {
     queryParams: {
       expand: "agency",
     },
+    init: { headers },
   });
   if (!res.ok) {
     if (res.status === 404) notFound();

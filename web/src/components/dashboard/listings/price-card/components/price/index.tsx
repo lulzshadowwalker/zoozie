@@ -37,7 +37,6 @@ export default function Price() {
           value={rentPrice}
           onChange={({ target: { value } }) => {
             setRentPrice(parseInt(value));
-            console.debug("updated availability value", value);
             if (!value) {
               removeAvailability("RENT");
             }

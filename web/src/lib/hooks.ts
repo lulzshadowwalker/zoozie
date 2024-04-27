@@ -1,4 +1,7 @@
+import { useTranslations } from "next-intl";
 import { useState, useEffect, useCallback } from "react";
+import { showToast } from "./utils";
+import { ZoozieUserMessage } from "./types";
 
 /**
  * Hook that tracks the scroll position and direction.
@@ -30,4 +33,19 @@ export function useScroll() {
   }, [handleScroll]);
 
   return { isScrollingDown };
+}
+
+export function useToastHelpers() {
+  const t = useTranslations("toast-helpers");
+
+  function showAuthRequiredToast() {
+    const message: ZoozieUserMessage = {
+      status: "info",
+      message: t("auth-required"),
+    };
+
+    showToast(message);
+  }
+
+  return { showAuthRequiredToast };
 }

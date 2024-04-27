@@ -132,7 +132,6 @@ export async function registerCustomer(
       default:
         console.error("actions.registerCustomer: status ", res.status);
         const msg = (await res.json())?.message;
-        console.log(msg);
         message = unknownError;
     }
 
@@ -411,3 +410,8 @@ type TRegisterCustomerResponsePayload = {
     };
   };
 };
+
+export async function getAccessToken(): Promise<string | undefined> {
+  const accessToken = cookies().get("access-token")?.value;
+  return accessToken;
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 
@@ -209,7 +210,7 @@ func (r *repo) CreateListing(c context.Context, listing Listing, tx interfaces.T
 		return Listing{}, utils.NewApiError(http.StatusBadRequest, "")
 	}
 
-	var dbListing dbListing
+	var dbListing DBListing
 	stmt := Listings.INSERT(
 		Listings.AgencyID,
 		Listings.LocationID,
@@ -316,7 +317,33 @@ func (r *repo) CreatePropertyI18n(c context.Context, translations PropertyI18n, 
 	return translations, nil
 }
 
-func getBaseQueryStatement(language string) SelectStatement {
+func getBaseQueryStatement(language string, customerId *int) SelectStatement {
+	fromClause := Listings.
+		LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID).AND(ListingsI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(ListingExtraFeatures, Listings.ID.EQ(ListingExtraFeatures.ListingID)).
+		LEFT_JOIN(ListingExtraFeaturesI18n, ListingExtraFeatures.ID.EQ(ListingExtraFeaturesI18n.ListingExtraFeaturesID).AND(ListingExtraFeaturesI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)).
+		LEFT_JOIN(ListingAvailabilities, Listings.ID.EQ(ListingAvailabilities.ListingID)).
+		LEFT_JOIN(Availabilities, ListingAvailabilities.AvailabilityID.EQ(Availabilities.ID)).
+		LEFT_JOIN(ListingAvailabilityPrices, ListingAvailabilities.ID.EQ(ListingAvailabilityPrices.ListingAvailabilityID)).
+		LEFT_JOIN(ListingTypes, Listings.TypeID.EQ(ListingTypes.ID)).
+		LEFT_JOIN(ListingTypesI18n, ListingTypes.ID.EQ(ListingTypesI18n.ListingTypeID).AND(ListingTypesI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(ListingLocations, Listings.LocationID.EQ(ListingLocations.ID)).
+		LEFT_JOIN(Countries, ListingLocations.CountryID.EQ(Countries.ID)).
+		LEFT_JOIN(CountriesI18n, Countries.ID.EQ(CountriesI18n.CountryID).AND(CountriesI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(Cities, ListingLocations.CityID.EQ(Cities.ID)).
+		LEFT_JOIN(CitiesI18n, Cities.ID.EQ(CitiesI18n.CityID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(Areas, ListingLocations.AreaID.EQ(Areas.ID)).
+		LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(Properties, Listings.ID.EQ(Properties.ListingID)).
+		LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language))))
+
+	cid := 0
+	if customerId != nil {
+		cid = *customerId
+	}
+	fromClause = fromClause.LEFT_JOIN(CustomerFavoriteListings, CustomerFavoriteListings.ListingID.EQ(Listings.ID).AND(CustomerFavoriteListings.CustomerID.EQ(Int(int64(cid)))))
+
 	return SELECT(
 		// TODO: fetch only the necessary columns
 		Listings.AllColumns,
@@ -338,38 +365,24 @@ func getBaseQueryStatement(language string) SelectStatement {
 		AreasI18n.AllColumns,
 		Properties.AllColumns,
 		PropertiesI18n.AllColumns,
-	).FROM(
-		Listings.
-			LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID).AND(ListingsI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(ListingExtraFeatures, Listings.ID.EQ(ListingExtraFeatures.ListingID)).
-			LEFT_JOIN(ListingExtraFeaturesI18n, ListingExtraFeatures.ID.EQ(ListingExtraFeaturesI18n.ListingExtraFeaturesID).AND(ListingExtraFeaturesI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(ListingPictures, Listings.ID.EQ(ListingPictures.ListingID)).
-			LEFT_JOIN(ListingAvailabilities, Listings.ID.EQ(ListingAvailabilities.ListingID)).
-			LEFT_JOIN(Availabilities, ListingAvailabilities.AvailabilityID.EQ(Availabilities.ID)).
-			LEFT_JOIN(ListingAvailabilityPrices, ListingAvailabilities.ID.EQ(ListingAvailabilityPrices.ListingAvailabilityID)).
-			LEFT_JOIN(ListingTypes, Listings.TypeID.EQ(ListingTypes.ID)).
-			LEFT_JOIN(ListingTypesI18n, ListingTypes.ID.EQ(ListingTypesI18n.ListingTypeID).AND(ListingTypesI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(ListingLocations, Listings.LocationID.EQ(ListingLocations.ID)).
-			LEFT_JOIN(Countries, ListingLocations.CountryID.EQ(Countries.ID)).
-			LEFT_JOIN(CountriesI18n, Countries.ID.EQ(CountriesI18n.CountryID).AND(CountriesI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(Cities, ListingLocations.CityID.EQ(Cities.ID)).
-			LEFT_JOIN(CitiesI18n, Cities.ID.EQ(CitiesI18n.CityID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(Areas, ListingLocations.AreaID.EQ(Areas.ID)).
-			LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(Properties, Listings.ID.EQ(Properties.ListingID)).
-			LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language)))),
-	)
+		CASE().WHEN(CustomerFavoriteListings.CustomerID.EQ(Int(int64(cid)))).THEN(Bool(true)).ELSE(Bool(false)).AS("dblisting.favorite"),
+	).FROM(fromClause)
 }
 
 func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
 	language, err := utils.GetLocale(c)
 	if err != nil {
 		return Listing{}, err
 	}
 
-	stmt := getBaseQueryStatement(language).WHERE(Listings.ID.EQ(Int(int64(id))))
+	stmt := getBaseQueryStatement(language, customerID).WHERE(Listings.ID.EQ(Int(int64(id))))
 
-	var dest dbListing
+	var dest DBListing
 	err = stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
 		return Listing{}, fmt.Errorf("failed to query the listing because %w", err)
@@ -380,14 +393,19 @@ func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
 }
 
 func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
 	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, err
 	}
 
-	stmt := getBaseQueryStatement(language)
+	stmt := getBaseQueryStatement(language, customerID)
 
-	var dest []dbListing
+	var dest []DBListing
 	err = stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query the listings because %w", err)
@@ -395,6 +413,10 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 
 	listings := make([]Listing, len(dest))
 	for index, listing := range dest {
+		if listing.Favorite {
+			log.Println("listing is favorite", listing.Listing.ID)
+		}
+
 		listings[index] = listing.ToEntity()
 	}
 
@@ -501,6 +523,7 @@ func (r *repo) GetListingsByCustomerID(c context.Context, customerID int, tx int
 		AreasI18n.AllColumns,
 		Properties.AllColumns,
 		PropertiesI18n.AllColumns,
+		CASE().WHEN(CustomerFavoriteListings.CustomerID.EQ(Int(int64(customerID)))).THEN(Bool(true)).ELSE(Bool(false)).AS("dblisting.favorite"),
 	).FROM(
 		Listings.
 			LEFT_JOIN(ListingsI18n, Listings.ID.EQ(ListingsI18n.ListingID).AND(ListingsI18n.LanguageCode.EQ(String(language)))).
@@ -524,7 +547,7 @@ func (r *repo) GetListingsByCustomerID(c context.Context, customerID int, tx int
 			INNER_JOIN(CustomerFavoriteListings, Listings.ID.EQ(CustomerFavoriteListings.ListingID).AND(CustomerFavoriteListings.CustomerID.EQ(Int(int64(customerID))))),
 	)
 
-	var dbListing []dbListing
+	var dbListing []DBListing
 	var db qrm.Queryable = r.database
 	if tx != nil {
 		db = tx
@@ -560,6 +583,10 @@ func (r *repo) ToggleListingFavorite(c context.Context, customerID, listingID in
 			}
 
 			return false, nil
+		}
+
+		if utils.IsForeignKeyPostgresViolationErr(err) {
+			return false, utils.NewApiError(http.StatusNotFound, fmt.Sprintf("listing with id %d does not exist", listingID))
 		}
 
 		return false, fmt.Errorf("failed to insert listing favorite because %w", err)

@@ -33,8 +33,8 @@ func NewHandler(service Service) *handler {
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.POST("/listings", utils.Unwrap(h.CreateListings), middleware.Auth(), middleware.WithAgencyAgent)
-	e.GET("/listings", utils.Unwrap(h.GetAllListings))
-	e.GET("/listings/:id", utils.Unwrap(h.GetListing))
+	e.GET("/listings", utils.Unwrap(h.GetAllListings), middleware.PreferAuth())
+	e.GET("/listings/:id", utils.Unwrap(h.GetListing), middleware.PreferAuth())
 	e.GET("/listings/types", utils.Unwrap(h.GetListingTypes))
 	e.GET("/listings/locations", utils.Unwrap(h.GetListingLocations))
 	e.GET("/listings/favorites", utils.Unwrap(h.GetCustomerFavoriteListings),

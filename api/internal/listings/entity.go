@@ -92,6 +92,7 @@ type (
 		Availabilities []Availability   `json:"availabilities,omitempty"`
 		Location       Location         `json:"location,omitempty"`
 		Property       *Property        `json:"property,omitempty"`
+		Favorite       bool             `json:"favorite"`
 	}
 )
 

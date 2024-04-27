@@ -25,8 +25,6 @@ function LocationSelection() {
   const t = useTranslations("dashboard.create-listing");
   const setLocation = useCreateListingStore((state) => state.setLocation);
   const location = useCreateListingStore((state) => state.location);
-  console.log("location => ");
-  console.table(location);
 
   const {
     data: payload,

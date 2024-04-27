@@ -5,15 +5,21 @@ import Listings from "@/components/customer/shared/listings";
 import { getTranslations } from "next-intl/server";
 import { fetchApi } from "@/lib/api";
 import { TListing } from "@/lib/types";
+import { getAccessToken } from "@/lib/actions/auth";
 
 export default async function FeaturedListings() {
+  const accessToken = await getAccessToken();
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const t = await getTranslations("customer.home");
-  const res = await fetchApi("/listings");
+  const res = await fetchApi("/listings", { init: { headers } });
   if (!res.ok) {
     console.error("utils.FeaturedListings: ", res.statusText);
     return <></>;
   }
-
   const listings = (await res.json())?.data?.listings as TListing[] | undefined;
   if (!listings?.length) {
     console.error("utils.FeaturedListings: listings are empty");

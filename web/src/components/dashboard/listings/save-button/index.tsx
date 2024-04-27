@@ -51,7 +51,6 @@ export default function SaveButton() {
     }
 
     if (!translated) {
-      console.debug("translating into arabic");
       await translateTo("en");
       router.push(pathname, { locale: "en" });
     }
@@ -99,7 +98,6 @@ export default function SaveButton() {
         furnishedDescriptionEnglish: state.enFurnishedDescription ?? null,
       };
 
-      console.table(pictures);
       const picturesForm = new FormData();
       for (const p of pictures!) {
         picturesForm.append("files", p);
@@ -143,31 +141,12 @@ export default function SaveButton() {
       arFurnishedDescription,
     } = state;
 
-    console.table({
-      arDescription,
-      arYearBuiltDescription,
-      arBedroomsDescription,
-      arBathroomsDescription,
-      arAreaDescription,
-      arFurnishedDescription,
-    });
-
     for (const feature of state?.extraFeatures ?? []) {
       if (!feature.arTitle) {
-        console.debug("400 invalid feature", feature);
         return false;
       }
     }
 
-    console.debug(
-      "400 ",
-      !!arDescription &&
-        !!arYearBuiltDescription &&
-        !!arBedroomsDescription &&
-        !!arBathroomsDescription &&
-        !!arAreaDescription &&
-        !!arFurnishedDescription,
-    );
     return (
       !!arDescription &&
       !!arYearBuiltDescription &&

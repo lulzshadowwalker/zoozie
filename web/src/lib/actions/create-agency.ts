@@ -43,7 +43,6 @@ export async function createAgency(
   });
 
   if (res.ok) {
-    console.log("success", res.status);
     return [t("agency-created-successfully"), undefined];
   }
 

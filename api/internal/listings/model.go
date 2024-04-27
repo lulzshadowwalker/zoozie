@@ -43,9 +43,10 @@ type DBProperty struct {
 	Translations model.PropertiesI18n
 }
 
-type dbListing struct {
+type DBListing struct {
 	Listing             model.Listings
 	ListingTranslations model.ListingsI18n
+	Favorite            bool `alias:"favorite"`
 
 	ExtraFeatures []DBExtraFeature
 
@@ -59,7 +60,7 @@ type dbListing struct {
 	Pictures []model.ListingPictures
 }
 
-func (l *dbListing) ToEntity() Listing {
+func (l *DBListing) ToEntity() Listing {
 	extraFeatures := make([]ExtraFeature, len(l.ExtraFeatures))
 	for index, extraFeature := range l.ExtraFeatures {
 		t := extraFeature.Translations
@@ -98,6 +99,7 @@ func (l *dbListing) ToEntity() Listing {
 		Pictures:       pictures,
 		Availabilities: availabilities,
 		AgencyID:       int(l.Listing.AgencyID),
+		Favorite:       l.Favorite,
 		Location: Location{
 			Country: Country{Name: l.Location.DBCountry.Translations.Name},
 			City:    City{Name: l.Location.DBCity.Translations.Name},

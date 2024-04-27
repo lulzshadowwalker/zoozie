@@ -49,7 +49,6 @@ export async function createListing({
     });
     if (!res.ok) {
       console.error("createListing: pictures upload error", res.statusText);
-      console.log(await res.json());
       return unknownError;
     }
 

@@ -82,7 +82,6 @@ export async function translate(
   to: Locale,
 ): Promise<string | undefined> {
   try {
-    console.info("translate: translating", input, from, to);
     const uri = Config.translationApiBaseUrl;
     if (!uri) {
       console.error("translationApiBaseUrl is not set");
@@ -115,7 +114,6 @@ export async function translate(
       return undefined;
     }
 
-    console.info("translate: translated", translatedText);
     return translatedText;
   } catch (e) {
     console.error("translate: failed to translate", e);

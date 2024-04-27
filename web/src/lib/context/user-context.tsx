@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getUser } from "@lib/actions/auth";
+import { getAccessToken, getUser } from "@lib/actions/auth";
 
 type Props = {
   children: ReactNode;
@@ -16,12 +16,14 @@ type Props = {
 
 type TUserContext = {
   user?: TUser;
+  accessToken?: string;
 };
 
 const UserContext = createContext<TUserContext | null>(null);
 
 export default function UserContextProvider({ children }: Props) {
   const [user, setUser] = useState<TUser | undefined>();
+  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 
   useEffect(function handleGetUser() {
     getUser().then((payload) => {
@@ -31,8 +33,16 @@ export default function UserContextProvider({ children }: Props) {
     });
   }, []);
 
+  useEffect(function handleGetAccessToken() {
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+    });
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, accessToken }}>
+      {children}
+    </UserContext.Provider>
   );
 }
 

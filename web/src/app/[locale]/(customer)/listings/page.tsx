@@ -4,14 +4,23 @@ import ListingsComponent from "@/components/customer/shared/listings";
 import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
 import { fetchApi } from "@/lib/api";
+import { useUser } from "@/lib/context/user-context";
 
 export default async function Listings({
   params: { locale },
 }: IBasePageParams) {
   unstable_setRequestLocale(locale);
+  const { accessToken } = useUser();
   const t = await getTranslations("listings");
 
-  const res = await fetchApi("/listings");
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  const res = await fetchApi("/listings", {
+    init: { headers },
+  });
   if (!res.ok) {
     console.error("utils.FeaturedListings: ", res.statusText);
     return <></>;

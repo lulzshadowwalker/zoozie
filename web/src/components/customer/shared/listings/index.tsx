@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBed,
   faCalendarDays,
+  faHeart,
   faLocationDot,
   faUpRightAndDownLeftFromCenter,
 } from "@fortawesome/free-solid-svg-icons";
 import { TListing } from "@/lib/types";
 import { getTranslations } from "next-intl/server";
+import FavoriteButton from "./components/favorite-button";
 
 type Props = {
   // TODO: make listings required
@@ -54,7 +56,7 @@ export default async function Listings({ listings }: Props) {
             return (
               <li
                 key={index}
-                className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl shadow-md dark:shadow-none"
+                className="group relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl shadow-md dark:shadow-none"
               >
                 <Link href={`/listings/${listing.id}`} className="group">
                   <ZoozImage
@@ -147,6 +149,8 @@ export default async function Listings({ listings }: Props) {
                     </div>
                   )}
                 </div>
+
+                <FavoriteButton listing={listing} />
               </li>
             );
           })

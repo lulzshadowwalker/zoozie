@@ -79,7 +79,9 @@
       "JOD": "JOD",
       "USD": "USD",
       "rent-price": "Rent Price",
-      "sale-price": "Sale Price"
+      "sale-price": "Sale Price",
+      "unknown-error": "An unexpected error occurred. Please try again later.",
+      "agents-cannot-favorite": "Agents cannot interact with customer functionalities"
     }
   },
   "dashboard": {
@@ -150,5 +152,8 @@
   },
   "admin": {
     "agencies": {}
+  },
+  "toast-helpers": {
+    "auth-required": "Login or register a new account to use this feature"
   }
 }

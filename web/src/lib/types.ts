@@ -208,6 +208,7 @@ export type TListing = {
       description?: string;
     };
   };
+  favorite?: boolean;
 };
 
 export type TAgency = {
@@ -222,3 +223,4 @@ export type TAgency = {
   name?: string;
   description?: string;
 };
+//
