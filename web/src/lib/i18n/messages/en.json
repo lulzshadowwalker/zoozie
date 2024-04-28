@@ -156,6 +156,12 @@
       "bad-request": "Please enter the details correctly",
       "failure": "An unexpected error occurred. Please try again later.",
       "square-meter-unit": "m"
+    },
+    "messages": {
+      "messages": "Messages",
+      "write-your-message": "Write your message",
+      "message-input": "Message input",
+      "send": "Send"
     }
   },
   "admin": {

@@ -15,7 +15,7 @@ export default function Header({
   return (
     <header
       className={cn(
-        "bg-gray-50 px-xl-2xl py-s-m flex items-center justify-between",
+        "flex items-center justify-between bg-gray-50 px-xl-2xl py-s-m",
         className,
       )}
       {...rest}
