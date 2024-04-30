@@ -34,6 +34,11 @@ const (
 	ContextUserKey   ContextKey = "user"
 )
 
+var (
+	ErrNotCustomer = errors.New("user is not a customer")
+	ErrNotAgent    = errors.New("user is not an agent")
+)
+
 type ApiError struct {
 	Status  int
 	Message string
@@ -141,7 +146,7 @@ func GetAgencyID(c context.Context) (int, error) {
 	}
 
 	if role := claims.Role; role != entities.RoleAgencyAgent {
-		return -1, fmt.Errorf("user is not an agency agent")
+		return -1, ErrNotAgent
 	}
 
 	return claims.AgencyID, nil
@@ -154,7 +159,7 @@ func GetCustomerID(c context.Context) (int, error) {
 	}
 
 	if role := claims.Role; role != entities.RoleCustomer {
-		return -1, fmt.Errorf("user is not a customer")
+		return -1, ErrNotCustomer
 	}
 
 	return claims.CustomerID, nil

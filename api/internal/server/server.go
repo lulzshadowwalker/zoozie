@@ -6,6 +6,8 @@ import (
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	"github.com/lulzshadowwalker/zoozie/api/internal/auth"
+
+	"github.com/lulzshadowwalker/zoozie/api/internal/conversations"
 	"github.com/lulzshadowwalker/zoozie/api/internal/listings"
 	zoozieMiddlware "github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/uploads"
@@ -54,6 +56,7 @@ func (s *Server) Run() error {
 	auth.Init(s.database).RegisterRoutes(api)
 	users.Init(s.database).RegisterRoutes(protected)
 	listings.Init(s.database).RegisterRoutes(api)
+	conversations.Init(s.database).RegisterRoutes(api)
 
 	router.Logger.Fatal(router.Start(":42069"))
 	return nil

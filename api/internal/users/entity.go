@@ -7,16 +7,16 @@ import (
 )
 
 type User struct {
-	ID             int64
-	Role           entities.Role
-	EmailAddress   string
-	PhoneNumber    entities.PhoneNumber
-	Name           string
-	Active         bool
-	ProfilePicture *string
-	AccessToken    string
-	RefreshToken   string
+	ID             int64                 `json:"id,omitempty"`
+	Role           entities.Role         `json:"role,omitempty"`
+	EmailAddress   string                `json:"emailAddress,omitempty"`
+	PhoneNumber    *entities.PhoneNumber `json:"phoneNumber,omitempty"`
+	Name           string                `json:"name,omitempty"`
+	Active         bool                  `json:"active,omitempty"`
+	ProfilePicture *string               `json:"profilePicture,omitempty"`
+	AccessToken    string                `json:"-"`
+	RefreshToken   string                `json:"-"`
 
-	Agent    *agencies.AgencyAgent
-	Customer *customers.Customer
+	Agent    *agencies.AgencyAgent `json:"agent,omitempty"`
+	Customer *customers.Customer   `json:"customer,omitempty"`
 }

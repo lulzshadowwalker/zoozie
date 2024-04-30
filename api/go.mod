@@ -3,16 +3,17 @@ module github.com/lulzshadowwalker/zoozie/api
 go 1.21.1
 
 require (
+	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/go-jet/jet v2.3.0+incompatible
 	github.com/go-jet/jet/v2 v2.11.0
 	github.com/google/wire v0.6.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
 )
 
 require (
-	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -36,7 +37,6 @@ require (
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.2.0
 	github.com/labstack/gommon v0.4.2 // indirect

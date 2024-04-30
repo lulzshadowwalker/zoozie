@@ -132,7 +132,7 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 	user := users.User{
 		EmailAddress: request.EmailAddress,
 		Name:         request.Name,
-		PhoneNumber:  phoneNumber,
+		PhoneNumber:  &phoneNumber,
 		Role:         entities.RoleCustomer,
 	}
 
@@ -332,7 +332,7 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 	user := users.User{
 		EmailAddress:   request.EmailAddress,
 		Name:           request.Name,
-		PhoneNumber:    phoneNumber,
+		PhoneNumber:    &phoneNumber,
 		ProfilePicture: &request.ProfilePicture,
 		Role:           entities.RoleAgencyAgent,
 	}

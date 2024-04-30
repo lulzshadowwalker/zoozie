@@ -39,6 +39,7 @@ func NewRepo(database *sql.DB) *repo {
 		database: database,
 	}
 }
+
 func (r *repo) CreateUser(c context.Context, user User, tx interfaces.Transaction) (User, error) {
 	var dbUserRole model.UserRoles
 	err := UserRoles.SELECT(UserRoles.ID, UserRoles.Name).

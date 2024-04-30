@@ -121,11 +121,9 @@ func (h *handler) RegisterCustomer(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, echo.Map{"message": "profilePicture file is too large"})
 		}
 
-		if errors.Is(err, http.ErrMissingFile) {
-			return utils.NewApiError(http.StatusBadRequest, "profilePicture file is required")
+		if !errors.Is(err, http.ErrMissingFile) {
+			return fmt.Errorf("failed to get profilePicture because %w", err)
 		}
-
-		return fmt.Errorf("failed to get profilePicture because %w", err)
 	}
 	request.ProfilePicture = profilePicture
 

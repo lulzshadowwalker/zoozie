@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
@@ -38,6 +39,22 @@ func (r *repo) CreateCustomer(c context.Context, customer Customer, tx interface
 		&dbCustomer,
 	); err != nil {
 		return Customer{}, fmt.Errorf("failed to insert customer because %w", err)
+	}
+
+	return dbCustomer.ToEntity(), nil
+}
+
+func (r *repo) GetCustomerByID(c context.Context, id int, tx interfaces.Transaction) (Customer, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbCustomer DBCustomer
+	if err := Customers.SELECT(Customers.AllColumns).
+		WHERE(Customers.ID.EQ(postgres.Int(int64(id)))).
+		QueryContext(c, db, &dbCustomer); err != nil {
+		return Customer{}, fmt.Errorf("failed to query the customer because %w", err)
 	}
 
 	return dbCustomer.ToEntity(), nil
