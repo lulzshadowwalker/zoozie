@@ -52,7 +52,11 @@ export default async function Listing({ params: { locale, id } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.listings");
 
-  const res = await fetchApi("/listings/" + id, {
+  if (!Number.isNaN(id)) {
+    notFound();
+  }
+
+  const res = await fetchApi("/listings/" + Number(id), {
     queryParams: {
       expand: "agency",
     },

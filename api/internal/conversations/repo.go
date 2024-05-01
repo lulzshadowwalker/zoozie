@@ -87,8 +87,14 @@ func (r *repo) GetConversation(c context.Context, customerID, agencyID int, tx i
 	}
 
 	var dbConversation DBConversation
-	if err := SELECT(Conversations.AllColumns).
-		FROM(Conversations).
+	if err := SELECT(
+		Conversations.AllColumns,
+		ConversationMessages.AllColumns,
+	).
+		FROM(
+			Conversations.
+				LEFT_JOIN(ConversationMessages, Conversations.ID.EQ(ConversationMessages.ConversationID)),
+		).
 		WHERE(
 			Conversations.CustomerID.EQ(Int(int64(customerID))).
 				AND(Conversations.AgencyID.EQ(Int(int64(agencyID)))),
@@ -135,6 +141,7 @@ func (r *repo) GetConversationsByAgencyID(c context.Context, agencyID int, tx in
 	if err := SELECT(Conversations.AllColumns).
 		FROM(Conversations).
 		WHERE(Conversations.AgencyID.EQ(Int(int64(agencyID)))).
+		ORDER_BY(Conversations.CreatedAt.DESC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, fmt.Errorf("failed to query the conversation because %w", err)
 	}
@@ -157,6 +164,7 @@ func (r *repo) GetConversationsByCustomerID(c context.Context, agencyID int, tx 
 	if err := SELECT(Conversations.AllColumns).
 		FROM(Conversations).
 		WHERE(Conversations.CustomerID.EQ(Int(int64(agencyID)))).
+		ORDER_BY(Conversations.CreatedAt.DESC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, fmt.Errorf("failed to query the conversation because %w", err)
 	}
@@ -185,9 +193,29 @@ func (r *repo) GetConversationByID(c context.Context, id int, tx interfaces.Tran
 				LEFT_JOIN(ConversationMessages, Conversations.ID.EQ(ConversationMessages.ConversationID)),
 		).
 		WHERE(Conversations.ID.EQ(Int(int64(id)))).
+		ORDER_BY(Conversations.CreatedAt.DESC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return Conversation{}, fmt.Errorf("failed to query the conversation because %w", err)
 	}
 
 	return dbConversation.ToEntity(), nil
+}
+
+func (r *repo) GetLastMessage(c context.Context, conversationID int, tx interfaces.Transaction) (Message, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbMessage DBMessage
+	if err := SELECT(ConversationMessages.AllColumns).
+		FROM(ConversationMessages).
+		WHERE(ConversationMessages.ConversationID.EQ(Int(int64(conversationID)))).
+		ORDER_BY(ConversationMessages.CreatedAt.DESC()).
+		LIMIT(1).
+		QueryContext(c, db, &dbMessage); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return Message{}, fmt.Errorf("failed to query the message because %w", err)
+	}
+
+	return dbMessage.ToEntity(), nil
 }

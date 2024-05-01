@@ -18,7 +18,10 @@ export function cn(...inputs: ClassValue[]) {
 export async function showToast(
   message: ZoozieUserMessage | Promise<ZoozieUserMessage>,
 ) {
-  toast.dismiss();
+  if (isClientSide()) {
+    toast.dismiss();
+  }
+
   isPromise(message)
     ? await showToastAsync(message as Promise<ZoozieUserMessage>)
     : showToastSync(message as ZoozieUserMessage);
@@ -119,4 +122,8 @@ export async function translate(
     console.error("translate: failed to translate", e);
     return undefined;
   }
+}
+
+export function isClientSide() {
+  return typeof window !== "undefined";
 }

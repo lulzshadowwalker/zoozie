@@ -69,6 +69,13 @@ export function generateApiUrl({
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          url.searchParams.append(key, v);
+        }
+        continue;
+      }
+
       url.searchParams.set(key, value);
     }
   }
@@ -81,5 +88,5 @@ interface ServerRequestOptions extends BaseRequestOptions {
 }
 
 interface BaseRequestOptions {
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | string[]>;
 }

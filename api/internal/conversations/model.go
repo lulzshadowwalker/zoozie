@@ -23,8 +23,9 @@ func (m *DBMessage) ToEntity() Message {
 }
 
 type DBConversation struct {
-	Conversation model.Conversations
-	Messages     []DBMessage
+	Conversation  model.Conversations
+	Messages      []DBMessage
+	LatestMessage *DBMessage
 }
 
 func (c *DBConversation) ToEntity() Conversation {
@@ -41,6 +42,11 @@ func (c *DBConversation) ToEntity() Conversation {
 		for i, message := range c.Messages {
 			conversation.Messages[i] = message.ToEntity()
 		}
+	}
+
+	if c.LatestMessage != nil {
+		msg := c.LatestMessage.ToEntity()
+		conversation.LatestMessage = &msg
 	}
 
 	return conversation

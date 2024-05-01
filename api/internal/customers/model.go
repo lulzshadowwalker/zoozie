@@ -11,6 +11,6 @@ type DBCustomer struct {
 func (c *DBCustomer) ToEntity() Customer {
 	return Customer{
 		ID:     int(c.Customer.ID),
-		UserID: int(c.Customer.ID),
+		UserID: int(c.Customer.UserID),
 	}
 }

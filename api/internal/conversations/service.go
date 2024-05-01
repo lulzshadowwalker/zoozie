@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"slices"
@@ -34,6 +33,7 @@ type Repo interface {
 	GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
 	GetCustomerByID(context.Context, int, interfaces.Transaction) (customers.Customer, error)
 	GetUserById(c context.Context, id int, tx interfaces.Transaction) (*users.User, error)
+	GetLastMessage(c context.Context, conversationID int, tx interfaces.Transaction) (Message, error)
 }
 
 func NewService(repo Repo) *service {
@@ -74,8 +74,6 @@ func (s *service) CreateOrGetConversation(c context.Context, to int) (Conversati
 		return Conversation{}, fmt.Errorf("%w %s", ErrInvalidSenderType, senderType)
 	}
 
-	log.Println("sender", senderType, "receiver", receiver, "customerID", customerID, "agencyID", agencyID)
-
 	conversation, err := s.repo.GetConversation(c, customerID, agencyID, tx)
 	if err == nil {
 		return conversation, nil
@@ -96,7 +94,7 @@ func (s *service) CreateOrGetConversation(c context.Context, to int) (Conversati
 	return conversation, err
 }
 
-func (s *service) GetConversations(c context.Context) ([]Conversation, error) {
+func (s *service) GetConversations(c context.Context, request getConversationsRequest) ([]Conversation, error) {
 	senderID, senderType, err := s.getSenderType(c)
 	if err != nil {
 		return nil, err
@@ -117,10 +115,19 @@ func (s *service) GetConversations(c context.Context) ([]Conversation, error) {
 	}
 
 	for i, conversation := range conversations {
-		conversations[i], err = s.expand(c, conversation, nil)
+		if request.Expand != nil {
+			conversations[i], err = s.expand(c, conversation, request.Expand)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		latestMessage, err := s.repo.GetLastMessage(c, conversation.ID, nil)
 		if err != nil {
 			return nil, err
 		}
+
+		conversations[i].LatestMessage = &latestMessage
 	}
 
 	return conversations, nil
@@ -172,7 +179,7 @@ func (s *service) expand(c context.Context, conversation Conversation, options [
 			return Conversation{}, err
 		}
 
-		user, err := s.repo.GetUserById(c, customer.ID, nil)
+		user, err := s.repo.GetUserById(c, customer.UserID, nil)
 		if err != nil {
 			return Conversation{}, err
 		}

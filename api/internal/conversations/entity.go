@@ -14,9 +14,10 @@ type Conversation struct {
 	CreatedAt  time.Time `json:"createdAt,omitempty"`
 	UpdatedAt  time.Time `json:"updatedAt,omitempty"`
 
-	Customer *users.User      `json:"customer,omitempty"`
-	Agency   *agencies.Agency `json:"agency,omitempty"`
-	Messages []Message        `json:"messages,omitempty"`
+	Customer      *users.User      `json:"customer,omitempty"`
+	Agency        *agencies.Agency `json:"agency,omitempty"`
+	Messages      []Message        `json:"messages,omitempty"`
+	LatestMessage *Message         `json:"latestMessage,omitempty"`
 }
 
 type SenderType string

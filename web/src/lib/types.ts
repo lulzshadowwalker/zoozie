@@ -8,6 +8,10 @@ export interface IBasePageParams {
   };
 }
 
+export interface IBaseAgencyParams extends Omit<IBasePageParams, "params"> {
+  params: IBasePageParams["params"] & { agency: string };
+}
+
 export interface IBaseLayoutParams extends IBasePageParams {
   children: ReactNode;
 }
@@ -19,6 +23,7 @@ export type ZoozieUserMessage = {
 
 export type TUser = {
   id?: number;
+  name?: string;
   emailAddress?: string;
   phoneNumber?: string;
   profilePicture?: string;
@@ -223,4 +228,26 @@ export type TAgency = {
   name?: string;
   description?: string;
 };
-//
+
+export type TCustomer = TUser;
+
+export type TConversationMessage = {
+  id?: number;
+  conversationId?: number;
+  sentAt?: string;
+  sender?: "CUSTOMER" | "AGENCY";
+  type?: "TEXT";
+  content?: string;
+};
+
+export type TConversation = {
+  id?: number;
+  customerId?: number;
+  agencyId?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  customer?: TCustomer;
+  agency?: TAgency;
+  messages?: Array<TConversationMessage>;
+  latestMessage?: TConversationMessage;
+};

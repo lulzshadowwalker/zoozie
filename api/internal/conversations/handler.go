@@ -20,7 +20,7 @@ type Service interface {
 	StoreMessage(c context.Context, message Message) (Message, error)
 	CreateOrGetConversation(c context.Context, to int) (Conversation, error)
 
-	GetConversations(context.Context) ([]Conversation, error)
+	GetConversations(context.Context, getConversationsRequest) ([]Conversation, error)
 	GetConversationHistory(context.Context, conversationHistoryRequest) (Conversation, error)
 }
 
@@ -176,7 +176,12 @@ func (h *handler) handleConnection(c echo.Context, conversation Conversation, ws
 }
 
 func (h *handler) GetConversations(c echo.Context) error {
-	conversations, err := h.service.GetConversations(utils.TransformEchoContext(c))
+	var request getConversationsRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	conversations, err := h.service.GetConversations(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}

@@ -161,7 +161,11 @@
       "messages": "Messages",
       "write-your-message": "Write your message",
       "message-input": "Message input",
-      "send": "Send"
+      "send": "Send",
+      "failed-to-load-previous-messages": "Failed to load previous messages. Please try again later.",
+      "unknown-customer": "Unknown customer",
+      "nothing-here-yet": "Nothing here yet",
+      "no-conversations": "No conversations"
     }
   },
   "admin": {

@@ -8,3 +8,7 @@ type conversationHistoryRequest struct {
 	ConversationID int      `param:"id" validate:"required,number"`
 	Expand         []string `query:"expand"`
 }
+
+type getConversationsRequest struct {
+	Expand []string `query:"expand"`
+}
