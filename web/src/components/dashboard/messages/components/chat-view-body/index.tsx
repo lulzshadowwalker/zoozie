@@ -1,10 +1,20 @@
-import { ChatViewMessage } from "../chat-view-message";
+"use client";
 
-export async function ChatViewBody() {
+import { ChatViewMessage } from "../chat-view-message";
+import { useDashboardMessagesStore } from "@/lib/store/dashboard-messages";
+
+export function ChatViewBody() {
+  const conversation = useDashboardMessagesStore((state) => state.conversation);
+
   return (
     <section className="my-l-xl space-y-l-xl overflow-y-auto scrollbar-hide">
-      {[...Array(15)].map((_, index) => (
-        <ChatViewMessage key={index} sender={index % 2 === 0} />
+      {conversation?.messages?.map((message, index) => (
+        <ChatViewMessage
+          key={index}
+          message={message}
+          customer={conversation?.customer ?? {}}
+          agency={conversation?.agency ?? {}}
+        />
       ))}
     </section>
   );

@@ -15,27 +15,38 @@ type Props = {
 };
 
 type TUserContext = {
-  user?: TUser;
-  accessToken?: string;
+  user: PendingValue<TUser>;
+  accessToken: PendingValue<string>;
 };
+
+type PendingValue<T> = {
+  value?: T;
+  pending: boolean;
+}
 
 const UserContext = createContext<TUserContext | null>(null);
 
 export default function UserContextProvider({ children }: Props) {
-  const [user, setUser] = useState<TUser | undefined>();
-  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+  const [user, setUser] = useState<PendingValue<TUser>>({ pending: true });
+  const [accessToken, setAccessToken] = useState<PendingValue<string>>({ pending: true });
 
   useEffect(function handleGetUser() {
     getUser().then((payload) => {
       if (payload?.user) {
-        setUser(payload.user);
+        setUser({ value: payload.user, pending: false });
       }
+    }).catch((e) => {
+      console.error("failed to get user", e);
+      return setUser({ pending: false });
     });
   }, []);
 
   useEffect(function handleGetAccessToken() {
     getAccessToken().then((token) => {
-      setAccessToken(token);
+      setAccessToken({ value: token, pending: false });
+    }).catch((e) => {
+      console.error("failed to get access token", e);
+      return setAccessToken({ pending: false });
     });
   }, []);
 

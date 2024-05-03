@@ -42,7 +42,6 @@ export async function PreviousConversations() {
     return <ErrorSkeleton />;
   }
 
-  // TODO: NOW: Add Conversation with optional Customer, Agency, and Messages to `types.ts`
   const hasConversations = conversations.length > 0;
 
   return (
@@ -57,7 +56,6 @@ export async function PreviousConversations() {
         conversations?.map((conversation, index) => (
           <ChatTile
             key={index}
-            active={index === 0}
             conversation={conversation}
           />
         ))}

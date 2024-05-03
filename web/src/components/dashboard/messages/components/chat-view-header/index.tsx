@@ -1,17 +1,23 @@
+"use client";
+
 import ZoozImage from "@/components/shared/zooz-image";
+import { useDashboardMessagesStore } from "@/lib/store/dashboard-messages";
+import { getCustomerImage } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-export async function ChatViewHeader() {
-  const t = await getTranslations("dashboard.messages");
+export function ChatViewHeader() {
+  const t = useTranslations("dashboard.messages");
+  const { conversation } = useDashboardMessagesStore();
+  const customer = conversation?.customer;
 
   return (
     <div className="flex items-center gap-xs-s">
       <div className="relative min-h-xl-2xl w-full max-w-xl-2xl overflow-hidden rounded-full bg-gray-400">
         <ZoozImage
-          src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2662&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          // TODO: add customer name to alt text
-          alt={t("avatar")}
-          title={t("avatar")}
+          src={getCustomerImage(customer?.profilePicture)}
+          alt={`${(customer?.name) ?? ''} ${t("avatar")}`}
+          title={`${(customer?.name) ?? ''} ${t("avatar")}`}
           fill
           sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
           quality={65}
@@ -19,7 +25,7 @@ export async function ChatViewHeader() {
         />
       </div>
 
-      <h2 className="text-lg font-medium">Charlie Bradtke</h2>
+      <h2 className="text-lg font-medium">{customer?.name ?? t("unknown-customer")}</h2>
     </div>
   );
 }

@@ -163,9 +163,14 @@
       "message-input": "Message input",
       "send": "Send",
       "failed-to-load-previous-messages": "Failed to load previous messages. Please try again later.",
+      "failed-to-load-message-history": "Failed to load message history. Please try again later.",
       "unknown-customer": "Unknown customer",
       "nothing-here-yet": "Nothing here yet",
-      "no-conversations": "No conversations"
+      "no-conversations": "No conversations",
+      "dont-do-that": "dont do that ..",
+      "avatar": "avatar",
+      "no-conversation-selected": "No conversation selected",
+      "not-in-conversation": "You are not part of the conversation"
     }
   },
   "admin": {

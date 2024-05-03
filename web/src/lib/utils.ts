@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { Locale } from "./i18n/config";
 import path from "path";
 import Config from "./config";
+import { agencyFallbackImage, customerFallbackImage } from "./constants";
 
 /**
  * intelligently applies your tailwind overrides and conditional classes
@@ -126,4 +127,24 @@ export async function translate(
 
 export function isClientSide() {
   return typeof window !== "undefined";
+}
+
+/**
+ * Retrieves the customer image based on the provided image or fallback to a default image.
+ *
+ * @param {string | undefined} image - The image URL to retrieve or undefined.
+ * @return {string} The customer image URL.
+ */
+export function getCustomerImage(image: string | undefined): string {
+  return image ?? customerFallbackImage;
+}
+
+/**
+ * Retrieves the agency image based on the provided image or fallback to a default image.
+ *
+ * @param {string | undefined} image - The image URL to retrieve or undefined.
+ * @return {string} The agency image URL.
+ */
+export function getAgencyImage(image: string | undefined): string {
+  return image ?? agencyFallbackImage;
 }

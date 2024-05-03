@@ -412,6 +412,5 @@ type TRegisterCustomerResponsePayload = {
 };
 
 export async function getAccessToken(): Promise<string | undefined> {
-  const accessToken = cookies().get("access-token")?.value;
-  return accessToken;
+  return cookies().get("access-token")?.value;
 }

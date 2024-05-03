@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChatTileSkeleton } from "../../../chat-tile";
+import { ChatTileSkeleton } from "../../../chat-tile-skeleton";
 import { showToast } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
