@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { getAccessToken, getUser } from "@lib/actions/auth";
+import { usePostHog } from "posthog-js/react";
 
 type Props = {
   children: ReactNode;
@@ -22,32 +23,47 @@ type TUserContext = {
 type PendingValue<T> = {
   value?: T;
   pending: boolean;
-}
+};
 
 const UserContext = createContext<TUserContext | null>(null);
 
 export default function UserContextProvider({ children }: Props) {
   const [user, setUser] = useState<PendingValue<TUser>>({ pending: true });
-  const [accessToken, setAccessToken] = useState<PendingValue<string>>({ pending: true });
+  const [accessToken, setAccessToken] = useState<PendingValue<string>>({
+    pending: true,
+  });
+  const posthog = usePostHog();
 
-  useEffect(function handleGetUser() {
-    getUser().then((payload) => {
-      if (payload?.user) {
-        setUser({ value: payload.user, pending: false });
-      }
-    }).catch((e) => {
-      console.error("failed to get user", e);
-      return setUser({ pending: false });
-    });
-  }, []);
+  useEffect(
+    function handleGetUser() {
+      getUser()
+        .then((payload) => {
+          if (payload?.user) {
+            setUser({ value: payload.user, pending: false });
+            posthog.identify(payload.user.emailAddress);
+            return;
+          }
+
+          posthog.reset();
+        })
+        .catch((e) => {
+          console.error("failed to get user", e);
+          posthog.reset();
+          return setUser({ pending: false });
+        });
+    },
+    [posthog],
+  );
 
   useEffect(function handleGetAccessToken() {
-    getAccessToken().then((token) => {
-      setAccessToken({ value: token, pending: false });
-    }).catch((e) => {
-      console.error("failed to get access token", e);
-      return setAccessToken({ pending: false });
-    });
+    getAccessToken()
+      .then((token) => {
+        setAccessToken({ value: token, pending: false });
+      })
+      .catch((e) => {
+        console.error("failed to get access token", e);
+        return setAccessToken({ pending: false });
+      });
   }, []);
 
   return (

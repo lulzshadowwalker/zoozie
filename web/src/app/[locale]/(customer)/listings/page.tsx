@@ -4,7 +4,7 @@ import ListingsComponent from "@/components/customer/shared/listings";
 import Filters from "@/components/customer/listings/filters";
 import Search from "@/components/customer/listings/search";
 import { fetchApi } from "@/lib/api";
-import { useUser } from "@/lib/context/user-context";
+import { useUser } from "@/lib/context/user";
 import { getAccessToken } from "@/lib/actions/auth";
 
 export default async function Listings({

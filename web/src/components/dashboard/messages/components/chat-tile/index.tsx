@@ -2,7 +2,7 @@
 
 import ZoozImage from "@/components/shared/zooz-image";
 import { generateApiUrl } from "@/lib/api";
-import { useUser } from "@/lib/context/user-context";
+import { useUser } from "@/lib/context/user";
 import { useFormatDateTime } from "@/lib/hooks";
 import { Locale } from "@/lib/i18n/config";
 import { Link } from "@/lib/i18n/navigation";

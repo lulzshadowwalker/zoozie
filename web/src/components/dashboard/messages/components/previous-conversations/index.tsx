@@ -5,7 +5,7 @@ import { generateApiUrl } from "@/lib/api";
 import LoadingSkeleton from "./components/error-skeleton";
 import { TConversation, TZoozieUserMessage } from "@/lib/types";
 import { useTranslations } from "next-intl";
-import { useUser } from "@/lib/context/user-context";
+import { useUser } from "@/lib/context/user";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Locale } from "@/lib/i18n/config";

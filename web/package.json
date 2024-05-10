@@ -23,6 +23,8 @@
     "next-intl": "^3.9.2",
     "node-mocks-http": "^1.14.1",
     "plaiceholder": "^3.0.0",
+    "posthog-js": "^1.131.3",
+    "posthog-node": "^4.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-fast-marquee": "^1.6.4",

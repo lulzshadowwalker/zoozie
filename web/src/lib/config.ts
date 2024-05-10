@@ -26,13 +26,29 @@ export default class Config {
 
     return secret;
   }
-  static get translationApiBaseUrl(): string | undefined {
+  static get translationApiBaseUrl(): string {
     const url = process.env.NEXT_PUBLIC_TRANSLATION_API_BASE_URL;
     if (!url) {
-      console.error("env.NEXT_PUBLIC_TRANSLATION_API_BASE_URL is not set");
-      return undefined;
+      throw new Error("env.NEXT_PUBLIC_TRANSLATION_API_BASE_URL is not set");
     }
 
     return url;
+  }
+  static get postHogKey(): string {
+    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    if (!key) {
+      throw new Error("env.NEXT_PUBLIC_POSTHOG_KEY is not set");
+    }
+
+    return key;
+  }
+
+  static get postHogHost(): string {
+    const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+    if (!host) {
+      throw new Error("env.NEXT_PUBLIC_POSTHOG_HOST is not set");
+    }
+
+    return host;
   }
 }
