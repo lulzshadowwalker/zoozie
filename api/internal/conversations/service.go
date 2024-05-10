@@ -134,18 +134,29 @@ func (s *service) GetConversations(c context.Context, request getConversationsRe
 }
 
 func (s *service) GetConversationHistory(c context.Context, request conversationHistoryRequest) (Conversation, error) {
-	conversation, err := s.repo.GetConversationByID(c, request.ConversationID, nil)
+	sender, receiver, senderType, err := s.getSenderAndReceiver(c, request.To)
 	if err != nil {
 		return Conversation{}, err
 	}
 
-	senderID, _, err := s.getSenderType(c)
-	if err != nil {
-		return Conversation{}, err
+	var customerID, agencyID int
+	switch senderType {
+	case SenderCustomer:
+		customerID = sender
+		agencyID = receiver
+	case SenderAgency:
+		agencyID = sender
+		customerID = receiver
+	default:
+		return Conversation{}, fmt.Errorf("%w %s", ErrInvalidSenderType, senderType)
 	}
 
-	if senderID != conversation.CustomerID && senderID != conversation.AgencyID {
-		return Conversation{}, utils.NewApiError(http.StatusForbidden, "sender is not part of the conversation")
+	conversation, err := s.repo.GetConversation(c, customerID, agencyID, nil)
+	if err != nil {
+		if errors.Is(err, ErrConversationNotFound) {
+			return Conversation{}, utils.NewApiError(http.StatusForbidden, "sender is not part of the conversation")
+		}
+		return Conversation{}, err
 	}
 
 	if conversation, err = s.expand(c, conversation, request.Expand); err != nil {
@@ -197,6 +208,7 @@ func (s *service) expand(c context.Context, conversation Conversation, options [
 		user.EmailAddress = ""
 
 		conversation.Customer = user
+		conversation.Customer.Customer = &customer
 	}
 
 	return conversation, nil

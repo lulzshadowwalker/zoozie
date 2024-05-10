@@ -4,7 +4,7 @@ import { generateApiUrl } from "@/lib/api";
 import { useUser } from "@/lib/context/user-context";
 import { useToastHelpers } from "@/lib/hooks";
 // import { toggleFavorite } from "@/lib/actions/toggle-favorite";
-import { TListing, ZoozieUserMessage } from "@/lib/types";
+import { TListing, TZoozieUserMessage } from "@/lib/types";
 import { cn, showToast } from "@/lib/utils";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,7 +22,7 @@ export default function FavoriteButton({ listing }: Props) {
   const { showAuthRequiredToast } = useToastHelpers();
 
   async function toggleFavorite() {
-    const unknownError: ZoozieUserMessage = {
+    const unknownError: TZoozieUserMessage = {
       status: "failure",
       message: t("unknown-error"),
     };

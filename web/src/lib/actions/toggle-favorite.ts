@@ -1,7 +1,7 @@
 "use server";
 
 import { getTranslations } from "next-intl/server";
-import { ZoozieUserMessage } from "../types";
+import { TZoozieUserMessage } from "../types";
 import { cookies } from "next/headers";
 import { fetchApi } from "../api";
 
@@ -9,9 +9,9 @@ async function toggleFavorite({
   listingId,
 }: {
   listingId: number;
-}): Promise<{ message?: ZoozieUserMessage; status?: boolean }> {
+}): Promise<{ message?: TZoozieUserMessage; status?: boolean }> {
   const t = await getTranslations("customer.listings");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("unknown-error"),
   };
@@ -34,7 +34,7 @@ async function toggleFavorite({
 
     if (!res.ok) {
       if (res.status === 403) {
-        const message: ZoozieUserMessage = {
+        const message: TZoozieUserMessage = {
           status: "info",
           message: t("agents-cannot-favorite"),
         };

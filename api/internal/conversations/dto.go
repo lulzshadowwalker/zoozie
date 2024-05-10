@@ -5,8 +5,8 @@ type conversationRequest struct {
 }
 
 type conversationHistoryRequest struct {
-	ConversationID int      `param:"id" validate:"required,number"`
-	Expand         []string `query:"expand"`
+	To     int      `param:"to" validate:"required,number"`
+	Expand []string `query:"expand"`
 }
 
 type getConversationsRequest struct {

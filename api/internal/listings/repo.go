@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 
@@ -413,10 +412,6 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 
 	listings := make([]Listing, len(dest))
 	for index, listing := range dest {
-		if listing.Favorite {
-			log.Println("listing is favorite", listing.Listing.ID)
-		}
-
 		listings[index] = listing.ToEntity()
 	}
 

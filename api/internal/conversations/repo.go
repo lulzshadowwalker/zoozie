@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
@@ -77,7 +78,8 @@ func (r *repo) StoreMessage(c context.Context, message Message, tx interfaces.Tr
 		return Message{}, fmt.Errorf("failed to insert message because %w", err)
 	}
 
-	return dbMessage.ToEntity(), nil
+	message.ID = int(dbMessage.Message.ID)
+	return message, nil
 }
 
 func (r *repo) GetConversation(c context.Context, customerID, agencyID int, tx interfaces.Transaction) (Conversation, error) {
@@ -116,6 +118,7 @@ func (r *repo) CreateConversation(c context.Context, customerID, agencyID int, t
 		db = tx
 	}
 
+	log.Println("creating conversation", customerID, agencyID)
 	var dbConversation DBConversation
 	if err := Conversations.INSERT(
 		Conversations.CustomerID,
@@ -139,9 +142,12 @@ func (r *repo) GetConversationsByAgencyID(c context.Context, agencyID int, tx in
 
 	var dbConversation []DBConversation
 	if err := SELECT(Conversations.AllColumns).
-		FROM(Conversations).
+		FROM(
+			Conversations.
+				LEFT_JOIN(ConversationMessages, Conversations.ID.EQ(ConversationMessages.ConversationID)),
+		).
 		WHERE(Conversations.AgencyID.EQ(Int(int64(agencyID)))).
-		ORDER_BY(Conversations.CreatedAt.DESC()).
+		ORDER_BY(ConversationMessages.CreatedAt.DESC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, fmt.Errorf("failed to query the conversation because %w", err)
 	}
@@ -162,9 +168,12 @@ func (r *repo) GetConversationsByCustomerID(c context.Context, agencyID int, tx 
 
 	var dbConversation []DBConversation
 	if err := SELECT(Conversations.AllColumns).
-		FROM(Conversations).
+		FROM(
+			Conversations.
+				LEFT_JOIN(ConversationMessages, Conversations.ID.EQ(ConversationMessages.ConversationID)),
+		).
 		WHERE(Conversations.CustomerID.EQ(Int(int64(agencyID)))).
-		ORDER_BY(Conversations.CreatedAt.DESC()).
+		ORDER_BY(ConversationMessages.CreatedAt.DESC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, fmt.Errorf("failed to query the conversation because %w", err)
 	}
@@ -186,14 +195,18 @@ func (r *repo) GetConversationByID(c context.Context, id int, tx interfaces.Tran
 	var dbConversation DBConversation
 	if err := SELECT(
 		Conversations.AllColumns,
-		ConversationMessages.AllColumns,
+		ConversationMessages.ID,
+		ConversationMessages.Type,
+		ConversationMessages.Sender,
+		ConversationMessages.TextContent,
+		ConversationMessages.CreatedAt,
 	).
 		FROM(
 			Conversations.
 				LEFT_JOIN(ConversationMessages, Conversations.ID.EQ(ConversationMessages.ConversationID)),
 		).
 		WHERE(Conversations.ID.EQ(Int(int64(id)))).
-		ORDER_BY(Conversations.CreatedAt.DESC()).
+		ORDER_BY(ConversationMessages.CreatedAt.ASC()).
 		QueryContext(c, db, &dbConversation); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return Conversation{}, fmt.Errorf("failed to query the conversation because %w", err)
 	}
@@ -207,8 +220,16 @@ func (r *repo) GetLastMessage(c context.Context, conversationID int, tx interfac
 		db = tx
 	}
 
-	var dbMessage DBMessage
-	if err := SELECT(ConversationMessages.AllColumns).
+	var dbMessage PreviewMessage
+	if err := SELECT(
+		ConversationMessages.ID.AS("PreviewMessage.ID"),
+		ConversationMessages.ConversationID.AS("PreviewMessage.ConversationID"),
+		ConversationMessages.Sender.AS("PreviewMessage.Sender"),
+		ConversationMessages.Type.AS("PreviewMessage.Type"),
+		ConversationMessages.TextContent.AS("PreviewMessage.TextContent"),
+		ConversationMessages.CreatedAt.AS("PreviewMessage.CreatedAt"),
+		ConversationMessages.UpdatedAt.AS("PreviewMessage.UpdatedAt"),
+	).
 		FROM(ConversationMessages).
 		WHERE(ConversationMessages.ConversationID.EQ(Int(int64(conversationID)))).
 		ORDER_BY(ConversationMessages.CreatedAt.DESC()).

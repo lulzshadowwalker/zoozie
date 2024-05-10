@@ -16,7 +16,7 @@ export interface IBaseLayoutParams extends IBasePageParams {
   children: ReactNode;
 }
 
-export type ZoozieUserMessage = {
+export type TZoozieUserMessage = {
   status: "success" | "failure" | "warning" | "info";
   message: string;
 };
@@ -229,14 +229,14 @@ export type TAgency = {
   description?: string;
 };
 
-export type TCustomer = TUser;
+export type TCustomer = TUser & { customer?: { id?: number, userId?: number  }};
 
 export type TConversationMessage = {
   id?: number;
   conversationId?: number;
   sentAt?: string;
-  sender?: "CUSTOMER" | "AGENCY";
-  type?: "TEXT";
+  sender?: TSenderType;
+  type?: TMessageType;
   content?: string;
 };
 
@@ -251,3 +251,21 @@ export type TConversation = {
   messages?: Array<TConversationMessage>;
   latestMessage?: TConversationMessage;
 };
+
+export type TMessageType = "TEXT";
+export type TSenderType = "AGENCY" | "CUSTOMER";
+
+export type TSocketMessage = {
+  message?: {
+    type?: TMessageType;
+    sender?: TSenderType;
+    content?: string;
+    SentAt?: string;
+  };
+  error?: TSocketError;
+}
+
+export type TSocketError = {
+  code?: "SEND_FAILURE" | "READ_FAILURE" | "INTERNAL_FAILURE" | "UNRECOGNIZED_MESSAGE_TYPE" | "UNAUTHENTICATED" | "INVALID_TOKEN";
+  message?: string;
+}

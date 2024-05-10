@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, ClassValue } from "clsx";
-import { ZoozieUserMessage } from "@types";
+import { TZoozieUserMessage } from "@types";
 import { StoreApi, UseBoundStore } from "zustand";
 import { toast } from "react-toastify";
 import { getTranslations } from "next-intl/server";
@@ -17,22 +17,22 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export async function showToast(
-  message: ZoozieUserMessage | Promise<ZoozieUserMessage>,
+  message: TZoozieUserMessage | Promise<TZoozieUserMessage>,
 ) {
   if (isClientSide()) {
     toast.dismiss();
   }
 
   isPromise(message)
-    ? await showToastAsync(message as Promise<ZoozieUserMessage>)
-    : showToastSync(message as ZoozieUserMessage);
+    ? await showToastAsync(message as Promise<TZoozieUserMessage>)
+    : showToastSync(message as TZoozieUserMessage);
 }
 
 export function isPromise(value: unknown): value is Promise<unknown> {
   return !!value && typeof (value as Promise<unknown>).then === "function";
 }
 
-async function showToastAsync(message: Promise<ZoozieUserMessage>) {
+async function showToastAsync(message: Promise<TZoozieUserMessage>) {
   const t = await getTranslations();
 
   toast.promise(message, {
@@ -54,7 +54,7 @@ async function showToastAsync(message: Promise<ZoozieUserMessage>) {
   });
 }
 
-function showToastSync(message: ZoozieUserMessage): void {
+function showToastSync(message: TZoozieUserMessage): void {
   switch (message.status) {
     case "success":
       toast.success(message.message);
@@ -147,4 +147,8 @@ export function getCustomerImage(image: string | undefined): string {
  */
 export function getAgencyImage(image: string | undefined): string {
   return image ?? agencyFallbackImage;
+}
+
+export function isEmptyObject(obj: any): boolean {
+  return Object.keys(obj).length === 0 && obj.constructor === Object
 }

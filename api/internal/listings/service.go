@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"slices"
@@ -66,8 +65,6 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 	if err != nil {
 		return err
 	}
-
-	log.Println("agent follows agency: ", agencyID)
 
 	location := Location{
 		Country: Country{

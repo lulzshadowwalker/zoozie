@@ -1,4 +1,6 @@
 {
+  "just-now": "just now", 
+  "minutes-ago": "minutes ago", 
   "currency": {
     "jod": "JOD"
   },
@@ -170,7 +172,10 @@
       "dont-do-that": "dont do that ..",
       "avatar": "avatar",
       "no-conversation-selected": "No conversation selected",
-      "not-in-conversation": "You are not part of the conversation"
+      "not-in-conversation": "You are not part of the conversation",
+      "something-went-wrong": "Something went wrong. Please try again later.",
+      "read-failure": "failed to read incoming message. Please try again later.",
+      "write-failure": "failed to write outgoing message. Please try again later."
     }
   },
   "admin": {

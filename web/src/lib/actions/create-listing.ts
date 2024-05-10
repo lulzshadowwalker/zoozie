@@ -5,7 +5,7 @@ import {
   CreateListingRequestPayload,
   CreateListingRequestPayloadSchema,
   TFileUpload,
-  ZoozieUserMessage,
+  TZoozieUserMessage,
 } from "../types";
 import { fetchApi } from "../api";
 import { cookies } from "next/headers";
@@ -16,9 +16,9 @@ export async function createListing({
 }: {
   payload: Omit<CreateListingRequestPayload, "pictures">;
   picturesForm: FormData;
-}): Promise<ZoozieUserMessage> {
+}): Promise<TZoozieUserMessage> {
   const t = await getTranslations("dashboard.create-listing");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };

@@ -26,7 +26,7 @@ export function ChatViewMessage({ message, agency, customer }: ChatViewMessagePr
         "ms-auto flex-row-reverse": sender,
       })}
     >
-      <div className="relative min-h-xl-2xl w-full max-w-xl-2xl overflow-hidden rounded-full bg-gray-400">
+      <div className="relative min-w-[5rem] min-h-[5rem] h-[5rem] w-[5rem] overflow-hidden rounded-full bg-gray-400">
         <ZoozImage
           src={sender ? getAgencyImage(agency.logo) : getCustomerImage(customer.profilePicture)}
           alt={`${(sender ? agency.name : customer.name) ?? ''} ${t("avatar")}`}
@@ -40,7 +40,7 @@ export function ChatViewMessage({ message, agency, customer }: ChatViewMessagePr
 
       <p
         className={cn(
-          "rounded-3xl bg-primary-1/50 p-xs-s",
+          "rounded-3xl bg-primary-1/50 p-xs-s break-words",
           {
             "rounded-tr-none": sender,
           },

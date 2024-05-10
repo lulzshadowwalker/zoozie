@@ -12,7 +12,6 @@ type Conversation struct {
 	CustomerID int       `json:"customerId,omitempty"`
 	AgencyID   int       `json:"agencyId,omitempty"`
 	CreatedAt  time.Time `json:"createdAt,omitempty"`
-	UpdatedAt  time.Time `json:"updatedAt,omitempty"`
 
 	Customer      *users.User      `json:"customer,omitempty"`
 	Agency        *agencies.Agency `json:"agency,omitempty"`
@@ -31,12 +30,13 @@ type MessageType string
 
 const (
 	MessageText MessageType = "TEXT"
+	MessageAuth MessageType = "AUTH"
 )
 
 type Message struct {
 	ID             int       `json:"id,omitempty"`
 	ConversationID int       `json:"conversationId,omitempty"`
-	SentAt         time.Time `json:"sentAt"`
+	SentAt         time.Time `json:"sentAt,omitempty"`
 
 	Sender  SenderType  `json:"sender,omitempty"`
 	Type    MessageType `json:"type,omitempty"`

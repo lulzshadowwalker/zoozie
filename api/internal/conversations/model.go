@@ -1,6 +1,11 @@
 package conversations
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
+import (
+	"log"
+	"time"
+
+	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
+)
 
 type DBMessage struct {
 	Message model.ConversationMessages
@@ -22,10 +27,36 @@ func (m *DBMessage) ToEntity() Message {
 	return message
 }
 
+type PreviewMessage struct {
+	ID             int64 `sql:"primary_key"`
+	ConversationID int64
+	Type           string
+	Sender         string
+	TextContent    *string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}
+
+func (m *PreviewMessage) ToEntity() Message {
+	message := Message{
+		ID:             int(m.ID),
+		ConversationID: int(m.ConversationID),
+		Sender:         SenderType(m.Sender),
+		Type:           MessageType(m.Type),
+		SentAt:         m.CreatedAt,
+	}
+
+	if m.TextContent != nil {
+		message.Content = *m.TextContent
+	}
+
+	return message
+}
+
 type DBConversation struct {
 	Conversation  model.Conversations
 	Messages      []DBMessage
-	LatestMessage *DBMessage
+	LatestMessage *PreviewMessage
 }
 
 func (c *DBConversation) ToEntity() Conversation {
@@ -34,7 +65,6 @@ func (c *DBConversation) ToEntity() Conversation {
 		CustomerID: int(c.Conversation.CustomerID),
 		AgencyID:   int(c.Conversation.AgencyID),
 		CreatedAt:  c.Conversation.CreatedAt,
-		UpdatedAt:  c.Conversation.UpdatedAt,
 	}
 
 	if c.Messages != nil {
@@ -45,6 +75,7 @@ func (c *DBConversation) ToEntity() Conversation {
 	}
 
 	if c.LatestMessage != nil {
+		log.Printf("latest message %#v", c.LatestMessage)
 		msg := c.LatestMessage.ToEntity()
 		conversation.LatestMessage = &msg
 	}

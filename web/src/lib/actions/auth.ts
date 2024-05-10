@@ -5,7 +5,7 @@ import {
   RegisterCustomerFormSchema,
   TPhoneNumber,
   TUser,
-  ZoozieUserMessage,
+  TZoozieUserMessage,
 } from "../types";
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
@@ -17,7 +17,7 @@ export async function login({
 }: {
   phoneNumber?: TPhoneNumber;
   otp?: string;
-}): Promise<ZoozieUserMessage | undefined> {
+}): Promise<TZoozieUserMessage | undefined> {
   const t = await getTranslations("customer.auth");
 
   if (!phoneNumber?.countryCode || !phoneNumber?.phoneNumber || !otp) {
@@ -41,13 +41,13 @@ export async function login({
     },
   });
 
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };
 
   if (!res.ok) {
-    let message: ZoozieUserMessage | undefined;
+    let message: TZoozieUserMessage | undefined;
     switch (res.status) {
       // TODO: handle conflicting status 403 (otp expired,user deactivated)
       case 403:
@@ -88,9 +88,9 @@ export async function login({
 }
 
 export async function registerCustomer(
-  initialState: ZoozieUserMessage | undefined,
+  initialState: TZoozieUserMessage | undefined,
   form: FormData,
-): Promise<ZoozieUserMessage | undefined> {
+): Promise<TZoozieUserMessage | undefined> {
   const t = await getTranslations("customer.auth");
 
   const payload = {
@@ -120,13 +120,13 @@ export async function registerCustomer(
     },
   });
 
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };
 
   if (!res.ok) {
-    let message: ZoozieUserMessage | undefined;
+    let message: TZoozieUserMessage | undefined;
     switch (res.status) {
       case 400:
       default:
@@ -152,9 +152,9 @@ export async function registerCustomer(
 
 export async function sendOtp(
   phoneNumber?: TPhoneNumber,
-): Promise<ZoozieUserMessage> {
+): Promise<TZoozieUserMessage> {
   const t = await getTranslations("customer.auth");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("otp-sent-failure"),
   };
@@ -199,11 +199,11 @@ export async function sendOtp(
 }
 
 export async function verifyOtp(
-  initialState: ZoozieUserMessage | undefined,
+  initialState: TZoozieUserMessage | undefined,
   form: FormData,
-): Promise<ZoozieUserMessage> {
+): Promise<TZoozieUserMessage> {
   const t = await getTranslations("customer.auth");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };
@@ -261,7 +261,7 @@ export async function verifyOtp(
 }
 
 export async function getUser(): Promise<
-  { user?: TUser; message?: ZoozieUserMessage } | undefined
+  { user?: TUser; message?: TZoozieUserMessage } | undefined
 > {
   const t = await getTranslations("customer.auth");
   const accessToken = cookies().get("access-token")?.value;
@@ -280,9 +280,9 @@ export async function getUser(): Promise<
 async function fetchUser(
   accessToken: string,
   retries: number,
-): Promise<{ user?: TUser; message?: ZoozieUserMessage }> {
+): Promise<{ user?: TUser; message?: TZoozieUserMessage }> {
   const t = await getTranslations("customer.auth");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };
@@ -302,7 +302,7 @@ async function fetchUser(
   });
 
   if (!res.ok) {
-    let message: ZoozieUserMessage | undefined;
+    let message: TZoozieUserMessage | undefined;
     switch (res.status) {
       case 401:
         const currentRefreshToken = cookies().get("refresh-token")?.value;
@@ -343,10 +343,10 @@ async function fetchUser(
 async function refreshTokens(refreshToken: string): Promise<{
   accessToken?: string;
   refreshToken?: string;
-  message?: ZoozieUserMessage;
+  message?: TZoozieUserMessage;
 }> {
   const t = await getTranslations("customer.auth");
-  const unknownError: ZoozieUserMessage = {
+  const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("failure"),
   };
@@ -363,7 +363,7 @@ async function refreshTokens(refreshToken: string): Promise<{
     },
   });
 
-  let message: ZoozieUserMessage | undefined;
+  let message: TZoozieUserMessage | undefined;
   if (!res.ok) {
     switch (res.status) {
       case 403:

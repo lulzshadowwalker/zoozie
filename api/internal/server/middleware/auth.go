@@ -15,13 +15,14 @@ func Auth() echo.MiddlewareFunc {
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(entities.JwtCustomClaims)
 		},
-		SigningKey: []byte(config.GetJwtSecret()),
+		SigningKey:  []byte(config.GetJwtSecret()),
+		TokenLookup: "header:Authorization:Bearer ,query:token",
 	}
 
 	return echojwt.WithConfig(jwtConfig)
 }
 
-// PreferAuth is used for APIs that can operator on both unauthenticated and authenticated users
+// PreferAuth is used for APIs that can operate on both unauthenticated and authenticated users
 // it allows requests with missing tokens to pass but not malformed ones
 func PreferAuth() echo.MiddlewareFunc {
 	jwtConfig := echojwt.Config{

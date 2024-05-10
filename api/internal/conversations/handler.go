@@ -2,6 +2,8 @@ package conversations
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -29,8 +31,18 @@ type SocketErrorCode string
 const (
 	ErrCodeSendFailure             SocketErrorCode = "SEND_FAILURE"
 	ErrCodeReadFailure             SocketErrorCode = "READ_FAILURE"
-	ErrCodeInternal                SocketErrorCode = "INTERNAL_ERROR"
+	ErrCodeInternalFailure         SocketErrorCode = "INTERNAL_FAILURE"
 	ErrCodeUnrecognizedMessageType SocketErrorCode = "UNRECOGNIZED_MESSAGE_TYPE"
+	ErrCodeUnauthenticated         SocketErrorCode = "UNAUTHENTICATED"
+	ErrCodeInvalidToken            SocketErrorCode = "INVALID_TOKEN"
+)
+
+var (
+	ErrUnauthenticated         = errors.New("unauthenticated")
+	ErrInvalidToken            = errors.New("invalid token")
+	ErrReadFailure             = errors.New("failed to read message")
+	ErrWriteFailure            = errors.New("failed to write message")
+	ErrUnrecognizedMessageType = errors.New("unrecognized message type")
 )
 
 func NewHandler(service Service) *handler {
@@ -41,14 +53,24 @@ func NewHandler(service Service) *handler {
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
 	// customer or agency id depending on who's the one making the request
+	// NOTE: uses custom websocket auth middleware if you will
 	e.GET("/conversations/chat/:to", utils.Unwrap(h.Chat), middleware.Auth())
-	e.GET("/conversations/:id", utils.Unwrap(h.GetConversationHistory), middleware.Auth())
+	e.GET("/conversations/:to", utils.Unwrap(h.GetConversationHistory), middleware.Auth())
 	e.GET("/conversations", utils.Unwrap(h.GetConversations), middleware.Auth())
 }
 
+type ConversationID = int
+
 var (
-	upgrader      = websocket.Upgrader{}
-	conversations = make(map[int]chan SocketPayload)
+	upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			// TODO: add origin validation for websocket
+			return true
+		},
+		ReadBufferSize:  8 * 1024,
+		WriteBufferSize: 8 * 1024,
+	}
+	conversations = make(map[ConversationID][]SocketSession)
 )
 
 type (
@@ -68,7 +90,21 @@ type (
 		Code    SocketErrorCode `json:"code,omitempty"`
 		Message string          `json:"message,omitempty"`
 	}
+
+	SocketSession struct {
+		ws           *websocket.Conn
+		Conversation Conversation
+		ConnectedAt  time.Time
+	}
 )
+
+func newSocketSession(ws *websocket.Conn, conversation Conversation) SocketSession {
+	return SocketSession{
+		ws:           ws,
+		Conversation: conversation,
+		ConnectedAt:  time.Now(),
+	}
+}
 
 func NewSocketErrorPayload(code SocketErrorCode, message string) SocketPayload {
 	return SocketPayload{
@@ -97,67 +133,50 @@ func (h *handler) Chat(c echo.Context) error {
 	}
 
 	if conversations[conversation.ID] == nil {
-		conversations[conversation.ID] = make(chan SocketPayload, 10)
+		conversations[conversation.ID] = make([]SocketSession, 0)
 	}
+	socketSession := newSocketSession(ws, conversation)
+	conversations[conversation.ID] = append(conversations[conversation.ID], socketSession)
 	defer delete(conversations, conversation.ID)
-	// * Check if room exists and create a conversation if it doesn't
-	// * read message from user, store it in the database and send it via the websocket connection to the other end
 
-	// * if message fails to be stored in the database, return an error and do not send it via the websocket
-	// * still need to handle the errors on the client side
-
-	return h.handleConnection(c, conversation, ws, conversations[conversation.ID])
+	log.Println("SAVED WS => ", socketSession.ws != nil)
+	return h.handleConnection(c, socketSession)
 }
 
-func (h *handler) handleConnection(c echo.Context, conversation Conversation, ws *websocket.Conn, ch chan SocketPayload) error {
-	go func() {
-		for msg := range ch {
-			if err := ws.WriteJSON(msg); err != nil {
-				c.Logger().Error("failed to write message", "err", err, "conversationID", conversation.ID)
-			}
-		}
-	}()
-
+// TODO: refactor WriteJSON
+func (h *handler) handleConnection(c echo.Context, session SocketSession) error {
 	for {
 		var incomingPayload SocketPayload
-		err := ws.ReadJSON(&incomingPayload)
+		err := session.ws.ReadJSON(&incomingPayload)
 		if err != nil {
-			c.Logger().Error("failed to read message", "err", err, "conversationID", conversation.ID)
+			c.Logger().Error("failed to read message", "err", err, "conversationID", session.Conversation.ID)
 
-			if err := ws.WriteJSON(NewSocketErrorPayload(ErrCodeReadFailure, "failed to read message")); err != nil {
-				c.Logger().Error("failed to write message", "err", err, "conversationID", conversation.ID)
-				continue
+			if err := session.ws.WriteJSON(NewSocketErrorPayload(ErrCodeReadFailure, "failed to read message")); err != nil {
+				c.Logger().Error("failed to write message", "err", err, "conversationID", session.Conversation.ID)
 			}
 
 			continue
 		}
 
-		// TODO: communicate via JSON
-		// TODO: refactor out the writeJSON method
-
-		// outgoingPayload := NewTextSocketPayload(incomingPayload.Content.Content)
-		// if err := ws.WriteJSON(outgoingPayload); err != nil {
-		// 	c.Logger().Error("failed to write message", "err", err, "conversationID", conversation.ID)
-		// 	continue
-		// }
-
 		if incomingPayload.Message.Type != MessageText {
-			if err := ws.WriteJSON(NewSocketErrorPayload(ErrCodeUnrecognizedMessageType, "unrecognized message type")); err != nil {
-				c.Logger().Error("failed to write message", "err", err, "conversationID", conversation.ID)
+			if err := session.ws.WriteJSON(NewSocketErrorPayload(ErrCodeUnrecognizedMessageType, "unrecognized message type")); err != nil {
+				c.Logger().Error("failed to write message", "err", err, "conversationID", session.Conversation.ID)
 			}
+
+			c.Logger().Error("failed to read message", "err", fmt.Errorf("%w %q", ErrUnrecognizedMessageType, incomingPayload.Message.Type), "conversationID", session.Conversation.ID)
 			continue
 		}
 
 		msg, err := h.service.StoreMessage(utils.TransformEchoContext(c), Message{
 			// NOTE: do not pass in any of the decoded sensitive data from the incoming payload into the service
-			ConversationID: conversation.ID,
+			ConversationID: session.Conversation.ID,
 			Type:           incomingPayload.Message.Type,
 			Content:        incomingPayload.Message.Content,
 		})
 		if err != nil {
-			c.Logger().Error("failed to store message", "err", err, "conversationID", conversation.ID)
-			if err := ws.WriteJSON(NewSocketErrorPayload(ErrCodeInternal, "failed to store message")); err != nil {
-				c.Logger().Error("failed to write message", "err", err, "conversationID", conversation.ID)
+			c.Logger().Error("failed to store message", "err", err, "conversationID", session.Conversation.ID)
+			if err := session.ws.WriteJSON(NewSocketErrorPayload(ErrCodeInternalFailure, "failed to store message")); err != nil {
+				c.Logger().Error("failed to write message", "err", err, "conversationID", session.Conversation.ID)
 			}
 
 			continue
@@ -170,8 +189,14 @@ func (h *handler) handleConnection(c echo.Context, conversation Conversation, ws
 			Type:    MessageText,
 		}
 
+		log.Println("len of conns", len(conversations[session.Conversation.ID]))
+
 		message := SocketPayload{Message: content}
-		ch <- message
+		for _, s := range conversations[session.Conversation.ID] {
+			if err := s.ws.WriteJSON(message); err != nil {
+				c.Logger().Error("failed to write message", "err", err, "conversationID", session.Conversation.ID)
+			}
+		}
 	}
 }
 
@@ -193,6 +218,7 @@ func (h *handler) GetConversations(c echo.Context) error {
 	})
 }
 
+// TODO: get conversation history via customer id or agency id simply to align with /chat/:to
 func (h *handler) GetConversationHistory(c echo.Context) error {
 	var request conversationHistoryRequest
 	if err := utils.BindAndValidate(c, &request); err != nil {
@@ -200,7 +226,6 @@ func (h *handler) GetConversationHistory(c echo.Context) error {
 	}
 
 	request.Expand = c.QueryParams()["expand"]
-	log.Println(len(c.QueryParams()["expand"]))
 
 	conversation, err := h.service.GetConversationHistory(utils.TransformEchoContext(c), request)
 	if err != nil {

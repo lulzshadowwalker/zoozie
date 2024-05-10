@@ -16,8 +16,8 @@ export function ChatViewHeader() {
       <div className="relative min-h-xl-2xl w-full max-w-xl-2xl overflow-hidden rounded-full bg-gray-400">
         <ZoozImage
           src={getCustomerImage(customer?.profilePicture)}
-          alt={`${(customer?.name) ?? ''} ${t("avatar")}`}
-          title={`${(customer?.name) ?? ''} ${t("avatar")}`}
+          alt={`${customer?.name ?? ""} ${t("avatar")}`}
+          title={`${customer?.name ?? ""} ${t("avatar")}`}
           fill
           sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
           quality={65}
@@ -25,7 +25,9 @@ export function ChatViewHeader() {
         />
       </div>
 
-      <h2 className="text-lg font-medium">{customer?.name ?? t("unknown-customer")}</h2>
+      <h2 className="text-lg font-medium">
+        {customer?.name ?? t("unknown-customer")}
+      </h2>
     </div>
   );
 }

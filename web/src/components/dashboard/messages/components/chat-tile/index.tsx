@@ -3,10 +3,11 @@
 import ZoozImage from "@/components/shared/zooz-image";
 import { generateApiUrl } from "@/lib/api";
 import { useUser } from "@/lib/context/user-context";
+import { useFormatDateTime } from "@/lib/hooks";
 import { Locale } from "@/lib/i18n/config";
 import { Link } from "@/lib/i18n/navigation";
 import { useDashboardMessagesStore } from "@/lib/store/dashboard-messages";
-import { TConversation, ZoozieUserMessage } from "@/lib/types";
+import { TConversation, TZoozieUserMessage } from "@/lib/types";
 import { cn, getCustomerImage, showToast } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
@@ -16,98 +17,110 @@ interface ChatTileProps extends HTMLAttributes<HTMLElement> {
   conversation: TConversation;
 }
 
-export function ChatTile({
-  conversation,
-  className,
-  ...rest
-}: ChatTileProps) {
+export function ChatTile({ conversation, className, ...rest }: ChatTileProps) {
   const t = useTranslations("dashboard.messages");
-  const { locale } = useParams()
+  const { locale } = useParams();
   const searchParams = useSearchParams();
 
   const customer = conversation.customer;
-  const active = searchParams.get("conversation") === conversation?.id?.toString();
+  const latestMessage = conversation.latestMessage;
+
+  const active =
+    searchParams.get("customer") ===
+    // hmm
+    conversation?.customer?.customer?.id?.toString();
 
   const { accessToken } = useUser();
 
-  const conversationSearchParam = searchParams.get("conversation");
+  const customerSearchParam = searchParams.get("customer");
   const { setConversation } = useDashboardMessagesStore();
+  const { formatDateTime } = useFormatDateTime();
 
-  useEffect(function fetchMessageHistory() {
-    if (typeof window === "undefined" || accessToken.pending) return
+  useEffect(
+    function fetchMessageHistory() {
+      if (typeof window === "undefined" || accessToken.pending) return;
 
-    const failureMessage: ZoozieUserMessage = { status: "failure", message: t("failed-to-load-message-history") }
-    if (!accessToken.value) {
-      console.error("ChatViewBody: no access token");
-      showToast(failureMessage);
-      return
-    }
-
-    if (!conversationSearchParam) {
-      setConversation(null);
-      return;
-    }
-
-    const conversationId = Number(conversationSearchParam);
-    if (Number.isNaN(conversationId)) {
-      console.error("ChatViewBody: invalid conversation id");
-      showToast({ status: "warning", message: t("dont-do-that") })
-      return
-    }
-
-    const url = generateApiUrl({
-      endpoint: `/conversations/${conversationId}`,
-      locale: locale as Locale,
-      queryParams: { expand: ["agency", "customer"] },
-    })
-
-    fetch(url.href, {
-      headers: {
-        Authorization: `Bearer ${accessToken.value}`,
+      const failureMessage: TZoozieUserMessage = {
+        status: "failure",
+        message: t("failed-to-load-message-history"),
+      };
+      if (!accessToken.value) {
+        console.error("ChatViewBody: no access token");
+        showToast(failureMessage);
+        return;
       }
-    }).then(async (res) => {
-      if (!res.ok) {
-        switch (res.status) {
-          case 403: showToast({ status: "warning", message: t("not-in-conversation") }); break;
-          default: showToast(failureMessage);
-        }
 
+      if (!customerSearchParam) {
         setConversation(null);
         return;
       }
 
-      const conversation = (await res.json())?.data?.conversation as TConversation | undefined;
-      if (!conversation) {
-        console.error("ChatViewBody: conversation is not in the expected format");
-        showToast(failureMessage);
+      const customerId = Number(customerSearchParam);
+      if (Number.isNaN(customerId)) {
+        console.error("ChatViewBody: invalid conversation id");
+        showToast({ status: "warning", message: t("dont-do-that") });
         return;
       }
 
-      setConversation(conversation);
-    })
-      .catch((err) => {
-        console.error("ChatViewBody: failed to fetch conversation", err);
-        showToast(failureMessage);
+      const url = generateApiUrl({
+        endpoint: `/conversations/${customerId}`,
+        locale: locale as Locale,
+        queryParams: { expand: ["agency", "customer"] },
+      });
+
+      fetch(url.href, {
+        headers: {
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+        cache: "no-store",
       })
-  }, [accessToken, conversationSearchParam, locale, setConversation, t]);
+        .then(async (res) => {
+          if (!res.ok) {
+            switch (res.status) {
+              case 403:
+                showToast({
+                  status: "warning",
+                  message: t("not-in-conversation"),
+                });
+                break;
+              case 404:
+                showToast({ status: "warning", message: t("dont-do-that") });
+                break;
+              default:
+                showToast(failureMessage);
+            }
 
+            setConversation(null);
+            return;
+          }
 
-  function formatDate(v: string | Date | number) {
-    return new Date(v).toLocaleDateString(
-      locale === "ar" ? "ar-JO" : "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      },
-    )
-  }
+          const conversation = (await res.json())?.data?.conversation as
+            | TConversation
+            | undefined;
+          if (!conversation) {
+            console.error(
+              "ChatViewBody: conversation is not in the expected format",
+            );
+            showToast(failureMessage);
+            return;
+          }
+
+          setConversation(conversation);
+        })
+        .catch((err) => {
+          console.error("ChatViewBody: failed to fetch conversation", err);
+          showToast(failureMessage);
+        });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [accessToken.value, customerSearchParam],
+  );
 
   return (
     <Link
-      href={`?conversation=${conversation.id}`}
+      href={`?customer=${conversation?.customer?.customer?.id}`}
       className={cn(
-        "flex cursor-pointer items-start gap-xs-s rounded-2xl p-s-m transition-all hover:bg-gray-100 focus:no-underline focus:bg-gray-100",
+        "flex cursor-pointer items-start gap-xs-s rounded-2xl p-s-m transition-all hover:bg-gray-100 focus:bg-gray-100 focus:no-underline",
         className,
         {
           "cursor-default bg-gray-100": active,
@@ -133,12 +146,12 @@ export function ChatTile({
             {customer?.name ?? t("unknown-customer")}
           </h2>
 
-          {conversation?.createdAt && (
+          {latestMessage?.sentAt && (
             <time
-              dateTime={conversation?.createdAt}
+              dateTime={latestMessage?.sentAt}
               className="text-base font-light text-gray-500"
             >
-              {formatDate(conversation?.createdAt)}
+              {formatDateTime(latestMessage?.sentAt)}
             </time>
           )}
         </div>

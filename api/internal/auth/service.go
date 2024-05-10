@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -390,7 +389,6 @@ func (s *service) generateTokenPair(_ context.Context, user users.User) (accessT
 		}
 
 		customClaims.AgencyID = user.Agent.AgencyID
-		log.Println("setting custom claims for agency agent", user.Agent.AgencyID, customClaims.AgencyID)
 	} else if user.Role == entities.RoleCustomer {
 		if user.Customer == nil {
 			err = fmt.Errorf("user.Customer cannot be null when role is %s", user.Role)

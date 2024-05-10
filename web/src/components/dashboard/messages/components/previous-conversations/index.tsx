@@ -1,45 +1,93 @@
-import { getAccessToken } from "@/lib/actions/auth";
+"use client";
+
 import { ChatTile } from "../chat-tile";
-import { getTranslations } from "next-intl/server";
-import { fetchApi } from "@/lib/api";
-import ErrorSkeleton from "./components/error-skeleton";
-import { TConversation } from "@/lib/types";
+import { generateApiUrl } from "@/lib/api";
+import LoadingSkeleton from "./components/error-skeleton";
+import { TConversation, TZoozieUserMessage } from "@/lib/types";
+import { useTranslations } from "next-intl";
+import { useUser } from "@/lib/context/user-context";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Locale } from "@/lib/i18n/config";
+import { showToast } from "@/lib/utils";
+import { useDashboardMessagesStore } from "@/lib/store/dashboard-messages";
 
-export async function PreviousConversations() {
-  const t = await getTranslations("dashboard.messages");
-  const accessToken = await getAccessToken();
-  console.error();
-  if (!accessToken) {
-    console.error("PreviousConversations: no access token");
-    return <ErrorSkeleton />;
+export function PreviousConversations() {
+  const t = useTranslations("dashboard.messages");
+  const { accessToken } = useUser();
+  const { locale } = useParams();
+  const conversation = useDashboardMessagesStore((state) => state.conversation);
+  const [conversations, setConversations] = useState<TConversation[] | null>(
+    null,
+  );
+
+  useEffect(
+    function pollConversations() {
+      const controller = new AbortController();
+      fetchConversations(controller);
+      const interval = setInterval(() => fetchConversations(controller), 5000);
+
+      return () => {
+        controller.abort("cancelled");
+        clearInterval(interval);
+      };
+    },
+    [accessToken.pending, accessToken.value, conversation],
+  );
+
+  async function fetchConversations(abortController?: AbortController) {
+    const unknownErr: TZoozieUserMessage = {
+      status: "failure",
+      message: t("failed-to-load-previous-messages"),
+    };
+
+    try {
+      if (accessToken.pending) return;
+      if (!accessToken.value) {
+        console.error("PreviousConversations: no access token");
+        showToast(unknownErr);
+        return;
+      }
+
+      const url = generateApiUrl({
+        endpoint: "/conversations",
+        locale: locale as Locale,
+        queryParams: { expand: ["customer", "agency"] },
+      });
+
+      const res = await fetch(url.href, {
+        headers: {
+          Authorization: `Bearer ${accessToken.value}`,
+        },
+        signal: abortController?.signal,
+      });
+      console.debug("fetched conversations ..");
+
+      if (!res.ok) {
+        throw new Error(
+          `PreviousConversations: failed to fetch conversations. status code: ${res.status}`,
+        );
+      }
+
+      const conversations = (await res.json())?.data?.conversations as
+        | TConversation[]
+        | undefined;
+      if (!conversations) {
+        throw new Error(
+          "previous conversations api response is not in the expected format",
+        );
+      }
+
+      setConversations(conversations);
+    } catch (e) {
+      if (abortController?.signal.aborted) return;
+      console.error(e);
+      showToast(unknownErr);
+    }
   }
 
-  const res = await fetchApi("/conversations", {
-    init: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-    queryParams: {
-      expand: ["customer", "agency"],
-    },
-  });
-  if (!res.ok) {
-    console.error(
-      "PreviousConversations: failed to fetch conversations. status code:",
-      res.status,
-    );
-    return <ErrorSkeleton />;
-  }
-
-  const conversations = (await res.json())?.data?.conversations as
-    | TConversation[]
-    | undefined;
   if (!conversations) {
-    console.error(
-      "PreviousConversations: response is not in the expected format",
-    );
-    return <ErrorSkeleton />;
+    return <LoadingSkeleton />;
   }
 
   const hasConversations = conversations.length > 0;
@@ -54,10 +102,7 @@ export async function PreviousConversations() {
 
       {hasConversations &&
         conversations?.map((conversation, index) => (
-          <ChatTile
-            key={index}
-            conversation={conversation}
-          />
+          <ChatTile key={index} conversation={conversation} />
         ))}
     </section>
   );
