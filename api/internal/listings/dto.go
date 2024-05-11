@@ -61,6 +61,25 @@ type (
 	}
 )
 
+type getListingsRequest struct {
+	Furnished      *bool    `query:"furnished" validate:"omitempty,boolean"`
+	MinArea        int      `query:"minArea" validate:"omitempty,number"`
+	MinYearBuilt   int      `query:"minYear" validate:"omitempty,number"`
+	MinBathrooms   int      `query:"minBathrooms" validate:"omitempty,number"`
+	MinBedrooms    int      `query:"minBedrooms" validate:"omitempty,number"`
+	Type           string   `query:"type" validate:"omitempty,oneof=PROPERTY COMMERCIAL_PROPERTY OFFICE_SPACE RETAIL_SPACE INDUSTRIAL_SPACE MIXED_USE_PROPERTY RESIDENTIAL_PROPERTY APARTMENT VILLA TOWNHOUSE CONDOMINIUM"`
+	Locations      []int    `query:"locations" validate:"omitempty,dive,number"`
+	MinRentPrice   int      `query:"minRentPrice" validate:"omitempty,number"`
+	MaxRentPrice   int      `query:"maxRentPrice" validate:"omitempty,number"`
+	MinSalePrice   int      `query:"minSalePrice" validate:"omitempty,number"`
+	MaxSalePrice   int      `query:"maxSalePrice" validate:"omitempty,number"`
+	Availabilities []string `query:"availability" validate:"omitempty,dive,oneof=RENT SALE"`
+}
+
+func (r getListingsRequest) toFilters() filters {
+	return filters(r)
+}
+
 type getListingRequest struct {
 	ID     int      `param:"id" validate:"required,number"`
 	Expand []string `query:"expand"`

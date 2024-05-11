@@ -301,10 +301,15 @@ func StoreFile(file *multipart.FileHeader) (FileInfo, error) {
 }
 
 func GetFileURL(path string) (string, error) {
+	if ContainsAny(strings.ToLower(path), "http", "blob") {
+		return path, nil
+	}
+
 	sanitized := strings.TrimPrefix(path, "public/")
 	url, err := url.JoinPath(config.GetAppUrl(), sanitized)
 	if err != nil {
 		return "", fmt.Errorf("failed to join path because %w", err)
 	}
+
 	return url, err
 }

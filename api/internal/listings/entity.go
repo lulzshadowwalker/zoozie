@@ -130,3 +130,18 @@ type ListingType struct {
 	Name string `json:"name,omitempty"`
 	Code string `json:"code,omitempty"`
 }
+
+type filters struct {
+	Furnished      *bool
+	MinArea        int
+	MinYearBuilt   int
+	MinBathrooms   int
+	MinBedrooms    int
+	Type           string
+	Locations      []int
+	MinRentPrice   int
+	MaxRentPrice   int
+	MinSalePrice   int
+	MaxSalePrice   int
+	Availabilities []string
+}

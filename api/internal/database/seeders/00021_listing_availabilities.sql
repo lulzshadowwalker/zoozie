@@ -16,5 +16,4 @@ DELETE FROM
     listing_availabilities
 WHERE
     id IN (-42069, -42070);
-
 -- +goose StatementEnd

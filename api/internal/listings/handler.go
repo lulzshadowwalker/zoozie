@@ -17,7 +17,7 @@ type (
 	Service interface {
 		CreateListing(context.Context, createListingRequest) error
 		GetListing(context.Context, getListingRequest) (Listing, error)
-		GetAllListings(context.Context) ([]Listing, error)
+		GetAllListings(context.Context, getListingsRequest) ([]Listing, error)
 		GetListingTypes(context.Context) ([]ListingType, error)
 		GetListingLocations(context.Context) ([]Location, error)
 		GetCustomerFavorites(context.Context) ([]Listing, error)
@@ -89,7 +89,12 @@ func (h *handler) GetListing(c echo.Context) error {
 }
 
 func (h *handler) GetAllListings(c echo.Context) error {
-	entities, err := h.service.GetAllListings(utils.TransformEchoContext(c))
+	var request getListingsRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	entities, err := h.service.GetAllListings(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
 	}

@@ -27,7 +27,7 @@ type (
 	Repo interface {
 		Begin(context.Context) (interfaces.Transaction, error)
 		GetListing(c context.Context, id int) (Listing, error)
-		GetAllListings(c context.Context) ([]Listing, error)
+		GetAllListings(c context.Context, filters filters) ([]Listing, error)
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
 		GetListingsByCustomerID(context.Context, int, interfaces.Transaction) ([]Listing, error)
@@ -247,8 +247,8 @@ func (s *service) GetListing(c context.Context, request getListingRequest) (List
 	return listing, nil
 }
 
-func (s *service) GetAllListings(c context.Context) ([]Listing, error) {
-	return s.repo.GetAllListings(c)
+func (s *service) GetAllListings(c context.Context, request getListingsRequest) ([]Listing, error) {
+	return s.repo.GetAllListings(c, request.toFilters())
 }
 
 func (s *service) GetListingTypes(c context.Context) ([]ListingType, error) {

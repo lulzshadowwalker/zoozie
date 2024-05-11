@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 
@@ -391,7 +392,7 @@ func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
 	return listing, nil
 }
 
-func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
+func (r *repo) GetAllListings(c context.Context, filters filters) ([]Listing, error) {
 	var customerID *int = nil
 	if cid, err := utils.GetCustomerID(c); err == nil {
 		customerID = &cid
@@ -403,6 +404,86 @@ func (r *repo) GetAllListings(c context.Context) ([]Listing, error) {
 	}
 
 	stmt := getBaseQueryStatement(language, customerID)
+
+	// * CHECK
+	if filters.Furnished != nil {
+		stmt = stmt.WHERE(Properties.Furnished.EQ(Bool(*filters.Furnished)))
+	}
+
+	// * CHECK
+	if filters.MinArea > 0 {
+		stmt = stmt.WHERE(Properties.Area.GT_EQ(Float(float64(filters.MinArea))))
+	}
+
+	// * CHECK
+	if filters.MinYearBuilt > 0 {
+		stmt = stmt.WHERE(Properties.YearBuilt.GT_EQ(Int(int64(filters.MinYearBuilt))))
+	}
+
+	// * CHECK
+	if filters.MinBathrooms > 0 {
+		stmt = stmt.WHERE(Properties.Bathrooms.GT_EQ(Int(int64(filters.MinBathrooms))))
+	}
+
+	// * CHECK
+	if filters.MinBedrooms > 0 {
+		stmt = stmt.WHERE(Properties.Bedrooms.GT_EQ(Int(int64(filters.MinBedrooms))))
+	}
+
+	// * CHECK
+	if filters.Type != "" {
+		stmt = stmt.WHERE(ListingTypes.Code.EQ(String(filters.Type)))
+	}
+
+	// * CHECK
+	if len(filters.Locations) > 0 {
+		var expressions []Expression
+		for _, location := range filters.Locations {
+			expressions = append(expressions, Int(int64(location)))
+		}
+		stmt = stmt.WHERE(ListingLocations.ID.IN(expressions...))
+	}
+
+	// Where code in RENT or SALE
+	// Where code is rent and price is lte or gte X
+
+	if filters.Availabilities != nil && len(filters.Availabilities) > 0 {
+		var expression BoolExpression
+		for index, availability := range filters.Availabilities {
+			var expr BoolExpression
+			if availability == string(ListingAvailabilityRent) {
+				expr = Availabilities.Code.EQ(String(availability))
+				if filters.MinRentPrice > 0 {
+					expr = expr.AND(ListingAvailabilityPrices.Amount.GT_EQ(Float(float64(filters.MinRentPrice))))
+				}
+
+				if filters.MaxRentPrice > 0 {
+					expr = expr.AND(ListingAvailabilityPrices.Amount.LT_EQ(Float(float64(filters.MaxRentPrice))))
+				}
+			} else if availability == string(ListingAvailabilitySale) {
+				expr = Availabilities.Code.EQ(String(availability))
+
+				if filters.MinSalePrice > 0 {
+					expr = expr.AND(ListingAvailabilityPrices.Amount.GT_EQ(Float(float64(filters.MinSalePrice))))
+				}
+
+				if filters.MaxSalePrice > 0 {
+					expr = expr.AND(ListingAvailabilityPrices.Amount.LT_EQ(Float(float64(filters.MaxSalePrice))))
+				}
+			}
+
+			if index != 0 {
+				expression = expression.OR(expr)
+				continue
+			}
+
+			expression = expr
+		}
+
+		stmt = stmt.WHERE(expression)
+	}
+
+	log.Println(stmt.DebugSql())
 
 	var dest []DBListing
 	err = stmt.QueryContext(c, r.database, &dest)
