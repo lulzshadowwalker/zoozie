@@ -1,47 +1,93 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { faWheatAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBuilding,
+  faHotel,
+  faHouse,
+  faTreeCity,
+  faWheatAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import FilterButton from "./components/filter-button";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/lib/i18n/navigation";
 
 export default function Filters() {
+  const t = useTranslations("customer.listings");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const propertyTypes = [
+    {
+      title: t("apartment"),
+      icon: faBuilding,
+      value: "APARTMENT",
+    },
+    {
+      title: t("villa"),
+      icon: faHouse,
+      value: "VILLA",
+    },
+    {
+      title: t("condominium"),
+      icon: faHotel,
+      value: "CONDOMINIUM",
+    },
+  ] as const;
+
+  function updateUrl(value: string) {
+    if (!value) return;
+    const q = new URLSearchParams(searchParams);
+    q.set("type", value);
+
+    router.replace(`?${q.toString()}`);
+  }
+
   return (
-    <section className="max-w-page mx-auto px-page">
-      <nav className="flex justify-between items-center gap-m-l">
-        <ul className="flex items-center gap-m-l overflow-scroll">
-          {[...Array(20)].map((_, index) => (
-            // TODO: focus, focus-within
-            <li
-              className={cn(
-                "flex flex-col items-center gap-2xs-xs pb-2xs-xs min-w-fit group",
-                {
-                  "border-b-[3px] border-on-primary-1": index === 0, // in case of being active
-                  "cursor-pointer": index !== 0,
-                },
-              )}
-              key={index}
-            >
-              <FontAwesomeIcon
-                icon={faWheatAlt}
-                size="lg"
+    <section className="mx-auto max-w-page px-page">
+      <nav className="flex items-center justify-between gap-m-l">
+        <ul className="flex flex-grow items-center gap-m-l overflow-scroll">
+          {propertyTypes.map(({ title, value, icon }, index) => {
+            const active = searchParams.get("type") === value;
+
+            return (
+              // TODO: focus, focus-within
+              <li
                 className={cn(
-                  "text-gray-300 transition-all group-hover:text-on-primary-1",
+                  "group flex w-full min-w-fit max-w-[10rem] cursor-pointer flex-col items-center gap-2xs-xs pb-2xs-xs",
                   {
-                    "text-on-primary-1": index === 0, // in case of being active
+                    "pointer-events-none border-b-[3px] border-on-primary-1":
+                      active,
                   },
                 )}
-              />
-              <p
-                className={cn(
-                  "text-gray-300 font-medium transition-all group-hover:text-on-primary-1",
-                  {
-                    "text-on-primary-1 text-lg": index === 0, // in case of being active
-                  },
-                )}
+                key={index}
+                onClick={() => updateUrl(value)}
               >
-                Farm House
-              </p>
-            </li>
-          ))}
+                <FontAwesomeIcon
+                  icon={icon}
+                  size="lg"
+                  className={cn(
+                    "text-gray-300 transition-all group-hover:text-on-primary-1",
+                    {
+                      "text-on-primary-1": active,
+                    },
+                  )}
+                />
+                <p
+                  className={cn(
+                    "font-medium text-gray-300 transition-all group-hover:text-on-primary-1",
+                    {
+                      "text-lg text-on-primary-1": active,
+                    },
+                  )}
+                >
+                  {title}
+                </p>
+              </li>
+            );
+          })}
         </ul>
 
         <FilterButton />

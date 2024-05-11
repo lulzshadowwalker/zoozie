@@ -88,6 +88,7 @@ export default function FilterButton() {
       value: "CONDOMINIUM",
     },
   ] as const;
+
   const [propertyType, setPropertyType] =
     useState<(typeof propertyTypes)[number]["value"]>(null);
 
@@ -204,8 +205,12 @@ export default function FilterButton() {
 
   function submit() {
     const q = new URLSearchParams(searchParams);
-    minBathrooms && q.set("minBathrooms", minBathrooms.toString());
-    minBedrooms && q.set("minBedrooms", minBedrooms.toString());
+    minBathrooms
+      ? q.set("minBathrooms", minBathrooms.toString())
+      : q.delete("minBathrooms");
+    minBedrooms
+      ? q.set("minBedrooms", minBedrooms.toString())
+      : q.delete("minBedrooms");
 
     if (availability) {
       q.set("availability", availability);
@@ -225,10 +230,16 @@ export default function FilterButton() {
         q.delete("minRentPrice");
         q.delete("maxRentPrice");
       }
+    } else {
+      q.delete("availability");
+      q.delete("minRentPrice");
+      q.delete("maxRentPrice");
+      q.delete("minSalePrice");
+      q.delete("maxSalePrice");
     }
 
-    propertyType && q.set("type", propertyType);
-    router.push(`?${q.toString()}`);
+    propertyType ? q.set("type", propertyType) : q.delete("type");
+    router.replace(`?${q.toString()}`);
 
     if (!dialogRef.current) {
       console.error("dialogRef.current is not defined");

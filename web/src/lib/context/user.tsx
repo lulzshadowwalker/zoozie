@@ -32,6 +32,7 @@ export default function UserContextProvider({ children }: Props) {
   const [accessToken, setAccessToken] = useState<PendingValue<string>>({
     pending: true,
   });
+  const [_refresh, setRefresh] = useState(false);
   const posthog = usePostHog();
 
   useEffect(

@@ -105,7 +105,11 @@
       "property-type": "Property Type",
       "apartment": "Apartment",
       "villa": "Villa",
-      "condominium": "Condominium"
+      "condominium": "Condominium",
+      "empty-state": {
+        "title": "No luck with your search",
+        "description": "Try adjusting your preferences or explore our other listings for potential matches?"
+      }
     }
   },
   "dashboard": {

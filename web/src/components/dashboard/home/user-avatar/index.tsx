@@ -10,9 +10,9 @@ export default function UserAvatar() {
 
   return (
     <div className="relative h-[3.2rem] w-[3.2rem] overflow-hidden rounded-full bg-gray-400">
-      {user?.profilePicture && (
+      {user?.value?.profilePicture && (
         <ZoozImage
-          src={user.profilePicture}
+          src={user?.value?.profilePicture}
           title={t("user-avatar")}
           alt={t("user-avatar")}
           fill
