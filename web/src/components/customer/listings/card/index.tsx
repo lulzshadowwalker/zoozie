@@ -16,7 +16,6 @@ export default async function Card({ listing }: Props) {
     listing.pictures?.find((picture) => picture.highlighted) ??
     listing.pictures?.[0];
 
-  const areaName = listing.location?.area?.name;
   const salePrice = listing.availabilities?.find(
     (availability) => availability.availability === "SALE",
   )?.price;

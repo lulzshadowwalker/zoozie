@@ -61,6 +61,7 @@ export default function FavoriteButton({ listing }: Props) {
 
         console.error("toggleFavorite: unknown error", res);
         showToast(unknownError);
+        return;
       }
 
       const favorite = (await res.json())?.data?.favorite as

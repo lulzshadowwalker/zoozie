@@ -1,6 +1,6 @@
 {
-  "just-now": "just now", 
-  "minutes-ago": "minutes ago", 
+  "just-now": "just now",
+  "minutes-ago": "minutes ago",
   "currency": {
     "jod": "JOD"
   },
@@ -91,7 +91,21 @@
       "rent-price": "Rent Price",
       "sale-price": "Sale Price",
       "unknown-error": "An unexpected error occurred. Please try again later.",
-      "agents-cannot-favorite": "Agents cannot interact with customer functionalities"
+      "agents-cannot-favorite": "Agents cannot interact with customer functionalities",
+      "something-went-wrong": "Something went wrong. Please try again later.",
+      "show": "Show",
+      "places": "places",
+      "rent": "Rent",
+      "sale": "Sale",
+      "any": "Any",
+      "price-range": {
+        "title": "Price Range",
+        "description": "What budget do you have in mind?"
+      },
+      "property-type": "Property Type",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "condominium": "Condominium"
     }
   },
   "dashboard": {

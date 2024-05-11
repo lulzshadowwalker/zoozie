@@ -2,18 +2,189 @@
 
 import Button from "@/components/shared/button";
 import ZoozInput from "@/components/shared/zooz-input";
-import { cn } from "@/lib/utils";
-import { faHotel, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { generateApiUrl } from "@/lib/api";
+import { Locale } from "@/lib/i18n/config";
+import { useRouter } from "@/lib/i18n/navigation";
+import { TListing } from "@/lib/types";
+import { cn, showToast } from "@/lib/utils";
+import {
+  faBuilding,
+  faHotel,
+  faHouse,
+  faTreeCity,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
-import { ButtonHTMLAttributes, HTMLAttributes, useRef, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export default function FilterButton() {
   const t = useTranslations("customer.listings");
   const tCurrency = useTranslations("currency");
-
+  const locale = useParams().locale as Locale;
+  const searchParams = useSearchParams();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
   const [isClosed, setIsClosed] = useState(true);
+  const [count, setCount] = useState<number | null>(null);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+
+  const availabilities = [
+    { title: t("any"), value: null },
+    { title: t("sale"), value: "SALE" },
+    { title: t("rent"), value: "RENT" },
+  ] as const;
+  const [availability, setAvailability] =
+    useState<(typeof availabilities)[number]["value"]>(null);
+
+  const bedrooms = [...Array(8)].map((_, index) => ({
+    title: index === 0 ? t("any") : (index + 1).toString(),
+    value: index === 0 ? null : index + 1,
+  }));
+  const [minBedrooms, setMinBedroom] =
+    useState<(typeof bedrooms)[number]["value"]>(null);
+
+  const bathrooms = bedrooms;
+  const [minBathrooms, setMinBathrooms] =
+    useState<(typeof bathrooms)[number]["value"]>(null);
+
+  const propertyTypes = [
+    {
+      title: t("any"),
+      icon: faTreeCity,
+      value: null,
+    },
+    {
+      title: t("apartment"),
+      icon: faBuilding,
+      value: "APARTMENT",
+    },
+    {
+      title: t("villa"),
+      icon: faHouse,
+      value: "VILLA",
+    },
+    {
+      title: t("condominium"),
+      icon: faHotel,
+      value: "CONDOMINIUM",
+    },
+  ] as const;
+  const [propertyType, setPropertyType] =
+    useState<(typeof propertyTypes)[number]["value"]>(null);
+
+  const fetchCount = useCallback(
+    async function fetchCount() {
+      const queryParams: Record<string, string> = {};
+      if (availability) {
+        queryParams.availability = availability;
+
+        if (minPrice) {
+          if (availability === "RENT") {
+            queryParams.minRentPrice = minPrice.toString();
+          } else {
+            queryParams.minSalePrice = minPrice.toString();
+          }
+        }
+
+        if (maxPrice) {
+          if (availability === "RENT") {
+            queryParams.maxRentPrice = maxPrice.toString();
+          } else {
+            queryParams.maxSalePrice = maxPrice.toString();
+          }
+        }
+      }
+
+      minBedrooms && (queryParams.minBedrooms = minBedrooms.toString());
+      minBathrooms && (queryParams.minBathrooms = minBathrooms.toString());
+      propertyType && (queryParams.type = propertyType);
+
+      const url = generateApiUrl({
+        endpoint: "/listings",
+        locale,
+        queryParams,
+      });
+      const res = await fetch(url.href);
+
+      if (!res.ok) {
+        showToast({
+          status: "failure",
+          message: t("something-went-wrong"),
+        });
+        return;
+      }
+
+      const listings = (await res.json())?.data?.listings as
+        | TListing[]
+        | undefined;
+
+      if (!listings) {
+        console.error("listings response is not in the expected format");
+        return;
+      }
+
+      setCount(listings.length);
+    },
+    [
+      availability,
+      minBathrooms,
+      minBedrooms,
+      locale,
+      maxPrice,
+      minPrice,
+      propertyType,
+      t,
+    ],
+  );
+
+  useEffect(
+    function syncSearchParams() {
+      const q = searchParams;
+
+      const availability = q.get("availability");
+      if (
+        (availability && availability === "RENT") ||
+        availability === "SALE"
+      ) {
+        setAvailability(availability);
+      }
+
+      const minPrice = q.get("minRentPrice") || q.get("minSalePrice");
+      const maxPrice = q.get("maxRentPrice") || q.get("maxSalePrice");
+      minPrice && setMinPrice(parseInt(minPrice));
+      maxPrice && setMaxPrice(parseInt(maxPrice));
+
+      const minBedrooms = q.get("minBedrooms");
+      if (bedrooms.find((b) => b.value === minBedrooms)) {
+        minBedrooms && setMinBedroom(parseInt(minBedrooms));
+      }
+
+      const minBathrooms = q.get("minBathrooms");
+      if (bathrooms.find((b) => b.value === minBathrooms)) {
+        minBathrooms && setMinBathrooms(parseInt(minBathrooms));
+      }
+
+      const propertyType = q.get("type");
+      if (propertyType && propertyTypes.find((p) => p.value === propertyType)) {
+        setPropertyType(propertyType as any);
+      }
+    },
+    [searchParams],
+  );
+
+  useEffect(() => {
+    fetchCount();
+  }, [fetchCount, locale, availability, minPrice, maxPrice]);
 
   function toggleDialog() {
     if (!dialogRef.current) {
@@ -24,48 +195,94 @@ export default function FilterButton() {
     setIsClosed((prev) => !prev);
   }
 
+  function submit() {
+    const q = new URLSearchParams(searchParams);
+    minBathrooms && q.set("minBathrooms", minBathrooms.toString());
+    minBedrooms && q.set("minBedrooms", minBedrooms.toString());
+
+    if (availability) {
+      q.set("availability", availability);
+
+      if (availability === "RENT") {
+        minPrice && q.set("minRentPrice", minPrice.toString());
+        maxPrice && q.set("maxRentPrice", maxPrice.toString());
+
+        q.delete("minSalePrice");
+        q.delete("maxSalePrice");
+      }
+
+      if (availability === "SALE") {
+        minPrice && q.set("minSalePrice", minPrice.toString());
+        maxPrice && q.set("maxSalePrice", maxPrice.toString());
+
+        q.delete("minRentPrice");
+        q.delete("maxRentPrice");
+      }
+    }
+
+    propertyType && q.set("type", propertyType);
+    router.push(`?${q.toString()}`);
+
+    if (!dialogRef.current) {
+      console.error("dialogRef.current is not defined");
+      return;
+    }
+
+    dialogRef.current.close();
+  }
+
+  function clear() {
+    setCount(null);
+    setMinPrice(null);
+    setMaxPrice(null);
+    setAvailability(null);
+    setMinBedroom(null);
+    setMinBathrooms(null);
+    setPropertyType(null);
+  }
+
   return (
     <>
       <dialog
         ref={dialogRef}
-        className={cn("max-w-[65rem] w-full rounded-2xl", {
+        className={cn("w-full max-w-[65rem] rounded-2xl", {
           "flex flex-col": !isClosed,
         })}
         onClose={(e) => {
           setIsClosed(true);
         }}
       >
-        <header className="flex items-center py-s-m px-m-l border-b border-gray-200">
+        <header className="flex items-center border-b border-gray-200 px-m-l py-s-m">
           <Button
             square
             typ="secondary"
-            className="max-w-[3.4rem] min-h-[3.4rem] w-full flex items-center justify-center"
+            className="flex min-h-[3.4rem] w-full max-w-[3.4rem] items-center justify-center"
             onClick={toggleDialog}
           >
             <FontAwesomeIcon icon={faXmark} />
           </Button>
 
-          <h2 className="mx-auto text-lg font-semibold -translate-x-1/2">
+          <h2 className="mx-auto -translate-x-1/2 text-lg font-semibold">
             {t("filters")}
           </h2>
         </header>
 
-        <section className="divide-y divide-gray-200 px-m-l [&>*]:py-m-l flex-grow overflow-auto">
+        <section className="flex-grow divide-y divide-gray-200 overflow-auto px-m-l [&>*]:py-m-l">
           <DialogSection
             title="Type of Listing"
             subtitle="are you looking to buy or rent a property?"
           >
             <div className="flex items-center">
-              {[...Array(3)].map((_, index) => {
+              {availabilities.map(({ title, value }, index) => {
                 const isFirst = index === 0;
                 const isLast = index === [...Array(3)].length - 1;
 
                 return (
                   <DialogButton
                     key={index}
-                    selected={isFirst}
+                    selected={value === availability}
                     className={cn(
-                      "flex-grow px-m-l py-l-xl rounded-none",
+                      "flex-grow rounded-none px-m-l py-l-xl",
                       {
                         "rounded-s-3xl": isFirst,
                         "rounded-e-3xl": isLast,
@@ -74,70 +291,105 @@ export default function FilterButton() {
                         "border-e-0 hover:border-e": !isLast,
                       },
                     )}
+                    onClick={() => setAvailability(value)}
                   >
-                    Any Type
+                    {title}
                   </DialogButton>
                 );
               })}
             </div>
           </DialogSection>
 
-          <DialogSection
-            title="Price Range"
-            subtitle="What budget do you have in mind?"
-          >
-            <div className="flex items-center gap-s-m">
-              <ZoozInput
-                id="budget-min"
-                label={t("minimum")}
-                type="number"
-                placeholder={`0 ${tCurrency("jod")}`}
-              />
+          {availability && (
+            <DialogSection
+              title={t("price-range.title")}
+              subtitle={t("price-range.description")}
+            >
+              <div className="flex items-center gap-s-m">
+                <ZoozInput
+                  id="budget-min"
+                  label={t("minimum")}
+                  type="number"
+                  placeholder={`0 ${tCurrency("jod")}`}
+                  onChange={({ target: { value } }) =>
+                    setMinPrice(Number(value))
+                  }
+                  value={minPrice ?? undefined}
+                />
 
-              <ZoozInput
-                id="budget-max"
-                label={t("maximum")}
-                type="number"
-                placeholder={`0 ${tCurrency("jod")}`}
-              />
-            </div>
-          </DialogSection>
+                <ZoozInput
+                  id="budget-max"
+                  label={t("maximum")}
+                  type="number"
+                  placeholder={`0 ${tCurrency("jod")}`}
+                  onChange={({ target: { value } }) =>
+                    setMaxPrice(Number(value))
+                  }
+                  value={maxPrice ?? undefined}
+                />
+              </div>
+            </DialogSection>
+          )}
 
-          <DialogSection title="Rooms and Bathroms">
+          <DialogSection title={t("bedrooms")}>
             <div className="flex items-center gap-xs-s overflow-scroll">
-              {[...Array(10)].map((_, index) => (
-                <DialogButton selected={index === 0} key={index}>
-                  {index === 0 ? "All" : index}
+              {bedrooms.map(({ title, value }, index) => (
+                <DialogButton
+                  selected={value === minBedrooms}
+                  key={index}
+                  onClick={() => setMinBedroom(value)}
+                >
+                  {title}
                 </DialogButton>
               ))}
             </div>
           </DialogSection>
 
-          <DialogSection title="Property type">
+          <DialogSection title={t("bathrooms")}>
+            <div className="flex items-center gap-xs-s overflow-scroll">
+              {bathrooms.map(({ title, value }, index) => (
+                <DialogButton
+                  selected={value === minBathrooms}
+                  key={index}
+                  onClick={() => setMinBathrooms(value)}
+                >
+                  {title}
+                </DialogButton>
+              ))}
+            </div>
+          </DialogSection>
+
+          <DialogSection title={t("property-type")}>
             <div className="flex items-center gap-s-m">
-              {[...Array(4)].map((_, index) => (
+              {propertyTypes.map(({ title, icon, value }, index) => (
                 <DialogButton
                   key={index}
                   className={cn(
-                    "rounded-2xl flex flex-col items-start px-xs-s flex-grow",
+                    "flex w-full max-w-[14rem] flex-grow flex-col items-start rounded-2xl px-xs-s",
                     {
-                      "border-2 border-on-primary-1 text-on-primary-1 bg-gray-100":
-                        index === 0,
+                      "border-2 border-on-primary-1 bg-gray-100 text-on-primary-1":
+                        value == propertyType,
                     },
                   )}
-                  selected={index === 0}
+                  selected={value == propertyType}
+                  onClick={() => setPropertyType(value)}
                 >
-                  <FontAwesomeIcon icon={faHotel} size="xl" />
-                  <h4 className="font-semibold mt-l-xl">Apartment</h4>
+                  <FontAwesomeIcon icon={icon} size="xl" />
+                  <h4 className="mt-l-xl font-semibold">{title}</h4>
                 </DialogButton>
               ))}
             </div>
           </DialogSection>
         </section>
 
-        <footer className="py-m-l px-m-l border-t border-gray-200 flex items-center justify-between">
-          <Button typ="secondary">{t("clear")}</Button>
-          <Button>Show 685 places </Button>
+        <footer className="flex items-center justify-between border-t border-gray-200 px-m-l py-m-l">
+          <Button typ="secondary" onClick={clear}>
+            {t("clear")}
+          </Button>
+          <Button
+            disabled={!count}
+            onClick={submit}
+          >{`${t("show")} ${count ?? 0} ${t("places")}`}</Button>
         </footer>
       </dialog>
 
@@ -164,7 +416,7 @@ function DialogSection({
     <section className={cn(className)} {...rest}>
       <h3 className="text-xl font-medium">{title}</h3>
       {subtitle && (
-        <p className="text-lg text-gray-400 font-extralight">{subtitle}</p>
+        <p className="text-lg font-extralight text-gray-400">{subtitle}</p>
       )}
       <div className="my-m-l">{children}</div>
     </section>
@@ -179,7 +431,7 @@ function DialogButton({ className, children, selected, ...rest }: ButtonProps) {
   return (
     <button
       className={cn(
-        "border border-gray-300 rounded-full px-m-l py-2xs-xs outline-none transition-all hover:border-on-primary-1 focus:border-on-primary-1 active:bg-gray-100",
+        "rounded-full border border-gray-300 px-m-l py-2xs-xs outline-none transition-all hover:border-on-primary-1 focus:border-on-primary-1 active:bg-gray-100",
         {
           "bg-on-primary-1 text-primary-1 active:bg-on-primary-1": selected,
         },
