@@ -40,7 +40,10 @@
       "fill-in-your-details": "Step Inside, Your Details Open the Door"
     },
     "header-navigation-bar": {
-      "avatar": "avatar"
+      "avatar": "avatar",
+      "buy": "Buy",
+      "rent": "Rent",
+      "services": "Services"
     },
     "home": {
       "featured-listings": "Featured Listings",

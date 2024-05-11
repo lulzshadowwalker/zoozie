@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/lib/i18n/navigation";
+import { Link, usePathname } from "@/lib/i18n/navigation";
 import ZoozLogo from "../../../shared/zooz-logo";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -10,42 +10,60 @@ import Button from "../../../shared/button";
 import UserAvatar from "./components/user-avatar";
 
 export default function HeaderNavigationBar() {
-  const navigationSampleItems = ["Buy", "Sell", "Services"];
   const t = useTranslations("customer.header-navigation-bar");
+  const pathname = usePathname();
+
+  const navigationSampleItems = [
+    {
+      title: t("buy"),
+      href: "/listings?type=SALE",
+    },
+    {
+      title: t("rent"),
+      href: "/listings?type=RENT",
+    },
+    {
+      title: t("services"),
+      href: null,
+    },
+  ] as const;
 
   const { isScrollingDown } = useScroll();
 
   // TODO: responsive mobile navigation burger menu
   return (
     <header
-      className={cn("sticky top-0 bg-primary-1/70 backdrop-blur-sm z-10", {
+      className={cn("sticky top-0 z-10 bg-primary-1/70 backdrop-blur-sm", {
         "animate-slide-in-bottom": !isScrollingDown,
         "animate-slide-out-top": isScrollingDown,
       })}
     >
-      <nav className="px-l-xl py-2xs-xs border-b-[0.5px] border-gray-300 flex items-center">
+      <nav className="flex items-center border-b-[0.5px] border-gray-300 px-l-xl py-2xs-xs">
         <ZoozLogo />
 
         <ul className="ms-auto flex items-center gap-2xs-xs">
-          {navigationSampleItems.map((item, index) => (
+          {navigationSampleItems.map(({ title, href }, index) => (
             <li key={index}>
               <Link
-                href="/"
+                href={href ?? pathname}
                 className={cn(
-                  "text-lg transition-all hover:text-on-primary-1 outline-none focus:text-on-primary-1",
+                  "text-lg outline-none transition-all hover:text-on-primary-1 focus:text-on-primary-1",
                   {
                     "text-gray-500": true,
-                    "text-on-primary-1 font-medium": false,
+                    "font-medium text-on-primary-1": false,
+                  },
+                  {
+                    "cursor-not-allowed": href === null,
                   },
                 )}
               >
-                {item}
+                {title}
               </Link>
             </li>
           ))}
         </ul>
 
-        <section className="flex items-center ms-s-m gap-xs-s">
+        <section className="ms-s-m flex items-center gap-xs-s">
           <Button>List your home</Button>
           <UserAvatar />
         </section>

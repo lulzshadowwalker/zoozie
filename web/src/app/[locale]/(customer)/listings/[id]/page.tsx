@@ -52,7 +52,7 @@ export default async function Listing({ params: { locale, id } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.listings");
 
-  if (!Number.isNaN(id)) {
+  if (Number.isNaN(id)) {
     notFound();
   }
 

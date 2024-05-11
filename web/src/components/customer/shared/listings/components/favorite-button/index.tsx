@@ -47,7 +47,7 @@ export default function FavoriteButton({ listing }: Props) {
       const res = await fetch(url.href, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken.value}`,
         },
       });
 
