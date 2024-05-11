@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 
@@ -405,47 +404,39 @@ func (r *repo) GetAllListings(c context.Context, filters filters) ([]Listing, er
 
 	stmt := getBaseQueryStatement(language, customerID)
 
-	// * CHECK
+	var conditions []BoolExpression
+
 	if filters.Furnished != nil {
-		stmt = stmt.WHERE(Properties.Furnished.EQ(Bool(*filters.Furnished)))
+		conditions = append(conditions, Properties.Furnished.EQ(Bool(*filters.Furnished)))
 	}
 
-	// * CHECK
 	if filters.MinArea > 0 {
-		stmt = stmt.WHERE(Properties.Area.GT_EQ(Float(float64(filters.MinArea))))
+		conditions = append(conditions, Properties.Area.GT_EQ(Float(float64(filters.MinArea))))
 	}
 
-	// * CHECK
 	if filters.MinYearBuilt > 0 {
-		stmt = stmt.WHERE(Properties.YearBuilt.GT_EQ(Int(int64(filters.MinYearBuilt))))
+		conditions = append(conditions, Properties.YearBuilt.GT_EQ(Int(int64(filters.MinYearBuilt))))
 	}
 
-	// * CHECK
-	if filters.MinBathrooms > 0 {
-		stmt = stmt.WHERE(Properties.Bathrooms.GT_EQ(Int(int64(filters.MinBathrooms))))
-	}
-
-	// * CHECK
 	if filters.MinBedrooms > 0 {
-		stmt = stmt.WHERE(Properties.Bedrooms.GT_EQ(Int(int64(filters.MinBedrooms))))
+		conditions = append(conditions, Properties.Bedrooms.GT_EQ(Int(int64(filters.MinBedrooms))))
 	}
 
-	// * CHECK
+	if filters.MinBathrooms > 0 {
+		conditions = append(conditions, Properties.Bathrooms.GT_EQ(Int(int64(filters.MinBathrooms))))
+	}
+
 	if filters.Type != "" {
-		stmt = stmt.WHERE(ListingTypes.Code.EQ(String(filters.Type)))
+		conditions = append(conditions, ListingTypes.Code.EQ(String(filters.Type)))
 	}
 
-	// * CHECK
 	if len(filters.Locations) > 0 {
 		var expressions []Expression
 		for _, location := range filters.Locations {
 			expressions = append(expressions, Int(int64(location)))
 		}
-		stmt = stmt.WHERE(ListingLocations.ID.IN(expressions...))
+		conditions = append(conditions, ListingLocations.ID.IN(expressions...))
 	}
-
-	// Where code in RENT or SALE
-	// Where code is rent and price is lte or gte X
 
 	if filters.Availabilities != nil && len(filters.Availabilities) > 0 {
 		var expression BoolExpression
@@ -474,16 +465,21 @@ func (r *repo) GetAllListings(c context.Context, filters filters) ([]Listing, er
 
 			if index != 0 {
 				expression = expression.OR(expr)
-				continue
+			} else {
+				expression = expr
 			}
-
-			expression = expr
 		}
 
-		stmt = stmt.WHERE(expression)
+		conditions = append(conditions, expression)
 	}
 
-	log.Println(stmt.DebugSql())
+	if len(conditions) > 0 {
+		whereClause := conditions[0]
+		for i := 1; i < len(conditions); i++ {
+			whereClause = whereClause.AND(conditions[i])
+		}
+		stmt = stmt.WHERE(whereClause)
+	}
 
 	var dest []DBListing
 	err = stmt.QueryContext(c, r.database, &dest)
