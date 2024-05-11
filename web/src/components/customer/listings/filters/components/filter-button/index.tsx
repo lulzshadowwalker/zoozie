@@ -3,10 +3,15 @@
 import Button from "@/components/shared/button";
 import ZoozInput from "@/components/shared/zooz-input";
 import { generateApiUrl } from "@/lib/api";
+import { listingTypes } from "@/lib/const";
 import { Locale } from "@/lib/i18n/config";
 import { useRouter } from "@/lib/i18n/navigation";
-import { TListing } from "@/lib/types";
-import { cn, showToast } from "@/lib/utils";
+import { TListing, TListingFilters } from "@/lib/types";
+import {
+  cn,
+  extractListingsFiltersFromSearchParams,
+  showToast,
+} from "@/lib/utils";
 import {
   faBuilding,
   faHotel,
@@ -16,7 +21,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
-import { useParams, useSearchParams } from "next/navigation";
+import {
+  ReadonlyURLSearchParams,
+  useParams,
+  useSearchParams,
+} from "next/navigation";
 import {
   ButtonHTMLAttributes,
   HTMLAttributes,
@@ -149,36 +158,34 @@ export default function FilterButton() {
 
   useEffect(
     function syncSearchParams() {
-      const q = searchParams;
-
-      const availability = q.get("availability");
-      if (
-        (availability && availability === "RENT") ||
-        availability === "SALE"
-      ) {
+      const params = extractListingsFiltersFromSearchParams(
+        new URLSearchParams(searchParams),
+      );
+      if (params.availability) {
         setAvailability(availability);
       }
 
-      const minPrice = q.get("minRentPrice") || q.get("minSalePrice");
-      const maxPrice = q.get("maxRentPrice") || q.get("maxSalePrice");
-      minPrice && setMinPrice(parseInt(minPrice));
-      maxPrice && setMaxPrice(parseInt(maxPrice));
+      const minPrice = params.minRentPrice || params.minSalePrice;
+      const maxPrice = params.maxRentPrice || params.maxSalePrice;
+      minPrice && setMinPrice(minPrice);
+      maxPrice && setMaxPrice(maxPrice);
 
-      const minBedrooms = q.get("minBedrooms");
+      const minBedrooms = params.minBedrooms;
       if (bedrooms.find((b) => b.value === minBedrooms)) {
-        minBedrooms && setMinBedroom(parseInt(minBedrooms));
+        minBedrooms && setMinBedroom(minBedrooms);
       }
 
-      const minBathrooms = q.get("minBathrooms");
+      const minBathrooms = params.minBathrooms;
       if (bathrooms.find((b) => b.value === minBathrooms)) {
-        minBathrooms && setMinBathrooms(parseInt(minBathrooms));
+        minBathrooms && setMinBathrooms(minBathrooms);
       }
 
-      const propertyType = q.get("type");
+      const propertyType = params.type;
       if (propertyType && propertyTypes.find((p) => p.value === propertyType)) {
         setPropertyType(propertyType as any);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [searchParams],
   );
 

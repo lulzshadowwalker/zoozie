@@ -6,9 +6,14 @@ import Search from "@/components/customer/listings/search";
 import { fetchApi } from "@/lib/api";
 import { useUser } from "@/lib/context/user";
 import { getAccessToken } from "@/lib/actions/auth";
+import {
+  extractListingsFiltersFromSearchParams,
+  pageSearchParamsToURLSearchParams,
+} from "@/lib/utils";
 
 export default async function Listings({
   params: { locale },
+  searchParams,
 }: IBasePageParams) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("listings");
@@ -19,8 +24,13 @@ export default async function Listings({
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
+  const queryParams = extractListingsFiltersFromSearchParams(
+    pageSearchParamsToURLSearchParams(searchParams),
+  );
+
   const res = await fetchApi("/listings", {
     init: { headers },
+    queryParams: queryParams as Record<string, string>,
   });
   if (!res.ok) {
     console.error("listings: ", res.statusText);

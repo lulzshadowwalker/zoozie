@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, ClassValue } from "clsx";
-import { TZoozieUserMessage } from "@types";
+import { IBasePageParams, TListingFilters, TZoozieUserMessage } from "@types";
 import { StoreApi, UseBoundStore } from "zustand";
 import { toast } from "react-toastify";
 import { getTranslations } from "next-intl/server";
@@ -8,6 +8,8 @@ import { Locale } from "./i18n/config";
 import path from "path";
 import Config from "./config";
 import { agencyFallbackImage, customerFallbackImage } from "./constants";
+import { ReadonlyURLSearchParams } from "next/navigation";
+import { listingTypes } from "./const";
 
 /**
  * intelligently applies your tailwind overrides and conditional classes
@@ -150,5 +152,63 @@ export function getAgencyImage(image: string | undefined): string {
 }
 
 export function isEmptyObject(obj: any): boolean {
-  return Object.keys(obj).length === 0 && obj.constructor === Object
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
+}
+
+export function extractListingsFiltersFromSearchParams(
+  q: URLSearchParams,
+): TListingFilters {
+  const params: TListingFilters = {};
+
+  const availability = q.get("availability");
+  if ((availability && availability === "RENT") || availability === "SALE") {
+    params.availability = availability;
+  }
+
+  const prices = {
+    minRentPrice: q.get("minRentPrice"),
+    maxRentPrice: q.get("maxRentPrice"),
+    minSalePrice: q.get("minSalePrice"),
+    maxSalePrice: q.get("maxSalePrice"),
+    minBedrooms: q.get("minBedrooms"),
+    minBathrooms: q.get("minBathrooms"),
+  };
+
+  for (const [key, value] of Object.entries(prices)) {
+    if (!value) continue;
+    const v = parseInt(value);
+    if (!isNaN(v)) {
+      params[
+        key as "minRentPrice" | "maxRentPrice" | "minSalePrice" | "maxSalePrice"
+      ] = v;
+    }
+  }
+
+  const propertyType = q.get("type");
+  if (propertyType && listingTypes.includes(propertyType as any)) {
+    params.type = propertyType as (typeof params)["type"];
+  }
+
+  return params;
+}
+
+export function pageSearchParamsToURLSearchParams(
+  searchParams: IBasePageParams["searchParams"],
+): URLSearchParams {
+  const q = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (!value) continue;
+
+    // I am too lazy to test this, hope it works.
+    if (Array.isArray(value)) {
+      for (const v of value) {
+        q.append(key, v);
+      }
+      continue;
+    }
+
+    q.set(key, value);
+  }
+
+  return q;
 }

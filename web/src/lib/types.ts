@@ -1,10 +1,14 @@
 import { ReactNode } from "react";
 import { Locale } from "@lib/i18n/config";
 import { z } from "zod";
+import { listingTypes } from "./const";
 
 export interface IBasePageParams {
   params: {
     locale: Locale;
+  };
+  searchParams: {
+    [key: string]: string | string[] | undefined;
   };
 }
 
@@ -229,7 +233,7 @@ export type TAgency = {
   description?: string;
 };
 
-export type TCustomer = TUser & { customer?: { id?: number, userId?: number  }};
+export type TCustomer = TUser & { customer?: { id?: number; userId?: number } };
 
 export type TConversationMessage = {
   id?: number;
@@ -263,9 +267,28 @@ export type TSocketMessage = {
     SentAt?: string;
   };
   error?: TSocketError;
-}
+};
 
 export type TSocketError = {
-  code?: "SEND_FAILURE" | "READ_FAILURE" | "INTERNAL_FAILURE" | "UNRECOGNIZED_MESSAGE_TYPE" | "UNAUTHENTICATED" | "INVALID_TOKEN";
+  code?:
+    | "SEND_FAILURE"
+    | "READ_FAILURE"
+    | "INTERNAL_FAILURE"
+    | "UNRECOGNIZED_MESSAGE_TYPE"
+    | "UNAUTHENTICATED"
+    | "INVALID_TOKEN";
   message?: string;
-}
+};
+
+export type TListingFilters = {
+  minBedrooms?: number;
+  minBathrooms?: number;
+  minYear?: number;
+  minArea?: number;
+  availability?: "RENT" | "SALE";
+  minRentPrice?: number;
+  maxRentPrice?: number;
+  minSalePrice?: number;
+  maxSalePrice?: number;
+  type?: (typeof listingTypes)[number];
+};
