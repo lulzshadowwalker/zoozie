@@ -10,6 +10,8 @@ type dbAgency struct {
 	Agency       model.Agencies
 	PhoneNumber  model.AgencyPhoneNumbers
 	Translations model.AgenciesI18n
+
+	Following bool `alias:"following"`
 }
 
 func (m *dbAgency) ToEntity() (entities.Agency, error) {
@@ -26,6 +28,7 @@ func (m *dbAgency) ToEntity() (entities.Agency, error) {
 		Logo:         m.Agency.Logo,
 		Name:         m.Translations.Name,
 		Description:  m.Translations.Description,
+		Following:    m.Following,
 	}, nil
 }
 

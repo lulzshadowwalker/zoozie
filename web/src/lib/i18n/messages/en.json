@@ -54,7 +54,16 @@
     },
     "agency": {
       "view-more": "View More",
-      "view-listings": "View Listings"
+      "view-listings": "View Listings",
+      "logo": "Agency Logo",
+      "message": "Message",
+      "unfollow": "Unfollow",
+      "follow": "Follow",
+      "about": "About",
+      "about-this-agency": "About this agency",
+      "contact-information": "Contact Information",
+      "something-went-wrong": "Something went wrong. Please try again later.",
+      "agents-cannot-follow": "Agents cannot interact with customer functionalities"
     },
     "account-favorites": {
       "your-favorites": "Your Favorites",

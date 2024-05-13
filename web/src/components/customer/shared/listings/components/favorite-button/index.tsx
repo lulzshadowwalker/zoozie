@@ -3,7 +3,6 @@
 import { generateApiUrl } from "@/lib/api";
 import { useUser } from "@/lib/context/user";
 import { useToastHelpers } from "@/lib/hooks";
-// import { toggleFavorite } from "@/lib/actions/toggle-favorite";
 import { TListing, TZoozieUserMessage } from "@/lib/types";
 import { cn, showToast } from "@/lib/utils";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";

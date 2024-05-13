@@ -17,7 +17,6 @@ import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
-import { getAccessToken } from "@/lib/actions/auth";
 
 export const dynamic = "force-static";
 
@@ -327,7 +326,7 @@ export default async function Listing({ params: { locale, id } }: Props) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-page px-page ">
+      <section className="mx-auto max-w-page px-page">
         <article className="mt-l-xl border-t pt-l-xl">
           <h2 className="text-xl font-medium">{t("about-this-agency")}</h2>
 
@@ -348,7 +347,7 @@ export default async function Listing({ params: { locale, id } }: Props) {
 
               {listing.agency?.name && (
                 <div>
-                  <Link href="/agencies/foo">
+                  <Link href={`/agencies/${listing.agency?.slug}`}>
                     <h3 className="cursor-pointer text-xl font-light">
                       {listing.agency?.name}
                     </h3>

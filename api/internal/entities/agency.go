@@ -13,6 +13,7 @@ type Agency struct {
 
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
+	Following   bool   `json:"following"`
 }
 
 type AgencyAgent struct {

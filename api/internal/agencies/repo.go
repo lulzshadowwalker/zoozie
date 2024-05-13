@@ -14,7 +14,18 @@ import (
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
-func getBaseQueryStatement(language string) SelectStatement {
+func getBaseQueryStatement(language string, customerID *int) SelectStatement {
+	fromClause :=
+		Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.AgencyID).AND(AgenciesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(AgencyPhoneNumbers, Agencies.ID.EQ(AgencyPhoneNumbers.AgencyID))
+
+	cid := 0
+	if customerID != nil {
+		cid = *customerID
+	}
+
+	fromClause = fromClause.LEFT_JOIN(CustomerFollowedAgencies, CustomerFollowedAgencies.AgencyID.EQ(Agencies.ID).AND(CustomerFollowedAgencies.CustomerID.EQ(Int(int64(cid)))))
+
 	return SELECT(
 		Agencies.ID,
 		Agencies.Slug,
@@ -28,11 +39,10 @@ func getBaseQueryStatement(language string) SelectStatement {
 
 		AgencyPhoneNumbers.CountryCode,
 		AgencyPhoneNumbers.PhoneNumber,
+
+		CASE().WHEN(CustomerFollowedAgencies.CustomerID.EQ(Int(int64(cid)))).THEN(Bool(true)).ELSE(Bool(false)).AS("dbagency.following"),
 	).
-		FROM(
-			Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.AgencyID).AND(AgenciesI18n.LanguageCode.EQ(String(language)))).
-				LEFT_JOIN(AgencyPhoneNumbers, Agencies.ID.EQ(AgencyPhoneNumbers.AgencyID)),
-		)
+		FROM(fromClause)
 }
 
 type repo struct {
@@ -51,7 +61,12 @@ func (r *repo) GetAgencies(c context.Context) ([]entities.Agency, error) {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := getBaseQueryStatement(language)
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
+	stmt := getBaseQueryStatement(language, customerID)
 
 	var dest []*dbAgency
 	err = stmt.Query(r.database, &dest)
@@ -76,7 +91,12 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*entities.Agency
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := getBaseQueryStatement(language).
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
+	stmt := getBaseQueryStatement(language, customerID).
 		WHERE(Agencies.Slug.EQ(String(slug)))
 
 	var dest dbAgency
@@ -108,7 +128,12 @@ func (r *repo) GetAgencyByID(c context.Context, id int, tx interfaces.Transactio
 		return nil, fmt.Errorf("failed to get locale because %w", err)
 	}
 
-	stmt := getBaseQueryStatement(language).
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
+	stmt := getBaseQueryStatement(language, customerID).
 		WHERE(Agencies.ID.EQ(Int(int64(id))))
 
 	var dest dbAgency
@@ -328,6 +353,8 @@ func (r *repo) ToggleAgencyFollow(c context.Context, customerID, agencyID int, t
 
 			return false, nil
 		}
+
+		return false, fmt.Errorf("failed to insert agency follow because %w", err)
 	}
 
 	return true, nil

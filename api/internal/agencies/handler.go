@@ -31,7 +31,7 @@ func NewHandler(s Service) *handler {
 }
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
-	e.GET("/agencies", utils.Unwrap(h.GetAgencies))
+	e.GET("/agencies", utils.Unwrap(h.GetAgencies), middleware.PreferAuth())
 	e.POST(
 		"/agencies",
 		utils.Unwrap(h.CreateAgency),

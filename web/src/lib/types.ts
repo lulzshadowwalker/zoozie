@@ -231,6 +231,7 @@ export type TAgency = {
   slug?: string;
   name?: string;
   description?: string;
+  following?: boolean;
 };
 
 export type TCustomer = TUser & { customer?: { id?: number; userId?: number } };
