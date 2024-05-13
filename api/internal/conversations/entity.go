@@ -3,8 +3,7 @@ package conversations
 import (
 	"time"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
-	"github.com/lulzshadowwalker/zoozie/api/internal/users"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 )
 
 type Conversation struct {
@@ -13,8 +12,8 @@ type Conversation struct {
 	AgencyID   int       `json:"agencyId,omitempty"`
 	CreatedAt  time.Time `json:"createdAt,omitempty"`
 
-	Customer      *users.User      `json:"customer,omitempty"`
-	Agency        *agencies.Agency `json:"agency,omitempty"`
+	Customer      *entities.User   `json:"customer,omitempty"`
+	Agency        *entities.Agency `json:"agency,omitempty"`
 	Messages      []Message        `json:"messages,omitempty"`
 	LatestMessage *Message         `json:"latestMessage,omitempty"`
 }

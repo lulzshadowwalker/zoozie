@@ -40,20 +40,20 @@ func NewRepo(database *sql.DB) *repo {
 	}
 }
 
-func (r *repo) CreateUser(c context.Context, user User, tx interfaces.Transaction) (User, error) {
+func (r *repo) CreateUser(c context.Context, user entities.User, tx interfaces.Transaction) (entities.User, error) {
 	var dbUserRole model.UserRoles
 	err := UserRoles.SELECT(UserRoles.ID, UserRoles.Name).
 		WHERE(UserRoles.Name.EQ(String(string(user.Role)))).
 		QueryContext(c, tx, &dbUserRole)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			return User{},
+			return entities.User{},
 
 				// NOTE: do not return status 404
 				fmt.Errorf("failed to get user role %q because it was not found", user.Role)
 		}
 
-		return User{}, err
+		return entities.User{}, err
 	}
 
 	userModel := DBUser{}
@@ -70,7 +70,7 @@ func (r *repo) CreateUser(c context.Context, user User, tx interfaces.Transactio
 	).RETURNING(Users.ID).
 		QueryContext(c, tx, &userModel)
 	if err != nil {
-		return User{}, fmt.Errorf("failed to insert user because %w", err)
+		return entities.User{}, fmt.Errorf("failed to insert user because %w", err)
 	}
 	userID := userModel.User.ID
 
@@ -87,17 +87,17 @@ func (r *repo) CreateUser(c context.Context, user User, tx interfaces.Transactio
 	if err != nil {
 		if utils.IsUniquePostgresViolationErr(err) {
 			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
-			return User{}, fmt.Errorf("failed to register user because phone number already in use")
+			return entities.User{}, fmt.Errorf("failed to register user because phone number already in use")
 		}
 
-		return User{}, fmt.Errorf("failed to insert user phone number because %w", err)
+		return entities.User{}, fmt.Errorf("failed to insert user phone number because %w", err)
 	}
 
 	user.ID = int64(userID)
 	return user, nil
 }
 
-func (r *repo) GetUserByPhoneNumber(c context.Context, phoneNumber entities.PhoneNumber) (*User, error) {
+func (r *repo) GetUserByPhoneNumber(c context.Context, phoneNumber entities.PhoneNumber) (*entities.User, error) {
 	stmt := baseQueryStatement.
 		WHERE(
 			UserPhoneNumbers.CountryCode.EQ(String(phoneNumber.CountryCode)).
@@ -119,7 +119,7 @@ func (r *repo) GetUserByPhoneNumber(c context.Context, phoneNumber entities.Phon
 	return &entity, nil
 }
 
-func (r *repo) GetUserById(c context.Context, id int, tx interfaces.Transaction) (*User, error) {
+func (r *repo) GetUserById(c context.Context, id int, tx interfaces.Transaction) (*entities.User, error) {
 	stmt := baseQueryStatement.
 		WHERE(Users.ID.EQ(Int(int64(id))))
 

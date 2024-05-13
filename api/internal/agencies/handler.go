@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -14,9 +16,12 @@ type handler struct {
 }
 
 type Service interface {
-	GetAgencies(context.Context) ([]Agency, error)
-	CreateAgency(c context.Context, request createAgencyRequest) (Agency, error)
-	GetAgencyBySlug(c context.Context, request getAgencyBySlugRequest) (*Agency, error)
+	GetAgencies(context.Context) ([]entities.Agency, error)
+	CreateAgency(c context.Context, request createAgencyRequest) (entities.Agency, error)
+	GetAgencyBySlug(c context.Context, request getAgencyBySlugRequest) (*entities.Agency, error)
+	GetAgencyReviews(c context.Context, request getAgencyReviewsRequest) ([]entities.AgencyReview, error)
+	CreateAgencyReview(c context.Context, request createAgencyReviewRequest) (entities.AgencyReview, error)
+	ToggleAgencyFollowRequest(c context.Context, request toggleAgencyFollowRequest) (bool, error)
 }
 
 func NewHandler(s Service) *handler {
@@ -30,8 +35,12 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.POST(
 		"/agencies",
 		utils.Unwrap(h.CreateAgency),
+		// TODO: activate POST /agencies middleware:
 		//		middleware.WithZoozieAdmin,
 	)
+	e.GET("/agencies/:id/reviews", utils.Unwrap(h.GetAgencyReviews))
+	e.POST("/agencies/:id/reviews", utils.Unwrap(h.CreateAgencyReview), middleware.Auth(), middleware.WithCustomer)
+	e.POST("/agencies/:id/follows", utils.Unwrap(h.ToggleAgencyFollow), middleware.Auth(), middleware.WithCustomer)
 }
 
 func (h *handler) GetAgencies(c echo.Context) error {
@@ -87,6 +96,60 @@ func (h *handler) CreateAgency(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"agency": agency,
+		},
+	})
+}
+
+func (h *handler) GetAgencyReviews(c echo.Context) error {
+	var request getAgencyReviewsRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	reviews, err := h.service.GetAgencyReviews(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"reviews": reviews,
+		},
+	})
+}
+
+func (h *handler) CreateAgencyReview(c echo.Context) error {
+	var request createAgencyReviewRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	review, err := h.service.CreateAgencyReview(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"review": review,
+		},
+	})
+}
+
+func (h *handler) ToggleAgencyFollow(c echo.Context) error {
+	var request toggleAgencyFollowRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	status, err := h.service.ToggleAgencyFollowRequest(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"following": status,
 		},
 	})
 }

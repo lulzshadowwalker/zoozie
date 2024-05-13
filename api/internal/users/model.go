@@ -13,13 +13,13 @@ type DBUser struct {
 	Agent        agencies.DBAgencyAgent
 }
 
-func (u DBUser) ToEntity() User {
+func (u DBUser) ToEntity() entities.User {
 	phoneNumber := entities.PhoneNumber{
 		CountryCode: u.PhoneNumbers.CountryCode,
 		PhoneNumber: u.PhoneNumbers.PhoneNumber,
 	}
 
-	user := User{
+	user := entities.User{
 		ID:             int64(u.User.ID),
 		Role:           entities.Role(u.Role.Name),
 		EmailAddress:   u.User.EmailAddress,

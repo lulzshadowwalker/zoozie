@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -14,7 +15,7 @@ type (
 	}
 
 	Repo interface {
-		GetUserById(context.Context, int, interfaces.Transaction) (*User, error)
+		GetUserById(context.Context, int, interfaces.Transaction) (*entities.User, error)
 	}
 )
 
@@ -24,7 +25,7 @@ func NewService(r Repo) *service {
 	}
 }
 
-func (s *service) GetUserById(c context.Context, id int) (*User, error) {
+func (s *service) GetUserById(c context.Context, id int) (*entities.User, error) {
 	user, err := s.repo.GetUserById(c, id, nil)
 	if err != nil {
 		return nil, err

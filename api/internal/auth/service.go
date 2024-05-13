@@ -13,13 +13,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
-	"github.com/lulzshadowwalker/zoozie/api/internal/agencies/otp"
 	"github.com/lulzshadowwalker/zoozie/api/internal/config"
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
-	"github.com/lulzshadowwalker/zoozie/api/internal/users"
+	"github.com/lulzshadowwalker/zoozie/api/internal/otp"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -30,17 +28,17 @@ type (
 
 	Repo interface {
 		interfaces.Transactioner
-		GetUserById(context.Context, int, interfaces.Transaction) (*users.User, error)
-		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*users.User, error)
+		GetUserById(context.Context, int, interfaces.Transaction) (*entities.User, error)
+		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*entities.User, error)
 
 		// TODO: use a transaction to the create the customer and other things ..
 		CreateCustomer(context.Context, customers.Customer, interfaces.Transaction) (customers.Customer, error)
-		CreateUser(context.Context, users.User, interfaces.Transaction) (users.User, error)
+		CreateUser(context.Context, entities.User, interfaces.Transaction) (entities.User, error)
 		GetOTPByUserID(c context.Context, userID int) (otp.OTP, error)
 		StoreOTP(context.Context, otp.OTP, interfaces.Transaction) (otp.OTP, error)
 		UpdateOTP(c context.Context, otp otp.OTP) (otp.OTP, error)
-		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (agencies.AgencyAgent, error)
-		RegisterAgencyAgent(c context.Context, agent agencies.AgencyAgent, tx interfaces.Transaction) (agencies.AgencyAgent, error)
+		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (entities.AgencyAgent, error)
+		RegisterAgencyAgent(c context.Context, agent entities.AgencyAgent, tx interfaces.Transaction) (entities.AgencyAgent, error)
 	}
 )
 
@@ -50,7 +48,7 @@ func NewService(r Repo) *service {
 	}
 }
 
-func (s *service) Login(c context.Context, request loginRequest) (*users.User, error) {
+func (s *service) Login(c context.Context, request loginRequest) (*entities.User, error) {
 	phoneNumber, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
 	if err != nil {
 		return nil, err
@@ -116,19 +114,19 @@ func (s *service) RefreshToken(c context.Context, token string) (accessToken, re
 	return s.generateTokenPair(c, *user)
 }
 
-func (s *service) RegisterCustomer(c context.Context, request registerCustomerRequest) (users.User, error) {
+func (s *service) RegisterCustomer(c context.Context, request registerCustomerRequest) (entities.User, error) {
 	tx, err := s.repo.Begin(c)
 	if err != nil {
-		return users.User{}, nil
+		return entities.User{}, nil
 	}
 	defer tx.Rollback()
 
 	phoneNumber, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
 	if err != nil {
-		return users.User{}, nil
+		return entities.User{}, nil
 	}
 
-	user := users.User{
+	user := entities.User{
 		EmailAddress: request.EmailAddress,
 		Name:         request.Name,
 		PhoneNumber:  &phoneNumber,
@@ -138,34 +136,34 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 	if request.ProfilePicture != nil {
 		uploadInfo, err := utils.StoreFile(request.ProfilePicture)
 		if err != nil {
-			return users.User{}, err
+			return entities.User{}, err
 		}
 
 		user.ProfilePicture = &uploadInfo.Path
 	}
 	user, err = s.repo.CreateUser(c, user, tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 
 	customer := customers.Customer{UserID: int(user.ID)}
 	customer, err = s.repo.CreateCustomer(c, customer, tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 	user.Customer = &customer
 
 	err = s.sendOTP(c, int(user.ID), tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 
 	accessToken, refreshToken, err := s.generateTokenPair(c, user)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 	if err = tx.Commit(); err != nil {
-		return users.User{}, fmt.Errorf("failed to commit transaction: %w", err)
+		return entities.User{}, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	user.AccessToken = accessToken
@@ -173,7 +171,7 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 	return user, nil
 }
 
-func checkUserActiveStatus(user *users.User) error {
+func checkUserActiveStatus(user *entities.User) error {
 	if !user.Active {
 		return utils.NewApiError(http.StatusForbidden, "user has been deactivated")
 	}
@@ -316,19 +314,19 @@ func (s *service) sendOTP(c context.Context, userID int, tx interfaces.Transacti
 	return nil
 }
 
-func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyAgentRequest) (users.User, error) {
+func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyAgentRequest) (entities.User, error) {
 	tx, err := s.repo.Begin(c)
 	if err != nil {
-		return users.User{}, nil
+		return entities.User{}, nil
 	}
 	defer tx.Rollback()
 
 	phoneNumber, err := entities.NewPhoneNumber(request.CountryCode, request.PhoneNumber)
 	if err != nil {
-		return users.User{}, nil
+		return entities.User{}, nil
 	}
 
-	user := users.User{
+	user := entities.User{
 		EmailAddress:   request.EmailAddress,
 		Name:           request.Name,
 		PhoneNumber:    &phoneNumber,
@@ -338,39 +336,39 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 
 	user, err = s.repo.CreateUser(c, user, tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 
-	agent := agencies.AgencyAgent{
+	agent := entities.AgencyAgent{
 		UserID:   int(user.ID),
 		AgencyID: request.AgencyID,
 	}
 
 	agent, err = s.repo.RegisterAgencyAgent(c, agent, tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 	user.Agent = &agent
 
 	err = s.sendOTP(c, int(user.ID), tx)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 
 	accessToken, refreshToken, err := s.generateTokenPair(c, user)
 	if err != nil {
-		return users.User{}, err
+		return entities.User{}, err
 	}
 
 	if err = tx.Commit(); err != nil {
-		return users.User{}, fmt.Errorf("failed to commit transaction: %w", err)
+		return entities.User{}, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 	user.AccessToken = accessToken
 	user.RefreshToken = refreshToken
 	return user, nil
 }
 
-func (s *service) generateTokenPair(_ context.Context, user users.User) (accessToken, refreshToken string, err error) {
+func (s *service) generateTokenPair(_ context.Context, user entities.User) (accessToken, refreshToken string, err error) {
 	uid := strconv.Itoa(int(user.ID))
 	customClaims := entities.JwtCustomClaims{
 		Name: user.Name,

@@ -11,6 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -22,7 +23,7 @@ type (
 	}
 
 	agenciesRepo interface {
-		GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*entities.Agency, error)
 	}
 )
 
@@ -651,7 +652,7 @@ func (r *repo) ToggleListingFavorite(c context.Context, customerID, listingID in
 	).ExecContext(c, db); err != nil {
 		if utils.IsUniquePostgresViolationErr(err) {
 			if err := r.DeleteListingFavorite(c, customerID, listingID, tx); err != nil {
-				return false, fmt.Errorf("failed to delete listing favorite because %w", err)
+				return false, err
 			}
 
 			return false, nil

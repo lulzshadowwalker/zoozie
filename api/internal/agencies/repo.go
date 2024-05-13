@@ -9,6 +9,7 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
@@ -44,7 +45,7 @@ func NewRepo(database *sql.DB) *repo {
 	}
 }
 
-func (r *repo) GetAgencies(c context.Context) ([]Agency, error) {
+func (r *repo) GetAgencies(c context.Context) ([]entities.Agency, error) {
 	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
@@ -58,7 +59,7 @@ func (r *repo) GetAgencies(c context.Context) ([]Agency, error) {
 		return nil, fmt.Errorf("failed to query the agencies because %w", err)
 	}
 
-	entities := make([]Agency, len(dest))
+	entities := make([]entities.Agency, len(dest))
 	for index, agency := range dest {
 		entities[index], err = agency.ToEntity()
 		if err != nil {
@@ -69,7 +70,7 @@ func (r *repo) GetAgencies(c context.Context) ([]Agency, error) {
 	return entities, nil
 }
 
-func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) {
+func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*entities.Agency, error) {
 	language, err := utils.GetLocale(c)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get locale because %w", err)
@@ -96,7 +97,7 @@ func (r *repo) GetAgencyBySlug(c context.Context, slug string) (*Agency, error) 
 	return &agency, err
 }
 
-func (r *repo) GetAgencyByID(c context.Context, id int, tx interfaces.Transaction) (*Agency, error) {
+func (r *repo) GetAgencyByID(c context.Context, id int, tx interfaces.Transaction) (*entities.Agency, error) {
 	var db qrm.Queryable = r.database
 	if tx != nil {
 		db = tx
@@ -128,7 +129,7 @@ func (r *repo) GetAgencyByID(c context.Context, id int, tx interfaces.Transactio
 	return &agency, err
 }
 
-func (r *repo) GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (AgencyAgent, error) {
+func (r *repo) GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (entities.AgencyAgent, error) {
 	stmt := SELECT(AgencyAgents.AllColumns).
 		FROM(AgencyAgents).
 		WHERE(AgencyAgents.UserID.EQ(Int(int64(userID))))
@@ -140,7 +141,7 @@ func (r *repo) GetAgencyAgentByUserID(c context.Context, userID int, tx interfac
 	var dest DBAgencyAgent
 	err := stmt.QueryContext(c, db, &dest)
 	if err != nil {
-		return AgencyAgent{}, fmt.Errorf("failed to query the agency agent because %w", err)
+		return entities.AgencyAgent{}, fmt.Errorf("failed to query the agency agent because %w", err)
 	}
 
 	return dest.ToEntity(), nil
@@ -150,7 +151,7 @@ func (r *repo) Begin(c context.Context) (interfaces.Transaction, error) {
 	return r.database.Begin()
 }
 
-func (r *repo) CreateAgency(c context.Context, agency Agency, tx interfaces.Transaction) (Agency, error) {
+func (r *repo) CreateAgency(c context.Context, agency entities.Agency, tx interfaces.Transaction) (entities.Agency, error) {
 	var dest dbAgency
 	stmt := Agencies.
 		INSERT(
@@ -173,10 +174,10 @@ func (r *repo) CreateAgency(c context.Context, agency Agency, tx interfaces.Tran
 	if err != nil {
 		if utils.IsUniquePostgresViolationErr(err) {
 			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
-			return Agency{}, fmt.Errorf("failed to register agency because phone number already in use")
+			return entities.Agency{}, fmt.Errorf("failed to register agency because phone number already in use")
 		}
 
-		return Agency{}, fmt.Errorf("failed to insert agency because %w", err)
+		return entities.Agency{}, fmt.Errorf("failed to insert agency because %w", err)
 	}
 
 	agency.ID = int(dest.Agency.ID)
@@ -195,13 +196,13 @@ func (r *repo) CreateAgency(c context.Context, agency Agency, tx interfaces.Tran
 
 	_, err = stmt.ExecContext(c, tx)
 	if err != nil {
-		return Agency{}, fmt.Errorf("failed to insert agency phone number because %w", err)
+		return entities.Agency{}, fmt.Errorf("failed to insert agency phone number because %w", err)
 	}
 
 	return agency, nil
 }
 
-func (r *repo) CreateAgencyI18n(c context.Context, i18n AgencyI18n, tx interfaces.Transaction) (AgencyI18n, error) {
+func (r *repo) CreateAgencyI18n(c context.Context, i18n entities.AgencyI18n, tx interfaces.Transaction) (entities.AgencyI18n, error) {
 	stmt := AgenciesI18n.INSERT(
 		AgenciesI18n.Name,
 		AgenciesI18n.Description,
@@ -221,13 +222,13 @@ func (r *repo) CreateAgencyI18n(c context.Context, i18n AgencyI18n, tx interface
 	}
 	_, err := stmt.ExecContext(c, db)
 	if err != nil {
-		return AgencyI18n{}, fmt.Errorf("failed to insert agency i18n because %w", err)
+		return entities.AgencyI18n{}, fmt.Errorf("failed to insert agency i18n because %w", err)
 	}
 
 	return i18n, nil
 }
 
-func (r *repo) RegisterAgencyAgent(c context.Context, agent AgencyAgent, tx interfaces.Transaction) (AgencyAgent, error) {
+func (r *repo) RegisterAgencyAgent(c context.Context, agent entities.AgencyAgent, tx interfaces.Transaction) (entities.AgencyAgent, error) {
 	var db qrm.Queryable = r.database
 	if tx != nil {
 		db = tx
@@ -243,9 +244,107 @@ func (r *repo) RegisterAgencyAgent(c context.Context, agent AgencyAgent, tx inte
 	).RETURNING(AgencyAgents.ID)
 
 	if err := stmt.QueryContext(c, db, &dbAgent); err != nil {
-		return AgencyAgent{}, fmt.Errorf("failed to insert agency agent because %w", err)
+		return entities.AgencyAgent{}, fmt.Errorf("failed to insert agency agent because %w", err)
 	}
 	agent.ID = int(dbAgent.AgencyAgent.ID)
 
 	return agent, nil
+}
+
+func (r *repo) GetAgencyReviews(c context.Context, id int, tx interfaces.Transaction) ([]entities.AgencyReview, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dest []DBAgencyReview
+	if err := SELECT(
+		AgencyReviews.AllColumns,
+		Customers.ID,
+		Customers.UserID,
+		Users.ID,
+		Users.Name,
+		Users.EmailAddress,
+		Users.ProfilePicture,
+	).
+		FROM(
+			AgencyReviews.
+				LEFT_JOIN(Customers, Customers.ID.EQ(AgencyReviews.CustomerID)).
+				LEFT_JOIN(Users, Users.ID.EQ(Customers.UserID)),
+		).
+		WHERE(AgencyReviews.AgencyID.EQ(Int(int64(id)))).QueryContext(c, db, &dest); err != nil {
+		return nil, fmt.Errorf("failed to query the agency review because %w", err)
+	}
+
+	reviews := make([]entities.AgencyReview, len(dest))
+	for index, review := range dest {
+		reviews[index] = review.ToEntity()
+	}
+
+	return reviews, nil
+}
+
+func (r *repo) CreateAgencyReview(c context.Context, review entities.AgencyReview, tx interfaces.Transaction) (entities.AgencyReview, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dest DBAgencyReview
+	if err := AgencyReviews.INSERT(
+		AgencyReviews.AgencyID,
+		AgencyReviews.CustomerID,
+		AgencyReviews.Content,
+		AgencyReviews.Rating,
+	).VALUES(
+		review.AgencyID,
+		review.CustomerID,
+		review.Content,
+		review.Rating,
+	).RETURNING(AgencyReviews.AllColumns).QueryContext(c, db, &dest); err != nil {
+		return entities.AgencyReview{}, fmt.Errorf("failed to insert agency review because %w", err)
+	}
+
+	return dest.ToEntity(), nil
+}
+
+func (r *repo) ToggleAgencyFollow(c context.Context, customerID, agencyID int, tx interfaces.Transaction) (bool, error) {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := CustomerFollowedAgencies.INSERT(
+		CustomerFollowedAgencies.CustomerID,
+		CustomerFollowedAgencies.AgencyID,
+	).VALUES(
+		Int(int64(customerID)),
+		Int(int64(agencyID)),
+	).ExecContext(c, db); err != nil {
+		if utils.IsUniquePostgresViolationErr(err) {
+			if err := r.DeleteAgencyFollow(c, customerID, agencyID, tx); err != nil {
+				return false, err
+			}
+
+			return false, nil
+		}
+	}
+
+	return true, nil
+}
+
+func (r *repo) DeleteAgencyFollow(c context.Context, customerID, agencyID int, tx interfaces.Transaction) error {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := CustomerFollowedAgencies.DELETE().WHERE(
+		CustomerFollowedAgencies.CustomerID.EQ(Int(int64(customerID))).AND(
+			CustomerFollowedAgencies.AgencyID.EQ(Int(int64(agencyID)))),
+	).ExecContext(c, db); err != nil {
+		return fmt.Errorf("failed to delete agency follow because %w", err)
+	}
+
+	return nil
 }

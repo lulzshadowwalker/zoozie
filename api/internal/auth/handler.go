@@ -9,8 +9,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/server/middleware"
-	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -20,12 +20,12 @@ type (
 	}
 
 	Service interface {
-		Login(c context.Context, request loginRequest) (*users.User, error)
+		Login(c context.Context, request loginRequest) (*entities.User, error)
 		RefreshToken(c context.Context, token string) (accessToken, refreshToken string, err error)
-		RegisterCustomer(c context.Context, request registerCustomerRequest) (users.User, error)
+		RegisterCustomer(c context.Context, request registerCustomerRequest) (entities.User, error)
 		SendOTP(context.Context, sendOTPRequest) error
 		VerifyOTP(context.Context, verifyOTPRequest) error
-		RegisterAgencyAgent(context.Context, registerAgencyAgentRequest) (users.User, error)
+		RegisterAgencyAgent(context.Context, registerAgencyAgentRequest) (entities.User, error)
 	}
 )
 

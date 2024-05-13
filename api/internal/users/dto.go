@@ -16,7 +16,7 @@ type response struct {
 	RefreshToken   string  `json:"refreshToken,omitempty"`
 }
 
-func newResponseFromEntity(user *User) (response, error) {
+func newResponseFromEntity(user *entities.User) (response, error) {
 	phoneNumber, err := entities.NewE164PhoneNumber(user.PhoneNumber.CountryCode, user.PhoneNumber.PhoneNumber)
 	if err != nil {
 		return response{}, err

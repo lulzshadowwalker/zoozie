@@ -10,6 +10,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 
@@ -32,11 +33,11 @@ type (
 	}
 
 	usersRepo interface {
-		GetUserById(c context.Context, id int, tx interfaces.Transaction) (*users.User, error)
+		GetUserById(c context.Context, id int, tx interfaces.Transaction) (*entities.User, error)
 	}
 
 	agenciesRepo interface {
-		GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*entities.Agency, error)
 	}
 )
 

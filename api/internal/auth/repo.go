@@ -5,10 +5,10 @@ import (
 	"database/sql"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
-	"github.com/lulzshadowwalker/zoozie/api/internal/agencies/otp"
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
+	"github.com/lulzshadowwalker/zoozie/api/internal/otp"
 	"github.com/lulzshadowwalker/zoozie/api/internal/users"
 )
 
@@ -22,9 +22,9 @@ type (
 	}
 
 	usersRepo interface {
-		CreateUser(context.Context, users.User, interfaces.Transaction) (users.User, error)
-		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*users.User, error)
-		GetUserById(context.Context, int, interfaces.Transaction) (*users.User, error)
+		CreateUser(context.Context, entities.User, interfaces.Transaction) (entities.User, error)
+		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*entities.User, error)
+		GetUserById(context.Context, int, interfaces.Transaction) (*entities.User, error)
 	}
 
 	customersRepo interface {
@@ -39,8 +39,8 @@ type (
 
 	agenciesRepo interface {
 		interfaces.Transactioner
-		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (agencies.AgencyAgent, error)
-		RegisterAgencyAgent(c context.Context, agent agencies.AgencyAgent, tx interfaces.Transaction) (agencies.AgencyAgent, error)
+		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (entities.AgencyAgent, error)
+		RegisterAgencyAgent(c context.Context, agent entities.AgencyAgent, tx interfaces.Transaction) (entities.AgencyAgent, error)
 	}
 )
 

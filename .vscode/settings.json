@@ -5,10 +5,14 @@
         "echojwt",
         "fontawesome",
         "fortawesome",
+        "labstack",
         "oneof",
+        "plpgsql",
         "posthog",
+        "Transactioner",
         "Xmark",
-        "zooz"
+        "zooz",
+        "zoozie"
     ],
     "editor.formatOnSave": true,
     "sqltools.connections": [

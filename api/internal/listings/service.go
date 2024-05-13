@@ -10,14 +10,10 @@ import (
 	"strings"
 
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
-
-type listingOptions struct {
-	expand []string
-}
 
 type (
 	service struct {
@@ -31,7 +27,7 @@ type (
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
 		GetListingsByCustomerID(context.Context, int, interfaces.Transaction) ([]Listing, error)
-		GetAgencyByID(context.Context, int, interfaces.Transaction) (*agencies.Agency, error)
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*entities.Agency, error)
 
 		ToggleListingFavorite(c context.Context, customerID, listingID int, tx interfaces.Transaction) (bool, error)
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
@@ -14,7 +15,7 @@ type (
 	}
 
 	Service interface {
-		GetUserById(c context.Context, id int) (*User, error)
+		GetUserById(c context.Context, id int) (*entities.User, error)
 	}
 )
 

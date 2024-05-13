@@ -16,3 +16,17 @@ type createAgencyRequest struct {
 	EmailAddress string `json:"emailAddress" form:"emailAddress" validate:"required,email"`
 	Logo         string `json:"logo" form:"logo" validate:"required,url"`
 }
+
+type getAgencyReviewsRequest struct {
+	ID int `param:"id" validate:"required,number"`
+}
+
+type createAgencyReviewRequest struct {
+	AgencyID int    `param:"id" validate:"required,number"`
+	Content  string `json:"content" form:"content" validate:"required"`
+	Rating   int    `json:"rating" form:"rating" validate:"required,number,gte=0,lte=5"`
+}
+
+type toggleAgencyFollowRequest struct {
+	AgencyID int `param:"id" validate:"required,number"`
+}

@@ -1,6 +1,6 @@
 package listings
 
-import "github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+import "github.com/lulzshadowwalker/zoozie/api/internal/entities"
 
 type ListingAvailability string
 
@@ -84,7 +84,7 @@ type (
 	Listing struct {
 		ID             int              `json:"id,omitempty"`
 		AgencyID       int              `json:"agencyId,omitempty"`
-		Agency         *agencies.Agency `json:"agency,omitempty"`
+		Agency         *entities.Agency `json:"agency,omitempty"`
 		Type           string           `json:"type"`
 		Description    string           `json:"description,omitempty"`
 		ExtraFeatures  []ExtraFeature   `json:"extraFeatures,omitempty"`
