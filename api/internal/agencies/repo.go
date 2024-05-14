@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"net/http"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
@@ -17,7 +18,8 @@ import (
 func getBaseQueryStatement(language string, customerID *int) SelectStatement {
 	fromClause :=
 		Agencies.LEFT_JOIN(AgenciesI18n, Agencies.ID.EQ(AgenciesI18n.AgencyID).AND(AgenciesI18n.LanguageCode.EQ(String(language)))).
-			LEFT_JOIN(AgencyPhoneNumbers, Agencies.ID.EQ(AgencyPhoneNumbers.AgencyID))
+			LEFT_JOIN(AgencyPhoneNumbers, Agencies.ID.EQ(AgencyPhoneNumbers.AgencyID)).
+			LEFT_JOIN(AgencyReviews, Agencies.ID.EQ(AgencyReviews.AgencyID))
 
 	cid := 0
 	if customerID != nil {
@@ -41,6 +43,17 @@ func getBaseQueryStatement(language string, customerID *int) SelectStatement {
 		AgencyPhoneNumbers.PhoneNumber,
 
 		CASE().WHEN(CustomerFollowedAgencies.CustomerID.EQ(Int(int64(cid)))).THEN(Bool(true)).ELSE(Bool(false)).AS("dbagency.following"),
+		SELECT(
+			COUNT(AgencyReviews.ID).AS("dbagency.reviews_count"),
+		).
+			FROM(Agencies.LEFT_JOIN(AgencyReviews, Agencies.ID.EQ(AgencyReviews.AgencyID))).
+			GROUP_BY(Agencies.ID),
+
+		SELECT(
+			AVG(AgencyReviews.Rating).AS("dbagency.rating"),
+		).
+			FROM(Agencies.LEFT_JOIN(AgencyReviews, Agencies.ID.EQ(AgencyReviews.AgencyID))).
+			GROUP_BY(Agencies.ID),
 	).
 		FROM(fromClause)
 }
@@ -197,7 +210,7 @@ func (r *repo) CreateAgency(c context.Context, agency entities.Agency, tx interf
 	}
 	err := stmt.QueryContext(c, db, &dest)
 	if err != nil {
-		if utils.IsUniquePostgresViolationErr(err) {
+		if utils.IsUniqueViolationErr(err) {
 			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
 			return entities.Agency{}, fmt.Errorf("failed to register agency because phone number already in use")
 		}
@@ -297,26 +310,32 @@ func (r *repo) GetAgencyReviews(c context.Context, id int, tx interfaces.Transac
 				LEFT_JOIN(Customers, Customers.ID.EQ(AgencyReviews.CustomerID)).
 				LEFT_JOIN(Users, Users.ID.EQ(Customers.UserID)),
 		).
-		WHERE(AgencyReviews.AgencyID.EQ(Int(int64(id)))).QueryContext(c, db, &dest); err != nil {
+		WHERE(AgencyReviews.AgencyID.EQ(Int(int64(id)))).
+		ORDER_BY(AgencyReviews.CreatedAt.DESC()).
+		QueryContext(c, db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query the agency review because %w", err)
 	}
 
 	reviews := make([]entities.AgencyReview, len(dest))
 	for index, review := range dest {
-		reviews[index] = review.ToEntity()
+		review, err := review.ToEntity()
+		if err != nil {
+			return nil, err
+		}
+
+		reviews[index] = review
 	}
 
 	return reviews, nil
 }
 
 func (r *repo) CreateAgencyReview(c context.Context, review entities.AgencyReview, tx interfaces.Transaction) (entities.AgencyReview, error) {
-	var db qrm.Queryable = r.database
+	var db qrm.Executable = r.database
 	if tx != nil {
 		db = tx
 	}
 
-	var dest DBAgencyReview
-	if err := AgencyReviews.INSERT(
+	if _, err := AgencyReviews.INSERT(
 		AgencyReviews.AgencyID,
 		AgencyReviews.CustomerID,
 		AgencyReviews.Content,
@@ -326,11 +345,16 @@ func (r *repo) CreateAgencyReview(c context.Context, review entities.AgencyRevie
 		review.CustomerID,
 		review.Content,
 		review.Rating,
-	).RETURNING(AgencyReviews.AllColumns).QueryContext(c, db, &dest); err != nil {
+	).
+		ExecContext(c, db); err != nil {
+		if utils.IsUniqueViolationErr(err) {
+			return entities.AgencyReview{}, utils.NewApiError(http.StatusConflict, "agency has already been reviewed by customer")
+		}
+
 		return entities.AgencyReview{}, fmt.Errorf("failed to insert agency review because %w", err)
 	}
 
-	return dest.ToEntity(), nil
+	return review, nil
 }
 
 func (r *repo) ToggleAgencyFollow(c context.Context, customerID, agencyID int, tx interfaces.Transaction) (bool, error) {
@@ -346,7 +370,7 @@ func (r *repo) ToggleAgencyFollow(c context.Context, customerID, agencyID int, t
 		Int(int64(customerID)),
 		Int(int64(agencyID)),
 	).ExecContext(c, db); err != nil {
-		if utils.IsUniquePostgresViolationErr(err) {
+		if utils.IsUniqueViolationErr(err) {
 			if err := r.DeleteAgencyFollow(c, customerID, agencyID, tx); err != nil {
 				return false, err
 			}

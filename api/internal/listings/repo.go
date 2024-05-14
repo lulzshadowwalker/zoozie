@@ -650,7 +650,7 @@ func (r *repo) ToggleListingFavorite(c context.Context, customerID, listingID in
 		Int(int64(customerID)),
 		Int(int64(listingID)),
 	).ExecContext(c, db); err != nil {
-		if utils.IsUniquePostgresViolationErr(err) {
+		if utils.IsUniqueViolationErr(err) {
 			if err := r.DeleteListingFavorite(c, customerID, listingID, tx); err != nil {
 				return false, err
 			}

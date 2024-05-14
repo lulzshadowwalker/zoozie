@@ -58,9 +58,9 @@ export default function FollowButton({ agency }: Props) {
         }
       }
 
-      const data = await res.json();
-      console.table(data);
-      const following = data?.data?.following as boolean | undefined;
+      const following = (await res.json())?.data?.following as
+        | boolean
+        | undefined;
 
       if (following === undefined) {
         console.error("FollowButton: response is not in the expected format");
@@ -77,7 +77,7 @@ export default function FollowButton({ agency }: Props) {
   return (
     <Button
       typ="secondary"
-      className="ms-0 flex-grow basis-0 py-xs-s md:flex-grow-0 md:py-3xs-2xs"
+      className="relative ms-0 flex-grow basis-0 py-xs-s transition-all md:flex-grow-0 md:py-3xs-2xs"
       onClick={toggleFollow}
     >
       {following ? t("unfollow") : t("follow")}

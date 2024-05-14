@@ -14,6 +14,9 @@ type Agency struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Following   bool   `json:"following"`
+
+	Rating       *float64 `json:"rating,omitempty"`
+	ReviewsCount *int     `json:"reviewsCount,omitempty"`
 }
 
 type AgencyAgent struct {
@@ -30,12 +33,12 @@ type AgencyI18n struct {
 }
 
 type AgencyReview struct {
-	ID         int       `json:"id,omitempty"`
-	AgencyID   int       `json:"agencyId,omitempty"`
-	CustomerID int       `json:"customerId,omitempty"`
-	Customer   *User     `json:"customer,omitempty"`
-	Content    string    `json:"content,omitempty"`
-	Rating     int       `json:"rating,omitempty"`
-	CreatedAt  time.Time `json:"createdAt,omitempty"`
-	UpdateAt   time.Time `json:"updatedAt,omitempty"`
+	ID         int        `json:"id,omitempty"`
+	AgencyID   int        `json:"agencyId,omitempty"`
+	CustomerID int        `json:"customerId,omitempty"`
+	Customer   *User      `json:"customer,omitempty"`
+	Content    string     `json:"content,omitempty"`
+	Rating     int        `json:"rating,omitempty"`
+	CreatedAt  *time.Time `json:"createdAt,omitempty"`
+	UpdateAt   *time.Time `json:"updatedAt,omitempty"`
 }

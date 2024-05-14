@@ -3,7 +3,7 @@ import { clsx, ClassValue } from "clsx";
 import { IBasePageParams, TListingFilters, TZoozieUserMessage } from "@types";
 import { StoreApi, UseBoundStore } from "zustand";
 import { toast } from "react-toastify";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Locale } from "./i18n/config";
 import path from "path";
 import Config from "./config";
@@ -211,4 +211,38 @@ export function pageSearchParamsToURLSearchParams(
   }
 
   return q;
+}
+
+// FIXME: `formatDateTime` does not accurately calculate the difference between the datetimes from the API and the current local time
+export async function formatDateTime(
+  v: string | Date | number,
+): Promise<string> {
+  const t = await getTranslations();
+  const locale = await getLocale();
+
+  const now = new Date();
+  const dateTime = new Date(v);
+  const difference = now.getTime() - dateTime.getTime();
+
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+
+  if (difference <= minute) {
+    return t("just-now");
+  } else if (difference <= hour) {
+    const minutesAgo = Math.floor(difference / (60 * 1000));
+    return `${minutesAgo} ${t("minutes-ago")}`;
+  } else if (difference <= day) {
+    return dateTime.toLocaleTimeString(locale === "ar" ? "ar-JO" : "en-US", {
+      hour: "numeric",
+      minute: "numeric",
+    });
+  } else {
+    return dateTime.toLocaleDateString(locale === "ar" ? "ar-JO" : "en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
 }

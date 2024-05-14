@@ -91,6 +91,7 @@ export default async function Listing({ params: { locale, id } }: Props) {
   const furnished = listing.property?.furnished;
   const email = listing.agency?.emailAddress;
   const phone = listing.agency?.phoneNumber;
+  const agency = listing.agency;
 
   return (
     <main className="my-xl-2xl">
@@ -352,13 +353,15 @@ export default async function Listing({ params: { locale, id } }: Props) {
                       {listing.agency?.name}
                     </h3>
                   </Link>
-                  <Link
-                    href="/agencies/foo#reviews"
-                    className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline"
-                  >
-                    {/* TODO: Static review count */}
-                    5.0 (12 {t("reviews")})
-                  </Link>
+                  {(agency?.rating || agency?.reviewsCount) && (
+                    <Link
+                      href={`/agencies/${listing.agency?.slug}#reviews`}
+                      className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline"
+                    >
+                      {agency?.rating?.toFixed(1)} ({agency?.reviewsCount}{" "}
+                      {agency?.reviewsCount === 1 ? t("review") : t("reviews")})
+                    </Link>
+                  )}
                 </div>
               )}
             </div>

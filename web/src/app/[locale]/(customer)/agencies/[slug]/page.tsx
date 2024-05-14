@@ -9,9 +9,9 @@ import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { getAgencyImage } from "@/lib/utils";
 import { Link } from "@/lib/i18n/navigation";
-import { useTranslations } from "next-intl";
 import FollowButton from "@/components/customer/agencies/follow-button";
 import { getAccessToken } from "@/lib/actions/auth";
+import Reviews from "@/components/customer/agencies/reviews";
 
 export async function generateStaticParams({
   params: { locale },
@@ -41,16 +41,18 @@ export default async function Agency({ params: { locale, slug } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.agency");
   const accessToken = await getAccessToken();
+  const headers: Record<string, string> = {};
+  accessToken && (headers.Authorization = `Bearer ${accessToken}`);
 
   const res = await fetchApi("/agencies", {
-    init: { headers: { Authorization: `Bearer ${accessToken}` } },
+    init: { headers },
     queryParams: { slug },
   });
   if (!res.ok) {
     if (res.status === 404) notFound();
 
     throw new Error(
-      "agencies/[slug]: failed to fetch agency because" + res.statusText,
+      "agencies/[slug]: failed to fetch agency because " + res.statusText,
     );
   }
 
@@ -81,10 +83,15 @@ export default async function Agency({ params: { locale, slug } }: Props) {
               <h3 className="cursor-pointer text-xl font-light">
                 {agency.name}
               </h3>
-              <p className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline">
-                {/* TODO: agency rating and review count  */}
-                5.0 (12 reviews)
-              </p>
+              {(agency.rating || agency.reviewsCount) && (
+                <Link
+                  href="#reviews"
+                  className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline"
+                >
+                  {agency.rating?.toFixed(1)} ({agency.reviewsCount}{" "}
+                  {agency.reviewsCount === 1 ? t("review") : t("reviews")})
+                </Link>
+              )}
             </div>
           </div>
 
@@ -149,39 +156,8 @@ export default async function Agency({ params: { locale, slug } }: Props) {
           </article>
         </Section>
       )}
-      <Section>
-        <article className="mt-l-xl flex flex-col border-t pt-l-xl">
-          <h2 className="text-xl font-medium">Reviews</h2>
-          <ul className="mt-m-l flex flex-col gap-l-xl">
-            {[...Array(3)].map((_, index) => (
-              <li className="flex items-start gap-s-m" key={index}>
-                <div className="relative h-xl-2xl w-xl-2xl overflow-hidden rounded-3xl">
-                  <ZoozImage
-                    src="https://images.unsplash.com/photo-1488161628813-04466f872be2?q=80&w=2864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt=""
-                    title=""
-                    fill
-                    sizes="(min-width: 1340px) 50px, (min-width: 620px) calc(1.71vw + 27px), calc(7.67vw - 8px)"
-                    quality={65}
-                  />
-                </div>
-                <div className="self-center leading-[1.2rem]">
-                  <h3 className="text-lg text-gray-400">Customer Name</h3>
-                  <p className="mt-2xs-xs max-w-[50ch] text-lg text-on-primary-1/80">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Quisquam odit fugit nihil fugiat quam autem quae nam modi
-                    amet incidunt.
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
 
-          <button className="ms-auto mt-xs-s underline underline-offset-4 outline-none hover:decoration-transparent focus:decoration-transparent">
-            {t("view-more")}
-          </button>
-        </article>
-      </Section>
+      <Reviews agency={agency} />
 
       {/* NOTE: I don't want this button to be fluid in spacings or font size */}
       <Link href={`/listings?agency=${agency.slug}`}>

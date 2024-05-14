@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
-interface Props extends InputHTMLAttributes<HTMLTextAreaElement> {
+interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string;
   label: string;
   labelClassName?: string;
@@ -20,14 +20,14 @@ export default function ZoozTextarea({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-gray-200 overflow-hidden flex flex-col transition-all focus-within:border-on-primary-1 w-full",
+        "flex w-full flex-col overflow-hidden rounded-2xl border border-gray-200 transition-all focus-within:border-on-primary-1",
         containerClassName,
       )}
     >
       <label
         htmlFor={id}
         className={cn(
-          "text-base text-on-primary-1 font-medium px-xs-s py-3xs-2xs bg-gray-200",
+          "bg-gray-200 px-xs-s py-3xs-2xs text-base font-medium text-on-primary-1",
           labelClassName,
         )}
       >
@@ -36,7 +36,10 @@ export default function ZoozTextarea({
 
       <textarea
         id={id}
-        className={cn("rounded-2xl px-xs-s py-3xs-2xs w-full outline-none placeholder:text-lg", inputClassName)}
+        className={cn(
+          "w-full rounded-2xl px-xs-s py-3xs-2xs outline-none placeholder:text-lg",
+          inputClassName,
+        )}
         maxLength={10000}
         rows={10}
         {...rest}
@@ -44,4 +47,3 @@ export default function ZoozTextarea({
     </div>
   );
 }
-

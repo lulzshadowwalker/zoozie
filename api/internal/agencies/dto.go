@@ -23,8 +23,8 @@ type getAgencyReviewsRequest struct {
 
 type createAgencyReviewRequest struct {
 	AgencyID int    `param:"id" validate:"required,number"`
-	Content  string `json:"content" form:"content" validate:"required"`
-	Rating   int    `json:"rating" form:"rating" validate:"required,number,gte=0,lte=5"`
+	Content  string `json:"content" form:"content"`
+	Rating   int    `json:"rating" form:"rating" validate:"required,number,gte=1,lte=5"`
 }
 
 type toggleAgencyFollowRequest struct {

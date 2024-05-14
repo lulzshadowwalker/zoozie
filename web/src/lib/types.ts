@@ -232,6 +232,8 @@ export type TAgency = {
   name?: string;
   description?: string;
   following?: boolean;
+  rating?: number;
+  reviewsCount?: number;
 };
 
 export type TCustomer = TUser & { customer?: { id?: number; userId?: number } };
@@ -292,4 +294,15 @@ export type TListingFilters = {
   minSalePrice?: number;
   maxSalePrice?: number;
   type?: (typeof listingTypes)[number];
+};
+
+export type TAgencyReview = {
+  id?: number;
+  agencyId?: number;
+  customerId?: number;
+  customer?: Omit<TUser, "accessToken" | "refreshToken">;
+  content?: string;
+  rating?: 1 | 2 | 3 | 4 | 5;
+  createdAt?: string;
+  updatedAt?: string;
 };

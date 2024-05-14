@@ -63,7 +63,21 @@
       "about-this-agency": "About this agency",
       "contact-information": "Contact Information",
       "something-went-wrong": "Something went wrong. Please try again later.",
-      "agents-cannot-follow": "Agents cannot interact with customer functionalities"
+      "agents-cannot-follow": "Agents cannot interact with customer functionalities",
+      "customer-avatar": "Customer Avatar",
+      "agency-logo": "Agency Logo",
+      "unknown-customer": "Unknown customer",
+      "write-review": "Write a Review",
+      "unknown-agency": "Unknown agency",
+      "rate-this-agency": "Rate this agency",
+      "submit": "Submit",
+      "review-placeholder": "Share your experience with this agency. Your review helps others find their ideal partner in real estate.",
+      "review": "Review",
+      "reviews": "Reviews",
+      "review-sent": "Thank you for your review!",
+      "rating": "Rating",
+      "review-already-exists": "You have already submitted a review for this agency.",
+      "agents-cannot-write-reviews": "Agents cannot interact with customer functionalities"
     },
     "account-favorites": {
       "your-favorites": "Your Favorites",

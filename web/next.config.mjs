@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin("./src/lib/i18n/config.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   logging: {
-    "fetches": {
+    fetches: {
       fullUrl: true,
     },
   },
@@ -13,21 +13,25 @@ const nextConfig = {
     domains: ["localhost"],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**.imgur.com',
+        protocol: "https",
+        hostname: "**.imgur.com",
       },
       {
-        protocol: 'https',
-        hostname: '**.unsplash.com',
+        protocol: "https",
+        hostname: "**.unsplash.com",
       },
       {
-        protocol: 'http',
-        hostname: '**.localhost',
+        protocol: "http",
+        hostname: "**.localhost",
       },
       {
-        protocol: 'https',
-        hostname: '**.pinimg.com'
-      }
+        protocol: "https",
+        hostname: "**.pinimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.assets.so",
+      },
     ],
   },
 };

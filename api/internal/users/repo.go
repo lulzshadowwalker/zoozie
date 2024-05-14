@@ -85,7 +85,7 @@ func (r *repo) CreateUser(c context.Context, user entities.User, tx interfaces.T
 		user.PhoneNumber.PhoneNumber,
 	).ExecContext(c, tx)
 	if err != nil {
-		if utils.IsUniquePostgresViolationErr(err) {
+		if utils.IsUniqueViolationErr(err) {
 			// NOTE: do not return the actual reason to the user to prevent information disclosure to potential attackers
 			return entities.User{}, fmt.Errorf("failed to register user because phone number already in use")
 		}

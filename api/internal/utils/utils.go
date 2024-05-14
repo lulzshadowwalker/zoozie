@@ -216,7 +216,9 @@ func BindAndValidate(c echo.Context, i interface{}) error {
 	return nil
 }
 
-func IsUniquePostgresViolationErr(err error) bool {
+// NOTE: for some reason when using `jet` with `RETURNING` + `Query` or `QueryContext`
+// it doesn't actually return `*pg.Error` in case of a unique constraint violation for some reason though the error clearly is one
+func IsUniqueViolationErr(err error) bool {
 	pgErr, ok := err.(*pq.Error)
 	if !ok {
 		// Not a PostgreSQL error

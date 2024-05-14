@@ -1,9 +1,12 @@
 package agencies
 
 import (
+	"time"
+
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
+	"github.com/lulzshadowwalker/zoozie/api/internal/utils"
 )
 
 type dbAgency struct {
@@ -11,7 +14,9 @@ type dbAgency struct {
 	PhoneNumber  model.AgencyPhoneNumbers
 	Translations model.AgenciesI18n
 
-	Following bool `alias:"following"`
+	Following    bool `alias:"following"`
+	ReviewsCount *int
+	Rating       *float64
 }
 
 func (m *dbAgency) ToEntity() (entities.Agency, error) {
@@ -29,6 +34,8 @@ func (m *dbAgency) ToEntity() (entities.Agency, error) {
 		Name:         m.Translations.Name,
 		Description:  m.Translations.Description,
 		Following:    m.Following,
+		ReviewsCount: m.ReviewsCount,
+		Rating:       m.Rating,
 	}, nil
 }
 
@@ -50,23 +57,40 @@ type DBAgencyReview struct {
 	User     *model.Users
 }
 
-func (m *DBAgencyReview) ToEntity() entities.AgencyReview {
+func (m *DBAgencyReview) ToEntity() (entities.AgencyReview, error) {
 	review := entities.AgencyReview{
 		ID:         int(m.Review.ID),
 		AgencyID:   int(m.Review.AgencyID),
 		CustomerID: int(m.Review.CustomerID),
-		Content:    m.Review.Content,
 		Rating:     int(m.Review.Rating),
-		CreatedAt:  m.Review.CreatedAt,
-		UpdateAt:   m.Review.UpdatedAt,
+	}
+
+	if m.Review.Content != nil {
+		review.Content = *m.Review.Content
+	}
+
+	if m.Review.CreatedAt != (time.Time{}) {
+		review.CreatedAt = &m.Review.CreatedAt
+	}
+
+	if m.Review.UpdatedAt != (time.Time{}) {
+		review.CreatedAt = &m.Review.UpdatedAt
 	}
 
 	if m.User != nil {
 		user := &entities.User{
-			ID:             m.User.ID,
-			Name:           m.User.Name,
-			ProfilePicture: m.User.ProfilePicture,
-			EmailAddress:   m.User.EmailAddress,
+			ID:           m.User.ID,
+			Name:         m.User.Name,
+			EmailAddress: m.User.EmailAddress,
+		}
+
+		if m.User.ProfilePicture != nil {
+			pfp, err := utils.GetFileURL(*m.User.ProfilePicture)
+			if err != nil {
+				return entities.AgencyReview{}, err
+			}
+
+			user.ProfilePicture = &pfp
 		}
 
 		if m.Customer != nil {
@@ -80,5 +104,5 @@ func (m *DBAgencyReview) ToEntity() entities.AgencyReview {
 		review.Customer = user
 	}
 
-	return review
+	return review, nil
 }
