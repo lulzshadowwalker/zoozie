@@ -145,4 +145,5 @@ type filters struct {
 	MinSalePrice   int
 	MaxSalePrice   int
 	Availabilities []string
+	AgencySlug     string
 }

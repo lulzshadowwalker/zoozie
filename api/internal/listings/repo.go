@@ -357,7 +357,8 @@ func getBaseQueryStatement(language string, customerId *int) SelectStatement {
 		LEFT_JOIN(Areas, ListingLocations.AreaID.EQ(Areas.ID)).
 		LEFT_JOIN(AreasI18n, Areas.ID.EQ(AreasI18n.AreaID).AND(AreasI18n.LanguageCode.EQ(String(language)))).
 		LEFT_JOIN(Properties, Listings.ID.EQ(Properties.ListingID)).
-		LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language))))
+		LEFT_JOIN(PropertiesI18n, Properties.ID.EQ(PropertiesI18n.PropertyID).AND(PropertiesI18n.LanguageCode.EQ(String(language)))).
+		LEFT_JOIN(Agencies, Listings.AgencyID.EQ(Agencies.ID))
 
 	cid := 0
 	if customerId != nil {
@@ -450,6 +451,10 @@ func (r *repo) GetAllListings(c context.Context, filters filters) ([]Listing, er
 	stmt := getBaseQueryStatement(language, customerID)
 
 	var conditions []BoolExpression
+
+	if filters.AgencySlug != "" {
+		conditions = append(conditions, Agencies.Slug.EQ(String(filters.AgencySlug)))
+	}
 
 	if filters.Furnished != nil {
 		conditions = append(conditions, Properties.Furnished.EQ(Bool(*filters.Furnished)))

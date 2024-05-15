@@ -74,6 +74,7 @@ type getListingsRequest struct {
 	MinSalePrice   int      `query:"minSalePrice" validate:"omitempty,number"`
 	MaxSalePrice   int      `query:"maxSalePrice" validate:"omitempty,number"`
 	Availabilities []string `query:"availability" validate:"omitempty,dive,oneof=RENT SALE"`
+	AgencySlug     string   `query:"agency" validate:"omitempty"`
 }
 
 func (r getListingsRequest) toFilters() filters {
