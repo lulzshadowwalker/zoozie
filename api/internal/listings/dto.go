@@ -81,7 +81,7 @@ func (r getListingsRequest) toFilters() filters {
 }
 
 type getListingRequest struct {
-	ID     int      `param:"id" validate:"required,number"`
+	Slug   string   `param:"slug" validate:"required"`
 	Expand []string `query:"expand"`
 }
 

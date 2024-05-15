@@ -233,24 +233,25 @@ func IsForeignKeyPostgresViolationErr(err error) bool {
 	return ok && pgErr.Code.Name() == "foreign_key_violation"
 }
 
-func GenerateSlug(s string) string {
+func GenerateSlug(s ...string) string {
+	segments := strings.Join(s, " ")
 	// Convert the string to lowercase
-	s = strings.ToLower(s)
+	segments = strings.ToLower(segments)
 
 	// Replace spaces with hyphens
-	s = strings.ReplaceAll(s, " ", "-")
+	segments = strings.ReplaceAll(segments, " ", "-")
 
 	// Remove non-alphanumeric characters
 	reg := regexp.MustCompile("[^a-zA-Z0-9-]+")
-	s = reg.ReplaceAllString(s, "")
+	segments = reg.ReplaceAllString(segments, "")
 
 	// Remove consecutive hyphens
-	s = strings.ReplaceAll(s, "--", "-")
+	segments = strings.ReplaceAll(segments, "--", "-")
 
 	// Remove leading and trailing hyphens
-	s = strings.Trim(s, "-")
+	segments = strings.Trim(segments, "-")
 
-	return s
+	return segments
 }
 
 // returns the destination file, the destination file path, and the error if any

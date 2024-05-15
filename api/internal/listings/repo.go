@@ -61,8 +61,29 @@ func (r *repo) CreateListingLocation(c context.Context, location Location, tx in
 		return Location{}, utils.NewApiError(http.StatusBadRequest, "")
 	}
 
-	location.ID = int(dbLocation.Location.ID)
-	return location, nil
+	language := "en"
+	if err := SELECT(
+		ListingLocations.AllColumns,
+		Countries.AllColumns,
+		CountriesI18n.AllColumns,
+		Cities.AllColumns,
+		CitiesI18n.AllColumns,
+		Areas.AllColumns,
+		AreasI18n.AllColumns,
+	).FROM(
+		ListingLocations.
+			LEFT_JOIN(Countries, ListingLocations.CountryID.EQ(Countries.ID)).
+			LEFT_JOIN(CountriesI18n, CountriesI18n.CountryID.EQ(Countries.ID).AND(CountriesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Cities, ListingLocations.CountryID.EQ(Cities.ID)).
+			LEFT_JOIN(CitiesI18n, CitiesI18n.CityID.EQ(Cities.ID).AND(CitiesI18n.LanguageCode.EQ(String(language)))).
+			LEFT_JOIN(Areas, ListingLocations.CountryID.EQ(Areas.ID)).
+			LEFT_JOIN(AreasI18n, AreasI18n.AreaID.EQ(Areas.ID).AND(AreasI18n.LanguageCode.EQ(String(language)))),
+	).WHERE(ListingLocations.ID.EQ(Int(dbLocation.Location.ID))).
+		QueryContext(c, db, &dbLocation); err != nil {
+		return Location{}, fmt.Errorf("failed to get listing location because %w", err)
+	}
+
+	return dbLocation.ToEntity(), nil
 }
 
 func (r *repo) CreateListingAvailability(c context.Context, listingAvailability Availability, tx interfaces.Transaction) (Availability, error) {
@@ -369,7 +390,7 @@ func getBaseQueryStatement(language string, customerId *int) SelectStatement {
 	).FROM(fromClause)
 }
 
-func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
+func (r *repo) GetListingByID(c context.Context, id int) (Listing, error) {
 	var customerID *int = nil
 	if cid, err := utils.GetCustomerID(c); err == nil {
 		customerID = &cid
@@ -385,7 +406,30 @@ func (r *repo) GetListing(c context.Context, id int) (Listing, error) {
 	var dest DBListing
 	err = stmt.QueryContext(c, r.database, &dest)
 	if err != nil {
-		return Listing{}, fmt.Errorf("failed to query the listing because %w", err)
+		return Listing{}, fmt.Errorf("failed to query the listing by id because %w", err)
+	}
+
+	listing := dest.ToEntity()
+	return listing, nil
+}
+
+func (r *repo) GetListingBySlug(c context.Context, slug string) (Listing, error) {
+	var customerID *int = nil
+	if cid, err := utils.GetCustomerID(c); err == nil {
+		customerID = &cid
+	}
+
+	language, err := utils.GetLocale(c)
+	if err != nil {
+		return Listing{}, err
+	}
+
+	stmt := getBaseQueryStatement(language, customerID).WHERE(Listings.Slug.EQ(String(slug)))
+
+	var dest DBListing
+	err = stmt.QueryContext(c, r.database, &dest)
+	if err != nil {
+		return Listing{}, fmt.Errorf("failed to query the listing by slug because %w", err)
 	}
 
 	listing := dest.ToEntity()
@@ -679,6 +723,25 @@ func (r *repo) DeleteListingFavorite(c context.Context, customerID, listingID in
 			CustomerFavoriteListings.ListingID.EQ(Int(int64(listingID)))),
 	).ExecContext(c, db); err != nil {
 		return fmt.Errorf("failed to delete listing favorite because %w", err)
+	}
+
+	return nil
+}
+
+func (r *repo) UpdateListingSlug(c context.Context, ID int, slug string, tx interfaces.Transaction) error {
+	var db qrm.Executable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	if _, err := Listings.UPDATE(
+		Listings.Slug,
+	).SET(
+		String(slug),
+	).WHERE(
+		Listings.ID.EQ(Int(int64(ID))),
+	).ExecContext(c, db); err != nil {
+		return fmt.Errorf("failed to update listing slug because %w", err)
 	}
 
 	return nil

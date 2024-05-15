@@ -105,6 +105,7 @@ func (l *DBListing) ToEntity() Listing {
 			City:    City{Name: l.Location.DBCity.Translations.Name},
 			Area:    Area{Name: l.Location.DBArea.Translations.Name},
 		},
+		Slug: l.Listing.Slug,
 	}
 
 	if l.Property != nil {

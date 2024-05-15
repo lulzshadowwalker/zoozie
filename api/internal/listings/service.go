@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,7 +23,8 @@ type (
 
 	Repo interface {
 		Begin(context.Context) (interfaces.Transaction, error)
-		GetListing(c context.Context, id int) (Listing, error)
+		GetListingByID(c context.Context, id int) (Listing, error)
+		GetListingBySlug(c context.Context, slug string) (Listing, error)
 		GetAllListings(c context.Context, filters filters) ([]Listing, error)
 		GetListingTypes(context.Context, interfaces.Transaction) ([]ListingType, error)
 		GetListingLocations(context.Context, interfaces.Transaction) ([]Location, error)
@@ -43,6 +45,7 @@ type (
 
 		CreateProperty(context.Context, Property, interfaces.Transaction) (Property, error)
 		CreatePropertyI18n(context.Context, PropertyI18n, interfaces.Transaction) (PropertyI18n, error)
+		UpdateListingSlug(c context.Context, ID int, slug string, tx interfaces.Transaction) error
 	}
 )
 
@@ -84,6 +87,11 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 		Location: location,
 	}
 	listing, err = s.repo.CreateListing(c, listing, tx)
+	if err != nil {
+		return err
+	}
+	slug := utils.GenerateSlug(location.City.Name, location.Area.Name, request.Type, strconv.Itoa(listing.ID))
+	err = s.repo.UpdateListingSlug(c, listing.ID, slug, tx)
 	if err != nil {
 		return err
 	}
@@ -224,7 +232,7 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 }
 
 func (s *service) GetListing(c context.Context, request getListingRequest) (Listing, error) {
-	listing, err := s.repo.GetListing(c, request.ID)
+	listing, err := s.repo.GetListingBySlug(c, request.Slug)
 	if err != nil {
 		return Listing{}, err
 	}

@@ -39,23 +39,19 @@ export async function generateStaticParams() {
   }
 
   return listings.map((listing) => ({
-    id: listing.id?.toString(),
+    id: listing.slug,
   }));
 }
 
 interface Props extends Omit<IBasePageParams, "params"> {
-  params: IBasePageParams["params"] & { id: number };
+  params: IBasePageParams["params"] & { slug: string };
 }
 
-export default async function Listing({ params: { locale, id } }: Props) {
+export default async function Listing({ params: { locale, slug } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.listings");
 
-  if (Number.isNaN(id)) {
-    notFound();
-  }
-
-  const res = await fetchApi("/listings/" + Number(id), {
+  const res = await fetchApi("/listings/" + slug, {
     queryParams: {
       expand: "agency",
     },

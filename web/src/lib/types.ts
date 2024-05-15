@@ -218,6 +218,7 @@ export type TListing = {
     };
   };
   favorite?: boolean;
+  slug?: string;
 };
 
 export type TAgency = {
