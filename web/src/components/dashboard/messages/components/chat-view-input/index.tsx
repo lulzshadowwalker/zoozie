@@ -2,6 +2,7 @@
 
 import Button from "@/components/shared/button";
 import ZoozInput from "@/components/shared/zooz-input";
+import { useUser } from "@/lib/context/user";
 import { useDashboardMessagesStore } from "@/lib/store/dashboard-messages";
 import { TSocketError, TSocketMessage, TZoozieUserMessage } from "@/lib/types";
 import { isEmptyObject, showToast } from "@/lib/utils";
@@ -17,19 +18,22 @@ export function ChatViewInput() {
     (state) => state.appendMessage,
   );
   const conversation = useDashboardMessagesStore((state) => state.conversation);
+  const customerId = conversation?.customerId;
+  const { accessToken } = useUser();
 
   useEffect(() => {
     connect();
     return function cleanup() {
-      // ws?.current?.close(1000, "Bye!");
+      ws?.current?.close(1000, "Bye!");
     };
   }, [conversation?.id]);
 
   function connect(): void {
-    if (!conversation?.id) return;
+    if (!customerId) return;
 
     const socket = new WebSocket(
-      `ws://localhost:42069/api/en/conversations/chat/${17}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWdlbmN5IGFnZW50Iiwicm9sZSI6ImFnZW5jeV9hZ2VudCIsImFnZW5jeV9pZCI6LTQyMDY5LCJzdWIiOiIzNyIsImV4cCI6MTcxNzQ0ODE3Nn0.RY8Pg8jPTzsmEw0ee11qNZfN8MhCxanBSJWiadO1rPA`,
+      // TODO: use an OTP token
+      `ws://localhost:42069/api/en/conversations/chat/${customerId}?token=${accessToken.value}`,
     );
     ws.current = socket;
 

@@ -16,7 +16,10 @@ export interface IBaseAgencyParams extends Omit<IBasePageParams, "params"> {
   params: IBasePageParams["params"] & { agency: string };
 }
 
-export interface IBaseLayoutParams extends IBasePageParams {
+export interface IBaseLayoutParams {
+  params: {
+    locale: Locale;
+  };
   children: ReactNode;
 }
 

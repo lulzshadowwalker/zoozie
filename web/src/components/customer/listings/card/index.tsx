@@ -25,7 +25,7 @@ export default async function Card({ listing }: Props) {
 
   return (
     <Link
-      href={`/listings/${listing.id}`}
+      href={`/listings/${listing.slug}`}
       className="group flex min-h-[28rem] flex-col gap-m-l rounded-xl border p-m-l shadow-sm !outline-none hover:bg-gray-100/70 md:flex-row md:justify-between dark:shadow-none"
     >
       <div className="flex flex-row justify-between gap-3xs-2xs">

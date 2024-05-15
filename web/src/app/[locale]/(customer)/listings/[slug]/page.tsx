@@ -20,26 +20,30 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-static";
 
-export async function generateStaticParams() {
-  const res = await fetchApi("/listings", { locale: "en" });
+export async function generateStaticParams({
+  params: { locale },
+}: {
+  params: IBasePageParams["params"];
+}) {
+  const res = await fetchApi("/listings", { locale });
   if (!res.ok) {
     console.error(
-      "listings/[id].generateStaticParams: failed to fetch listings",
+      "listings/[slug].generateStaticParams: failed to fetch listings",
       res.statusText,
     );
-    return;
+    return [];
   }
 
   const listings = (await res.json())?.data?.listings as TListing[] | undefined;
-  if (!listings?.length) {
+  if (!listings) {
     console.error(
-      "listings/[id].generateStaticParams: listings are not in the expected format or are empty",
+      "listings/[slug].generateStaticParams: listings are not in the expected format",
     );
-    return;
+    return [];
   }
 
   return listings.map((listing) => ({
-    id: listing.slug,
+    slug: listing.slug,
   }));
 }
 
@@ -58,13 +62,15 @@ export default async function Listing({ params: { locale, slug } }: Props) {
   });
   if (!res.ok) {
     if (res.status === 404) notFound();
-    throw new Error("listings/[id]: failed to fetch listing" + res.statusText);
+    throw new Error(
+      "listings/[slug]: failed to fetch listing" + res.statusText,
+    );
   }
 
   const listing = (await res.json())?.data?.listing as TListing | undefined;
   if (!listing) {
     throw new Error(
-      "listings/[id]: listing is not in the expected format or is empty",
+      "listings/[slug]: listing is not in the expected format or is empty",
     );
   }
 

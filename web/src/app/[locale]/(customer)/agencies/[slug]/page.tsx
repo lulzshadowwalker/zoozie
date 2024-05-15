@@ -15,17 +15,19 @@ import Reviews from "@/components/customer/agencies/reviews";
 
 export async function generateStaticParams({
   params: { locale },
-}: IBasePageParams) {
+}: {
+  params: IBasePageParams["params"];
+}) {
   const res = await fetchApi("/agencies", { locale });
   if (!res.ok) {
     console.error("failed to fetch agencies because ", res.statusText);
-    return;
+    return [];
   }
 
   const agencies = (await res.json())?.data?.agencies as TAgency[] | undefined;
   if (!agencies) {
     console.error("agencies are not in the expected format");
-    return;
+    return [];
   }
 
   return agencies.map((agency) => ({

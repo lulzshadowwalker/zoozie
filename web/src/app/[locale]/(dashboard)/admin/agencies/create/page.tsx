@@ -2,17 +2,21 @@ import Header from "@/components/dashboard/shared/header";
 import Button from "@/components/shared/button";
 import ZoozInput from "@/components/shared/zooz-input";
 import { createAgency } from "@/lib/actions/create-agency";
+import { IBasePageParams } from "@/lib/types";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { unstable_setRequestLocale } from "next-intl/server";
 
-export default function CreateAgency() {
+export default function CreateAgency({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale);
+
   return (
     <main>
       <Header leading={<h1 className="text-2xl">Create Agency</h1>} />
 
       <form
         action={createAgency}
-        className="flex flex-col gap-xs-s max-w-screen-lg mx-auto my-xl-2xl"
+        className="mx-auto my-xl-2xl flex max-w-screen-lg flex-col gap-xs-s"
       >
         <div className="flex items-center gap-s-m">
           <ZoozInput

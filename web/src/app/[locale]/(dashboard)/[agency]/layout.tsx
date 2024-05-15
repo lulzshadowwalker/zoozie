@@ -1,14 +1,27 @@
-import { IBaseLayoutParams } from "@types";
+import { fetchApi } from "@/lib/api";
+import { IBaseLayoutParams, IBasePageParams, TAgency } from "@types";
 import { unstable_setRequestLocale } from "next-intl/server";
 
-export const dynamicParams = false;
+export async function generateStaticParams({
+  params: { locale },
+}: {
+  params: IBasePageParams["params"];
+}) {
+  const res = await fetchApi("/agencies", { locale });
+  if (!res.ok) {
+    console.error("failed to fetch agencies because ", res.statusText);
+    return [];
+  }
 
-export function generateStaticParams() {
-  return [
-    {
-      agency: "lulzie",
-    },
-  ];
+  const agencies = (await res.json())?.data?.agencies as TAgency[] | undefined;
+  if (!agencies) {
+    console.error("agencies are not in the expected format");
+    return [];
+  }
+
+  return agencies.map((agency) => ({
+    agency: agency.slug,
+  }));
 }
 
 export default function DashboardAgencyLayout({
@@ -16,5 +29,5 @@ export default function DashboardAgencyLayout({
   children,
 }: IBaseLayoutParams) {
   unstable_setRequestLocale(locale);
-  return children;
+  return <>{children}</>;
 }
