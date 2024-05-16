@@ -137,6 +137,21 @@
         "title": "No luck with your search",
         "description": "Try adjusting your preferences or explore our other listings for potential matches?"
       }
+    },
+    "footer": {
+      "resources": "Resources",
+      "blog": "Blog",
+      "services": "Services",
+      "follow-us": "Follow Us",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "pinterest": "Pinterest",
+      "twitter": "Twitter",
+      "youtube": "Youtube",
+      "legal": "Legal",
+      "privacy-policy": "Privacy Policy",
+      "terms-and-conditions": "Terms and Conditions",
+      "all-rights-reserved": "All Rights Reserved"
     }
   },
   "dashboard": {

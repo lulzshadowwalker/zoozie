@@ -1,3 +1,4 @@
+import Footer from "@/components/customer/shared/footer";
 import HeaderNavigationBar from "@/components/customer/shared/header-navigation-bar";
 
 export const metadata = {
@@ -14,7 +15,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <HeaderNavigationBar />
-        <div className="max-w-supported mx-auto">{children}</div>
+        <div className="mx-auto max-w-supported">{children}</div>
+        <Footer />
       </body>
     </html>
   );

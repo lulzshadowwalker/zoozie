@@ -5,7 +5,6 @@ import ZoozLogo from "../../../shared/zooz-logo";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
-import ZoozImage from "../../../shared/zooz-image";
 import Button from "../../../shared/button";
 import UserAvatar from "./components/user-avatar";
 
@@ -16,11 +15,11 @@ export default function HeaderNavigationBar() {
   const navigationSampleItems = [
     {
       title: t("buy"),
-      href: "/listings?type=SALE",
+      href: "/listings?availability=SALE",
     },
     {
       title: t("rent"),
-      href: "/listings?type=RENT",
+      href: "/listings?availability=RENT",
     },
     {
       title: t("services"),

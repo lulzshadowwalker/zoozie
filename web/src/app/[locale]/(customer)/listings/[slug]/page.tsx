@@ -272,7 +272,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
           )}
         </section>
 
-        <div className="top-[3rem] mt-l-xl flex-grow basis-0 rounded-2xl border border-gray-400 bg-gray-300/20 px-s-m py-m-l lg:sticky">
+        <div className="top-[3rem] mt-l-xl max-w-[34rem] flex-grow basis-0 rounded-2xl border border-gray-400 bg-gray-300/20 px-s-m py-m-l lg:sticky">
           {saleAvailability && saleAvailability?.price?.amount && (
             <p className="mb-xs-s border-b-2 pb-xs-s text-xl">
               <strong>{saleAvailability?.price?.amount}</strong>{" "}
