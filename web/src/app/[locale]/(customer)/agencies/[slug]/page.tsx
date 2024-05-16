@@ -98,7 +98,7 @@ export default async function Agency({ params: { locale, slug } }: Props) {
           </div>
 
           <section className="flex items-center gap-xs-s md:ms-auto">
-            <FollowButton agency={agency} />
+            {agency?.slug && <FollowButton slug={agency.slug} />}
             <Button className="ms-0 flex-grow basis-0 py-xs-s md:flex-grow-0 md:py-3xs-2xs">
               {t("message")}
             </Button>

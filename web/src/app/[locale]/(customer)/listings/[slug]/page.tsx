@@ -17,6 +17,7 @@ import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
+import FollowButton from "@/components/customer/agencies/follow-button";
 
 export const dynamic = "force-static";
 
@@ -348,16 +349,16 @@ export default async function Listing({ params: { locale, slug } }: Props) {
                 />
               </div>
 
-              {listing.agency?.name && (
+              {agency?.name && (
                 <div>
-                  <Link href={`/agencies/${listing.agency?.slug}`}>
+                  <Link href={`/agencies/${agency?.slug}`}>
                     <h3 className="cursor-pointer text-xl font-light">
-                      {listing.agency?.name}
+                      {agency?.name}
                     </h3>
                   </Link>
                   {(agency?.rating || agency?.reviewsCount) && (
                     <Link
-                      href={`/agencies/${listing.agency?.slug}#reviews`}
+                      href={`/agencies/${agency?.slug}#reviews`}
                       className="cursor-pointer text-base font-light text-gray-500 underline-offset-4 hover:underline"
                     >
                       {agency?.rating?.toFixed(1)} ({agency?.reviewsCount}{" "}
@@ -368,12 +369,12 @@ export default async function Listing({ params: { locale, slug } }: Props) {
               )}
             </div>
 
-            <Button
-              typ="secondary"
-              className="ms-0 py-xs-s md:ms-auto md:py-3xs-2xs"
-            >
-              {t("follow")}
-            </Button>
+            {agency?.slug && (
+              <FollowButton
+                slug={agency.slug}
+                className="ms-0 py-xs-s md:ms-auto md:py-3xs-2xs"
+              />
+            )}
           </div>
           {listing.agency?.description && (
             <p className="mt-s-m max-w-readable text-lg text-gray-500">
