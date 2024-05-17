@@ -50,7 +50,22 @@
       "partners": "Our Partners",
       "appreciate-trust": "Thank You for Your Trust",
       "view-more": "View More",
-      "total-visits": "Total Visits"
+      "total-visits": "Total Visits",
+      "sell-your-home": {
+        "title": "How to Sell Your Home on Zoozie in the Easiest Way",
+        "get-started": "Get Started",
+        "steps": {
+          "step-1": {
+            "title": "We estimate your home and help you prepare to sell it."
+          },
+          "step-2": {
+            "title": "Find the best price that works for you."
+          },
+          "step-3": {
+            "title": "We take care of the sale from start to finish."
+          }
+        }
+      }
     },
     "agency": {
       "view-more": "View More",

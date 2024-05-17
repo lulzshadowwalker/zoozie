@@ -236,10 +236,12 @@ func (r *repo) CreateListing(c context.Context, listing Listing, tx interfaces.T
 		Listings.AgencyID,
 		Listings.LocationID,
 		Listings.TypeID,
+		Listings.Slug,
 	).VALUES(
 		listing.AgencyID,
 		listing.Location.ID,
 		dbListingType.Type.ID,
+		listing.Slug,
 	).RETURNING(Listings.ID)
 
 	if err := stmt.QueryContext(c, db, &dbListing); err != nil {

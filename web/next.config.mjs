@@ -30,6 +30,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "**.google.com",
+      },
+      {
+        protocol: "https",
         hostname: "**.assets.so",
       },
     ],

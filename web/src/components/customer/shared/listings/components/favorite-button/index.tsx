@@ -21,12 +21,13 @@ export default function FavoriteButton({ listing }: Props) {
   const { showAuthRequiredToast } = useToastHelpers();
 
   async function toggleFavorite() {
+    if (accessToken.pending) return;
     const unknownError: TZoozieUserMessage = {
       status: "failure",
       message: t("unknown-error"),
     };
 
-    if (!accessToken) {
+    if (!accessToken.value) {
       showAuthRequiredToast();
       return;
     }
@@ -43,11 +44,13 @@ export default function FavoriteButton({ listing }: Props) {
         locale: "en",
       });
 
+      let headers: Record<string, string> = {};
+      accessToken.value &&
+        (headers["Authorization"] = `Bearer ${accessToken.value}`);
+
       const res = await fetch(url.href, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken.value}`,
-        },
+        headers: headers,
       });
 
       if (!res.ok) {

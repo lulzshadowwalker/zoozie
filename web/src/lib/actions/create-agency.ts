@@ -3,6 +3,7 @@
 import { CreateAgencyFormSchema } from "@types";
 import { getTranslations } from "next-intl/server";
 import { fetchApi } from "../api";
+import { redirect } from "@/lib/i18n/navigation";
 
 export async function createAgency(
   form: FormData,
@@ -43,7 +44,8 @@ export async function createAgency(
   });
 
   if (res.ok) {
-    return [t("agency-created-successfully"), undefined];
+    redirect("/admin");
+    // return [t("agency-created-successfully"), undefined];
   }
 
   console.error(res.status, res.statusText);

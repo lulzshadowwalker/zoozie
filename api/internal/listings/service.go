@@ -85,6 +85,7 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 		AgencyID: agencyID,
 		Type:     request.Type,
 		Location: location,
+		Slug:     "TEMP",
 	}
 	listing, err = s.repo.CreateListing(c, listing, tx)
 	if err != nil {

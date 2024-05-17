@@ -1,5 +1,6 @@
 "use client";
 
+import { shuffle } from "@/lib/utils";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
   faMicrosoft,
@@ -10,6 +11,17 @@ import {
   faDigitalOcean,
   faAws,
   faStripe,
+  faSalesforce,
+  faDashcube,
+  faIdeal,
+  faCcVisa,
+  faCcMastercard,
+  faStubber,
+  faUnsplash,
+  faTrello,
+  faFly,
+  faElementor,
+  faUsps,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
@@ -27,21 +39,35 @@ export default function Partners() {
     faDigitalOcean,
     faAws,
     faStripe,
+    faCcMastercard,
+    faSalesforce,
+    faDashcube,
+    faIdeal,
+    faCcVisa,
+    faStubber,
+    faUnsplash,
+    faTrello,
+    faFly,
+    faElementor,
+    faUsps,
   ];
 
   return (
     <section className="my-l-xl">
-      <h2 className="text-2xl font-semibold text-center">{t("partners")}</h2>
+      <h2 className="text-center text-2xl font-semibold">{t("partners")}</h2>
 
-      <div className="flex flex-col gap-m-l my-l-xl">
-        {[...Array(2)].map((_, index) => (
+      <div className="my-l-xl flex flex-col gap-m-l">
+        {[
+          samplePartnerIcons.slice(0, samplePartnerIcons.length / 2),
+          samplePartnerIcons.slice(samplePartnerIcons.length / 2),
+        ].map((arr, index) => (
           <Marquee
             autoFill
             speed={30}
             key={index}
             direction={index % 2 === 0 ? "left" : "right"}
           >
-            {samplePartnerIcons.map((icon, index) => (
+            {arr.map((icon, index) => (
               <FontAwesomeIcon
                 icon={icon}
                 key={index}
