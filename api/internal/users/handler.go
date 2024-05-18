@@ -31,6 +31,9 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 
 func (h *handler) GetUser(c echo.Context) error {
 	uid, err := utils.GetUserID(utils.TransformEchoContext(c))
+	if err != nil {
+		return err
+	}
 
 	user, err := h.service.GetUserById(utils.TransformEchoContext(c), uid)
 	if err != nil {

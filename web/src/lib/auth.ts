@@ -1,9 +1,10 @@
 import { jwtVerify } from "jose";
-import Config from "./config";
+import Config from "@/lib/config";
+import { TUserRole } from "@/lib/types";
 
 interface JwtCustomClaims {
   name: string;
-  role: "CUSTOMER" | "AGENCY_AGENT" | "ZOOZIE_ADMIN";
+  role: TUserRole;
   agencyId?: number;
   agencySlug?: string;
   sub: string | number;

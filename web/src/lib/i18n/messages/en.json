@@ -49,7 +49,11 @@
       "avatar": "avatar",
       "buy": "Buy",
       "rent": "Rent",
-      "services": "Services"
+      "services": "Services",
+      "favorites": "Favorites",
+      "sign-out": "Sign out",
+      "dashboard": "Dashboard",
+      "sign-in": "Sign in"
     },
     "home": {
       "featured-listings": "Featured Listings",

@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useScroll } from "@/lib/hooks";
 import Button from "../../../shared/button";
 import UserAvatar from "./components/user-avatar";
+import ZoozieDropDown from "@/components/shared/zoozie-dropdown";
 
 export default function HeaderNavigationBar() {
   const t = useTranslations("customer.header-navigation-bar");
@@ -20,10 +21,6 @@ export default function HeaderNavigationBar() {
     {
       title: t("rent"),
       href: "/listings?availability=RENT",
-    },
-    {
-      title: t("services"),
-      href: null,
     },
   ] as const;
 
@@ -60,6 +57,19 @@ export default function HeaderNavigationBar() {
               </Link>
             </li>
           ))}
+
+          <li>
+            <ZoozieDropDown title="services">
+              <div className="cursor-not-allowed">
+                <Link
+                  href="/services/property-estimation"
+                  className="pointer-events-none"
+                >
+                  Property Estimation
+                </Link>
+              </div>
+            </ZoozieDropDown>
+          </li>
         </ul>
 
         <section className="ms-s-m flex items-center gap-xs-s">

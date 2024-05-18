@@ -39,18 +39,30 @@ export type TZoozieUserMessage = {
   message: string;
 };
 
+export type TUserRole = "CUSTOMER" | "AGENCY_AGENT" | "ZOOZIE_ADMIN";
+
+export type TAgencyAgent = {
+  id?: number;
+  userId?: number;
+  agencyId?: number;
+  agency?: TAgency;
+};
+
 export type TUser = {
   id?: number;
   name?: string;
   emailAddress?: string;
   phoneNumber?: string;
   profilePicture?: string | null;
+  role?: TUserRole;
   createdAt?: string;
   updatedAt?: string;
   lastLoginAt?: string;
   isActive?: boolean;
   accessToken?: string;
   refreshToken?: string;
+  agent?: TAgencyAgent;
+  customer?: TCustomer;
 };
 
 export type TCoreFeature = {

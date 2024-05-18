@@ -14,9 +14,9 @@ import (
 
 type (
 	repo struct {
+		otpRepo
 		usersRepo
 		customersRepo
-		otpRepo
 		agenciesRepo
 		database *sql.DB
 	}

@@ -61,30 +61,11 @@ func (s *service) Login(c context.Context, request loginRequest) (*entities.User
 		return nil, err
 	}
 
-	if user.Role == entities.RoleCustomer {
-		customer, err := s.repo.GetCustomerByUserID(c, int(user.ID), nil)
-		if err != nil {
-			return nil, err
-		}
-
-		user.Customer = &customer
+	expandedUser, err := s.expandUser(c, *user)
+	if err != nil {
+		return nil, err
 	}
-
-	if user.Role == entities.RoleAgencyAgent {
-		agent, err := s.repo.GetAgencyAgentByUserID(c, int(user.ID), nil)
-		if err != nil {
-			return nil, err
-		}
-
-		user.Agent = &agent
-
-		agency, err := s.repo.GetAgencyByID(c, agent.AgencyID, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		user.Agent.Agency = agency
-	}
+	user = &expandedUser
 
 	err = checkUserActiveStatus(user)
 	if err != nil {
@@ -456,4 +437,33 @@ func (s *service) generateTokenPair(_ context.Context, user entities.User) (acce
 	}
 
 	return
+}
+
+func (s *service) expandUser(c context.Context, user entities.User) (entities.User, error) {
+	if user.Role == entities.RoleCustomer {
+		customer, err := s.repo.GetCustomerByUserID(c, int(user.ID), nil)
+		if err != nil {
+			return entities.User{}, err
+		}
+
+		user.Customer = &customer
+	}
+
+	if user.Role == entities.RoleAgencyAgent {
+		agent, err := s.repo.GetAgencyAgentByUserID(c, int(user.ID), nil)
+		if err != nil {
+			return entities.User{}, err
+		}
+
+		user.Agent = &agent
+
+		agency, err := s.repo.GetAgencyByID(c, agent.AgencyID, nil)
+		if err != nil {
+			return entities.User{}, err
+		}
+
+		user.Agent.Agency = agency
+	}
+
+	return user, nil
 }

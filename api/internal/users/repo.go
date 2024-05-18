@@ -9,6 +9,8 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
+	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
 	"github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/model"
 	. "github.com/lulzshadowwalker/zoozie/api/internal/database/.gen/zoozie/public/table"
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
@@ -30,13 +32,32 @@ var baseQueryStatement = SELECT(
 			LEFT_JOIN(AgencyAgents, Users.ID.EQ(AgencyAgents.UserID)),
 	)
 
-type repo struct {
-	database *sql.DB
-}
+type (
+	repo struct {
+		database *sql.DB
+
+		customersRepo
+		agenciesRepo
+	}
+
+	customersRepo interface {
+		GetCustomerByUserID(context.Context, int, interfaces.Transaction) (customers.Customer, error)
+	}
+
+	agenciesRepo interface {
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*entities.Agency, error)
+		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (entities.AgencyAgent, error)
+	}
+)
 
 func NewRepo(database *sql.DB) *repo {
+	customersRepoImpl := customers.NewRepo(database)
+	agenciesRepo := agencies.NewRepo(database)
+
 	return &repo{
-		database: database,
+		database:      database,
+		customersRepo: customersRepoImpl,
+		agenciesRepo:  agenciesRepo,
 	}
 }
 
