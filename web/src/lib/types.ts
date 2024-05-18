@@ -44,7 +44,7 @@ export type TUser = {
   name?: string;
   emailAddress?: string;
   phoneNumber?: string;
-  profilePicture?: string;
+  profilePicture?: string | null;
   createdAt?: string;
   updatedAt?: string;
   lastLoginAt?: string;

@@ -75,7 +75,7 @@ export default function FollowButton({
           case 403:
             showToast({
               status: "warning",
-              message: t("agency-cannot-follow"),
+              message: t("agents-cannot-follow"),
             });
             return;
           default:

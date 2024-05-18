@@ -1,0 +1,19 @@
+.dropdown-list > * {
+  display: block;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  font-size: 1.3rem;
+  color: #374151 !important; /* text-gray-700 */
+}
+
+.dropdown-list > *:hover {
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-list > * {
+    color: #d1d5db; /* text-gray-300 */
+  }
+}

@@ -135,8 +135,8 @@ export function isClientSide() {
  * @param {string | undefined} image - The image URL to retrieve or undefined.
  * @return {string} The customer image URL.
  */
-export function getCustomerImage(image: string | undefined): string {
-  return image ?? customerFallbackImage;
+export function getCustomerImage(image?: string | null): string {
+  return customerFallbackImage;
 }
 
 /**
