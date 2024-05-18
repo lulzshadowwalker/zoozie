@@ -24,13 +24,13 @@ export default async function Listings({
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  const queryParams = extractListingsFiltersFromSearchParams(
+  const filters = extractListingsFiltersFromSearchParams(
     pageSearchParamsToURLSearchParams(searchParams),
   );
 
   const res = await fetchApi("/listings", {
     init: { headers },
-    queryParams: queryParams as Record<string, string>,
+    queryParams: filters as Record<string, string>,
   });
   if (!res.ok) {
     throw new Error("listings: " + res.statusText);

@@ -7,6 +7,12 @@
   "listing-card": {
     "edit": "Edit"
   },
+  "403": {
+    "access-denied": "Access denied",
+    "message": "Sorry, you don't have permission to access this page.",
+    "switch-account": "Switch account",
+    "take-me-home": "Take me home"
+  },
   "customer": {
     "auth": {
       "user-not-found": "User not found. Please check your email and try again.",

@@ -4,7 +4,14 @@ import { showToast } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 
-export default function ResendButton() {
+type Props = {
+  phoneNumber: {
+    countryCode: string;
+    phoneNumber: string;
+  };
+};
+
+export default function ResendButton({ phoneNumber }: Props) {
   const t = useTranslations("customer.auth");
   const [delay, setDelay] = useState(0);
 
@@ -12,7 +19,7 @@ export default function ResendButton() {
   const defaultDelay = 40;
 
   async function handleResendOtp() {
-    const message = await sendOtp();
+    const message = await sendOtp(phoneNumber);
     showToast(message);
     setDelay(defaultDelay);
   }

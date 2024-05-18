@@ -20,9 +20,10 @@ type Agency struct {
 }
 
 type AgencyAgent struct {
-	ID       int `json:"id,omitempty"`
-	UserID   int `json:"userId,omitempty"`
-	AgencyID int `json:"agencyId,omitempty"`
+	ID       int     `json:"id,omitempty"`
+	UserID   int     `json:"userId,omitempty"`
+	AgencyID int     `json:"agencyId,omitempty"`
+	Agency   *Agency `json:"agency,omitempty"`
 }
 
 type AgencyI18n struct {

@@ -30,6 +30,8 @@ type (
 		interfaces.Transactioner
 		GetUserById(context.Context, int, interfaces.Transaction) (*entities.User, error)
 		GetUserByPhoneNumber(context.Context, entities.PhoneNumber) (*entities.User, error)
+		GetAgencyByID(c context.Context, id int, tx interfaces.Transaction) (*entities.Agency, error)
+		GetCustomerByUserID(c context.Context, userID int, tx interfaces.Transaction) (customers.Customer, error)
 
 		// TODO: use a transaction to the create the customer and other things ..
 		CreateCustomer(context.Context, customers.Customer, interfaces.Transaction) (customers.Customer, error)
@@ -57,6 +59,31 @@ func (s *service) Login(c context.Context, request loginRequest) (*entities.User
 	user, err := s.repo.GetUserByPhoneNumber(c, phoneNumber)
 	if err != nil {
 		return nil, err
+	}
+
+	if user.Role == entities.RoleCustomer {
+		customer, err := s.repo.GetCustomerByUserID(c, int(user.ID), nil)
+		if err != nil {
+			return nil, err
+		}
+
+		user.Customer = &customer
+	}
+
+	if user.Role == entities.RoleAgencyAgent {
+		agent, err := s.repo.GetAgencyAgentByUserID(c, int(user.ID), nil)
+		if err != nil {
+			return nil, err
+		}
+
+		user.Agent = &agent
+
+		agency, err := s.repo.GetAgencyByID(c, agent.AgencyID, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		user.Agent.Agency = agency
 	}
 
 	err = checkUserActiveStatus(user)
@@ -350,6 +377,12 @@ func (s *service) RegisterAgencyAgent(c context.Context, request registerAgencyA
 	}
 	user.Agent = &agent
 
+	agency, err := s.repo.GetAgencyByID(c, request.AgencyID, tx)
+	if err != nil {
+		return entities.User{}, err
+	}
+	user.Agent.Agency = agency
+
 	err = s.sendOTP(c, int(user.ID), tx)
 	if err != nil {
 		return entities.User{}, err
@@ -387,6 +420,12 @@ func (s *service) generateTokenPair(_ context.Context, user entities.User) (acce
 		}
 
 		customClaims.AgencyID = user.Agent.AgencyID
+		if user.Agent.Agency == nil {
+			err = fmt.Errorf("user.Agent.Agency cannot be null when role is %s", user.Role)
+			return
+		}
+
+		customClaims.AgencySlug = user.Agent.Agency.Slug
 	} else if user.Role == entities.RoleCustomer {
 		if user.Customer == nil {
 			err = fmt.Errorf("user.Customer cannot be null when role is %s", user.Role)

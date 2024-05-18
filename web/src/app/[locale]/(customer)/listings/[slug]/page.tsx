@@ -64,7 +64,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
   if (!res.ok) {
     if (res.status === 404) notFound();
     throw new Error(
-      "listings/[slug]: failed to fetch listing" + res.statusText,
+      "listings/[slug]: failed to fetch listing " + res.statusText,
     );
   }
 
@@ -137,7 +137,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
       </section>
 
       <section className="mx-auto flex max-w-page flex-col-reverse px-page lg:flex-row lg:items-start lg:gap-m-l">
-        <section>
+        <section className="flex-grow">
           <section className="mt-l-xl flex items-start border-t pt-l-xl">
             <div className="flex-grow-[2] basis-0">
               <h2 className="text-xl font-medium">

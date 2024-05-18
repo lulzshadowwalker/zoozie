@@ -129,7 +129,10 @@ const OtpDialog = forwardRef<TOtpDialogHandle, TProps>(function OtpDialog(
             >
               {t("verify")}
             </SubmitButton>
-            <ResendButton />
+            {/* FIXME: pass phone number to resend button or use zustand */}
+            <ResendButton
+              phoneNumber={{ countryCode: "US", phoneNumber: "1234567890" }}
+            />
           </div>
         </form>
       </dialog>

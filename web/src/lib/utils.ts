@@ -1,14 +1,12 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, ClassValue } from "clsx";
 import { IBasePageParams, TListingFilters, TZoozieUserMessage } from "@types";
-import { StoreApi, UseBoundStore } from "zustand";
 import { toast } from "react-toastify";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Locale } from "./i18n/config";
 import path from "path";
 import Config from "./config";
 import { agencyFallbackImage, customerFallbackImage } from "./constants";
-import { ReadonlyURLSearchParams } from "next/navigation";
 import { listingTypes } from "./const";
 
 /**

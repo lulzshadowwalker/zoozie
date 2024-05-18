@@ -6,10 +6,10 @@ import {
   TPhoneNumber,
   TUser,
   TZoozieUserMessage,
-} from "../types";
+} from "@/lib/types";
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
-import { redirect } from "../i18n/navigation";
+import { redirect } from "@/lib/i18n/navigation";
 
 export async function login({
   phoneNumber,
@@ -411,6 +411,31 @@ type TRegisterCustomerResponsePayload = {
   };
 };
 
+/**
+ * Retrieves the access token from the cookies.
+ *
+ * @return {Promise<string | undefined>} The access token value if it exists, otherwise undefined.
+ */
 export async function getAccessToken(): Promise<string | undefined> {
   return cookies().get("access-token")?.value;
+}
+
+/**
+ * Deletes the "access-token" and "refresh-token" cookies from the user's browser.
+ *
+ * @return {Promise<void>} A promise that resolves when the cookies are successfully deleted.
+ */
+export async function signOut() {
+  cookies().delete("access-token");
+  cookies().delete("refresh-token");
+}
+
+/**
+ * Signs out the current user and redirects them to the login page.
+ *
+ * @return {Promise<void>} A promise that resolves when the user has been signed out and redirected.
+ */
+export async function switchAccount() {
+  signOut();
+  redirect("/auth/login");
 }

@@ -1,5 +1,5 @@
 import { fetchApi } from "@/lib/api";
-import { IBaseLayoutParams, IBasePageParams, TAgency } from "@types";
+import { IBaseAgencyLayoutParams, IBasePageParams, TAgency } from "@types";
 import { unstable_setRequestLocale } from "next-intl/server";
 
 export async function generateStaticParams({
@@ -24,10 +24,10 @@ export async function generateStaticParams({
   }));
 }
 
-export default function DashboardAgencyLayout({
+export default async function DashboardAgencyLayout({
   params: { locale },
   children,
-}: IBaseLayoutParams) {
+}: IBaseAgencyLayoutParams) {
   unstable_setRequestLocale(locale);
   return <>{children}</>;
 }

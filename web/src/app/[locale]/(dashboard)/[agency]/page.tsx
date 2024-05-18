@@ -1,14 +1,27 @@
 import Header from "@/components/dashboard/shared/header";
 import Button from "@/components/shared/button";
-import { IBasePageParams } from "@types";
+import { IBaseAgencyParams, IBasePageParams } from "@types";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import UserAvatar from "@/components/dashboard/home/user-avatar";
+import { redirect } from "@/lib/i18n/navigation";
+import { authenticate, forbidden, Forbidden, TokenNotFound } from "@/lib/auth";
+import { cookies } from "next/headers";
 
-export default async function Home({ params: { locale } }: IBasePageParams) {
+export default async function Home({
+  params: { locale, agency },
+}: IBaseAgencyParams) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("dashboard.home");
+  try {
+    const claims = await authenticate(cookies().get("access-token")?.value);
+    if (claims.agencySlug !== agency) forbidden();
+  } catch (e) {
+    if (e instanceof Forbidden) redirect("/403");
+    if (e instanceof TokenNotFound) redirect("/auth/register");
+    throw e;
+  }
 
   return (
     <Header
@@ -21,7 +34,7 @@ export default async function Home({ params: { locale } }: IBasePageParams) {
       trailing={
         <Button
           square
-          className="rounded-full h-[3.8rem] w-[3.8rem] flex items-center justify-center"
+          className="flex h-[3.8rem] w-[3.8rem] items-center justify-center rounded-full"
           typ="secondary"
         >
           <FontAwesomeIcon icon={faBell} size="lg" />

@@ -141,7 +141,7 @@ export default function Footer() {
                 href={href}
                 title={title}
                 rel="noreferrer noopener nofollow"
-                className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                className="text-gray-500 transition-all hover:text-on-primary-1 focus:text-on-primary-1 dark:text-gray-400"
               >
                 <FontAwesomeIcon icon={icon} size="xl" />
                 <span className="sr-only">{title}</span>

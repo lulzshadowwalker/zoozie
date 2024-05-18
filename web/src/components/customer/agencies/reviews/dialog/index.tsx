@@ -17,7 +17,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLocale, useTranslations } from "next-intl";
-import { revalidatePath, revalidateTag } from "next/cache";
 import Image from "next/image";
 import { FormEvent, useRef, useState } from "react";
 

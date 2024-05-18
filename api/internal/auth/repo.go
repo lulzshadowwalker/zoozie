@@ -29,6 +29,7 @@ type (
 
 	customersRepo interface {
 		CreateCustomer(context.Context, customers.Customer, interfaces.Transaction) (customers.Customer, error)
+		GetCustomerByUserID(context.Context, int, interfaces.Transaction) (customers.Customer, error)
 	}
 
 	otpRepo interface {
@@ -39,6 +40,7 @@ type (
 
 	agenciesRepo interface {
 		interfaces.Transactioner
+		GetAgencyByID(context.Context, int, interfaces.Transaction) (*entities.Agency, error)
 		GetAgencyAgentByUserID(c context.Context, userID int, tx interfaces.Transaction) (entities.AgencyAgent, error)
 		RegisterAgencyAgent(c context.Context, agent entities.AgencyAgent, tx interfaces.Transaction) (entities.AgencyAgent, error)
 	}

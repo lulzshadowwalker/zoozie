@@ -2,9 +2,9 @@
 -- +goose StatementBegin
 INSERT INTO user_roles(id, name)
 VALUES
-(-1, 'customer'),
-(-2, 'agency_agent'),
-(-3, 'zoozie_admin');
+(-1, 'CUSTOMER'),
+(-2, 'AGENCY_AGENT'),
+(-3, 'ZOOZIE_ADMIN');
 -- +goose StatementEnd
 
 -- +goose Down

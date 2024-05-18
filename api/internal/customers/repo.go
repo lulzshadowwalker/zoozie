@@ -59,3 +59,19 @@ func (r *repo) GetCustomerByID(c context.Context, id int, tx interfaces.Transact
 
 	return dbCustomer.ToEntity(), nil
 }
+
+func (r *repo) GetCustomerByUserID(c context.Context, userID int, tx interfaces.Transaction) (Customer, error) {
+	var db qrm.Queryable = r.database
+	if tx != nil {
+		db = tx
+	}
+
+	var dbCustomer DBCustomer
+	if err := Customers.SELECT(Customers.AllColumns).
+		WHERE(Customers.UserID.EQ(postgres.Int(int64(userID)))).
+		QueryContext(c, db, &dbCustomer); err != nil {
+		return Customer{}, fmt.Errorf("failed to query the customer because %w", err)
+	}
+
+	return dbCustomer.ToEntity(), nil
+}

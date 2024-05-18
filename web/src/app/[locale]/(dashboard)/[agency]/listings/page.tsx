@@ -9,12 +9,22 @@ import {
   faMagnifyingGlass,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "@/lib/i18n/navigation";
+import { Link, redirect } from "@/lib/i18n/navigation";
+import { authenticate, forbidden, Forbidden, TokenNotFound } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 export default async function Listings({
   params: { locale, agency },
 }: IBaseAgencyParams) {
   unstable_setRequestLocale(locale);
+  try {
+    const claims = await authenticate(cookies().get("access-token")?.value);
+    if (claims.agencySlug !== agency) forbidden();
+  } catch (e) {
+    if (e instanceof Forbidden) redirect("/403");
+    if (e instanceof TokenNotFound) redirect("/auth/register");
+    throw e;
+  }
 
   return (
     <main>

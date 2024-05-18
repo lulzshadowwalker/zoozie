@@ -1,8 +1,8 @@
 import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
-import { IBasePageParams } from "@types";
+import { IBaseAgencyParams, IBasePageParams } from "@types";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { Link, redirect } from "@/lib/i18n/navigation";
 import Header from "@/components/dashboard/shared/header";
 import ImageInput from "@/components/dashboard/listings/image-input";
 import CoreFeatures from "@/components/dashboard/listings/core-features";
@@ -11,10 +11,22 @@ import DescriptionInput from "@/components/dashboard/listings/core-features/desc
 import ExtraFeatures from "@/components/dashboard/listings/extra-features";
 import BasicInfo from "@/components/dashboard/listings/basic-info";
 import SaveButton from "@/components/dashboard/listings/save-button";
+import { authenticate, forbidden, Forbidden, TokenNotFound } from "@/lib/auth";
+import { cookies } from "next/headers";
 
-export default async function Listing({ params: { locale } }: IBasePageParams) {
+export default async function Listing({
+  params: { locale, agency },
+}: IBaseAgencyParams) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("dashboard.create-listing");
+  try {
+    const claims = await authenticate(cookies().get("access-token")?.value);
+    if (claims.agencySlug !== agency) forbidden();
+  } catch (e) {
+    if (e instanceof Forbidden) redirect("/403");
+    if (e instanceof TokenNotFound) redirect("/auth/register");
+    throw e;
+  }
 
   return (
     <main>
