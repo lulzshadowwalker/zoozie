@@ -41,9 +41,9 @@ export function SellYourHome() {
             <div className="relative h-[20rem] overflow-hidden rounded-2xl">
               <ZoozImage
                 src={image}
-                alt={title}
+                alt={`${t("step")} ${index + 1}}`}
                 fill
-                sizes="100px"
+                sizes="(min-width: 1240px) 325px, (min-width: 1000px) calc(20.45vw + 75px), (min-width: 680px) calc(46.33vw - 37px), (min-width: 400px) calc(93.08vw - 67px), calc(11.25vw + 244px)"
                 className="transition-all duration-700 ease-out group-hover:scale-105"
               />
             </div>

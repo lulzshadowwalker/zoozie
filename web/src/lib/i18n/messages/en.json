@@ -51,9 +51,18 @@
       "appreciate-trust": "Thank You for Your Trust",
       "view-more": "View More",
       "total-visits": "Total Visits",
+      "stats": {
+        "title": "What's Happening on Zoozie",
+        "in-property-sales": "in property sales",
+        "page-views": "page views",
+        "listings-for-sale": "listings for sale",
+        "listings-for-rent": "listings for rent",
+        "500M": "500M+"
+      },
       "sell-your-home": {
         "title": "How to Sell Your Home on Zoozie in the Easiest Way",
         "get-started": "Get Started",
+        "step": "Step",
         "steps": {
           "step-1": {
             "title": "We estimate your home and help you prepare to sell it."
