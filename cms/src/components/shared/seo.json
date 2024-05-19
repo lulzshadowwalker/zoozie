@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_shared_seos",
+  "info": {
+    "displayName": "SEO",
+    "icon": "chartBubble",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "unique": false,
+      "maxLength": 55,
+      "required": true
+    },
+    "metaDescription": {
+      "type": "text",
+      "minLength": 70,
+      "maxLength": 150,
+      "required": true
+    },
+    "keywords": {
+      "type": "text",
+      "required": true
+    },
+    "preventIndexing": {
+      "type": "boolean",
+      "default": false,
+      "required": false
+    },
+    "sharedImage": {
+      "displayName": "Shared Image",
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.shared-image"
+    }
+  }
+}
