@@ -1,11 +1,15 @@
 import { fetchApi, getStrapiFileUrl } from "@/lib/api";
 import { IBasePageParams, TBlogPost, TCmsPicture } from "@/lib/types";
-import { estimateReadingTime, formatDateTime } from "@/lib/utils";
-import Image from "next/image";
+import {
+  estimateReadingTime,
+  formatDateTime,
+  minutesToDateTime,
+} from "@/lib/utils";
 import { notFound } from "next/navigation";
 
 import type { Metadata, ResolvingMetadata } from "next";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+import ZoozImage from "@/components/shared/zooz-image";
 
 interface Props extends Omit<IBasePageParams, "params"> {
   params: IBasePageParams["params"] & { slug: string };
@@ -20,7 +24,7 @@ export async function generateStaticParams({
     source: "strapi",
     queryParams: {
       locale,
-      populate: ["*", "deep"],
+      populate: "deep",
     },
   });
   if (!res.ok) {
@@ -51,7 +55,7 @@ export async function generateMetadata(
     queryParams: {
       locale,
       "filters[slug][$eq]": slug,
-      populate: ["*", "deep"],
+      populate: "deep",
     },
   });
   if (!res.ok) {
@@ -171,7 +175,7 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
                 {t("read")}
               </p>
               <time
-                dateTime="2022-07-21"
+                dateTime={minutesToDateTime(estimatedTime)}
                 className="text-center text-lg font-light"
               >
                 {estimatedTime} {t("min")}
@@ -183,7 +187,7 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
 
       {coverPicture && (
         <div className="relative my-xl-2xl aspect-video overflow-hidden rounded-[5rem] bg-gray-300 md:mx-page">
-          <Image
+          <ZoozImage
             src={getStrapiFileUrl(coverPicture?.url)?.href ?? ""}
             alt={coverPicture?.alternativeText ?? t("cover")}
             title={coverPicture?.alternativeText ?? t("cover")}

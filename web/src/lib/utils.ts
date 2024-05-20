@@ -8,7 +8,7 @@ import path from "path";
 import Config from "./config";
 import { agencyFallbackImage, customerFallbackImage } from "./constants";
 import { listingTypes } from "./const";
-import { load } from "cheerio"
+import { load } from "cheerio";
 
 /**
  * intelligently applies your tailwind overrides and conditional classes
@@ -269,9 +269,26 @@ export function shuffle<T>(array: T[]) {
 export function estimateReadingTime(content: string): number {
   const $ = load(content);
   const textContent = $.text();
-  const wordCount = textContent.split(/\s+/).filter(word => word.length > 0).length;
+  const wordCount = textContent
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
   const wordsPerMinute = 200;
   const readingTime = Math.ceil(wordCount / wordsPerMinute);
 
   return readingTime;
+}
+
+/**
+ * Converts the given number of minutes to a date and time string in ISO format.
+ *
+ * @param {number} minutes - The number of minutes to add to the current date and time.
+ * @return {string} The date and time string in ISO format.
+ */
+export function minutesToDateTime(minutes: number): string {
+  const today: Date = new Date();
+  today.setHours(0, 0, 0, 0);
+  today.setMinutes(today.getMinutes() + minutes);
+
+  const isoString: string = today.toISOString().slice(0, 19);
+  return isoString;
 }
