@@ -51,7 +51,7 @@
         }
       }
     },
-    "tags": {
+    "tag": {
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -72,16 +72,6 @@
       "type": "uid",
       "targetField": "title",
       "required": true
-    },
-    "contentold": {
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "type": "richtext",
-      "required": true,
-      "minLength": 500
     },
     "SEO": {
       "type": "component",

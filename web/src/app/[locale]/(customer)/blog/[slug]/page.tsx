@@ -1,65 +1,209 @@
+import { fetchApi, getStrapiFileUrl } from "@/lib/api";
+import { IBasePageParams, TBlogPost, TCmsPicture } from "@/lib/types";
+import { estimateReadingTime, formatDateTime } from "@/lib/utils";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
-export default function BlogPost() {
+import type { Metadata, ResolvingMetadata } from "next";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
+
+interface Props extends Omit<IBasePageParams, "params"> {
+  params: IBasePageParams["params"] & { slug: string };
+}
+
+export async function generateStaticParams({
+  params: { locale },
+}: {
+  params: IBasePageParams["params"];
+}) {
+  const res = await fetchApi("/posts", {
+    source: "strapi",
+    queryParams: {
+      locale,
+      populate: ["*", "deep"],
+    },
+  });
+  if (!res.ok) {
+    if (res.status === 404) {
+      console.error("failed to fetch blog posts because " + res.statusText);
+    }
+
+    return [];
+  }
+
+  const posts = (await res.json())?.data as TBlogPost[] | undefined;
+  if (!posts) {
+    console.error("posts are not in the expected format or are empty");
+    return [];
+  }
+
+  return posts.map((post) => ({
+    slug: post?.attributes?.slug,
+  }));
+}
+
+export async function generateMetadata(
+  { params: { locale, slug } }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const res = await fetchApi("/posts", {
+    source: "strapi",
+    queryParams: {
+      locale,
+      "filters[slug][$eq]": slug,
+      populate: ["*", "deep"],
+    },
+  });
+  if (!res.ok) {
+    if (res.status === 404) {
+      console.error("failed to fetch blog post because " + res.statusText);
+    }
+
+    return {};
+  }
+
+  const post = (await res.json())?.data?.[0]?.attributes as
+    | TBlogPost["attributes"]
+    | undefined;
+  if (!post) {
+    console.error(
+      `post with slug ${slug} is not in the expected format or not found`,
+    );
+    return {};
+  }
+
+  const seo = post.SEO;
+
+  const ogImages: string[] = [];
+  const sharedImage = seo?.sharedImage?.media?.attributes?.url;
+  sharedImage && ogImages.push(getStrapiFileUrl(sharedImage)!.href);
+  const pictures = post?.pictures?.data
+    ?.flatMap((picture) => picture?.attributes?.url)
+    .filter(Boolean);
+  pictures?.length && ogImages.push(getStrapiFileUrl(pictures[0])!.href);
+
+  return {
+    title: seo?.metaTitle,
+    description: seo?.metaDescription,
+    keywords: seo?.keywords,
+    robots: {
+      follow: seo?.preventIndexing,
+      index: seo?.preventIndexing,
+    },
+    openGraph: {
+      title: seo?.metaTitle, // NOTE: It seems that the default metaTitle is used as fallback even if it was not explicitly set
+      description: seo?.metaDescription,
+      images: ogImages, // NOTE: it simply ignores an empty array, or an array with empty strings
+    },
+  };
+}
+
+export default async function BlogPost({ params: { locale, slug } }: Props) {
+  unstable_setRequestLocale(locale);
+  const t = await getTranslations("customer.blog");
+
+  const res = await fetchApi("/posts", {
+    source: "strapi",
+    queryParams: {
+      "filters[slug][$eq]": slug,
+      populate: "pictures",
+    },
+  });
+  if (!res.ok) {
+    if (res.status === 404) notFound();
+    throw new Error("failed to fetch blog post because " + res.statusText);
+  }
+
+  const post = (await res.json())?.data?.[0]?.attributes as
+    | TBlogPost["attributes"]
+    | undefined;
+  if (!post) notFound();
+
+  const coverPicture = post?.pictures?.data?.[0]?.attributes as
+    | TCmsPicture["attributes"]
+    | undefined;
+
+  if (!post?.content) {
+    throw new Error("post content is not in the expected format");
+  }
+
+  const estimatedTime = estimateReadingTime(post?.content);
+
   return (
     <main className="mx-auto my-2xl-3xl">
       <section className="px-page">
-        <div className="mx-auto mb-s-m max-w-fit cursor-pointer rounded-full bg-gray-100 px-xs-s py-2xs-xs text-base font-medium uppercase text-on-primary-1/80 transition-all hover:bg-gray-200">
-          Design
-        </div>
+        {post?.tag && (
+          <div className="mx-auto mb-s-m max-w-fit cursor-pointer rounded-full bg-gray-100 px-xs-s py-2xs-xs text-base font-medium uppercase text-on-primary-1/80 transition-all hover:bg-gray-200">
+            {post?.tag}
+          </div>
+        )}
 
-        <h1 className="text-balnce max-w-[55ch] text-center text-4xl">
-          The influence of modern architecture
-        </h1>
-        <p className="mx-auto max-w-[62ch] text-center text-lg font-light">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Reiciendis
-          iure at dolor deserunt eum sapiente asperiores modi?
-        </p>
+        {post?.title && (
+          <h1 className="max-w-[55ch] text-balance text-center text-4xl">
+            {post?.title}
+          </h1>
+        )}
+
+        {post.description && (
+          <p className="mx-auto max-w-[62ch] text-center text-lg font-light">
+            {post.description}
+          </p>
+        )}
 
         <div className="mx-auto mt-s-m flex max-w-[40rem] flex-wrap items-center justify-center gap-l-xl">
-          <div>
-            <p className="text-center text-lg font-medium uppercase">Date</p>
-            <time
-              dateTime="2022-07-21"
-              className="text-center text-lg font-light"
-            >
-              July 21, 2022
-            </time>
-          </div>
+          {post.createdAt && (
+            <div>
+              <p className="text-center text-lg font-medium uppercase">
+                {t("date")}
+              </p>
+              <time
+                dateTime={post.createdAt}
+                className="text-center text-lg font-light"
+              >
+                {await formatDateTime(post.createdAt)}
+              </time>
+            </div>
+          )}
 
-          <div>
-            <p className="text-center text-lg font-medium uppercase">Read</p>
-            <time
-              dateTime="2022-07-21"
-              className="text-center text-lg font-light"
-            >
-              12 Min
-            </time>
-          </div>
+          {estimatedTime && (
+            <div>
+              <p className="text-center text-lg font-medium uppercase">
+                {t("read")}
+              </p>
+              <time
+                dateTime="2022-07-21"
+                className="text-center text-lg font-light"
+              >
+                {estimatedTime} {t("min")}
+              </time>
+            </div>
+          )}
         </div>
       </section>
 
-      <div className="relative my-xl-2xl aspect-video overflow-hidden rounded-[5rem] md:mx-page">
-        <Image
-          src="https://images.unsplash.com/photo-1715645943748-a7cf8a81f1ef?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt=""
-          fill
-          sizes="(min-width: 2020px) 1770px, (min-width: 780px) calc(90.98vw - 50px), 100vw"
-          quality={90}
-          priority
-          className="transition-all duration-[900ms] ease-out hover:scale-105"
-        />
-      </div>
+      {coverPicture && (
+        <div className="relative my-xl-2xl aspect-video overflow-hidden rounded-[5rem] bg-gray-300 md:mx-page">
+          <Image
+            src={getStrapiFileUrl(coverPicture?.url)?.href ?? ""}
+            alt={coverPicture?.alternativeText ?? t("cover")}
+            title={coverPicture?.alternativeText ?? t("cover")}
+            fill
+            sizes="(min-width: 2020px) 1770px, (min-width: 780px) calc(90.98vw - 50px), 100vw"
+            quality={90}
+            priority
+            className="transition-all duration-[900ms] ease-out hover:scale-105"
+          />
+        </div>
+      )}
 
-      <article className="mx-auto max-w-[85ch] px-page">
-        <h2 className="text-2xl font-medium">Hello, lulzie.</h2>
-        <p className="text-lg">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam id a
-          voluptatibus vel distinctio voluptate dolore dolor adipisci molestias
-          fuga. Earum magnam sit ex laborum perferendis, ea consequuntur impedit
-          temporibus!
-        </p>
-      </article>
+      {post?.content && (
+        <article
+          className="mx-auto max-w-[85ch] px-page"
+          dangerouslySetInnerHTML={{
+            __html: post?.content,
+          }}
+        />
+      )}
     </main>
   );
 }

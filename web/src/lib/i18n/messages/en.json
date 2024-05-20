@@ -186,6 +186,12 @@
       "privacy-policy": "Privacy Policy",
       "terms-and-conditions": "Terms and Conditions",
       "all-rights-reserved": "All Rights Reserved"
+    },
+    "blog": {
+      "read": "Read",
+      "date": "Date",
+      "cover": "Blog Cover",
+      "min": "Min"
     }
   },
   "dashboard": {

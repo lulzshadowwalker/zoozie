@@ -8,6 +8,7 @@ import path from "path";
 import Config from "./config";
 import { agencyFallbackImage, customerFallbackImage } from "./constants";
 import { listingTypes } from "./const";
+import { load } from "cheerio"
 
 /**
  * intelligently applies your tailwind overrides and conditional classes
@@ -257,4 +258,20 @@ export function shuffle<T>(array: T[]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
+}
+
+/**
+ * Estimates the reading time of an HTML content.
+ *
+ * @param {string} content - The HTML content to estimate the reading time for.
+ * @return {number} The estimated reading time in minutes.
+ */
+export function estimateReadingTime(content: string): number {
+  const $ = load(content);
+  const textContent = $.text();
+  const wordCount = textContent.split(/\s+/).filter(word => word.length > 0).length;
+  const wordsPerMinute = 200;
+  const readingTime = Math.ceil(wordCount / wordsPerMinute);
+
+  return readingTime;
 }

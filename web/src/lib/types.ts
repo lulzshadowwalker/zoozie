@@ -301,12 +301,12 @@ export type TSocketMessage = {
 
 export type TSocketError = {
   code?:
-    | "SEND_FAILURE"
-    | "READ_FAILURE"
-    | "INTERNAL_FAILURE"
-    | "UNRECOGNIZED_MESSAGE_TYPE"
-    | "UNAUTHENTICATED"
-    | "INVALID_TOKEN";
+  | "SEND_FAILURE"
+  | "READ_FAILURE"
+  | "INTERNAL_FAILURE"
+  | "UNRECOGNIZED_MESSAGE_TYPE"
+  | "UNAUTHENTICATED"
+  | "INVALID_TOKEN";
   message?: string;
 };
 
@@ -333,3 +333,91 @@ export type TAgencyReview = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type TBlogPost = {
+  id?: number
+  attributes?: {
+    title?: string
+    description?: string
+    tag?: string | null;
+    slug?: string
+    createdAt?: string
+    updatedAt?: string
+    publishedAt?: string
+    locale?: string
+    content?: string,
+    pictures: { data?: TCmsPicture[] }
+    SEO?: TCmsSeo;
+  }
+}
+
+export type TCmsSeo = {
+  id?: number
+  metaTitle?: string
+  metaDescription?: string
+  keywords?: string
+  preventIndexing?: boolean
+  sharedImage?: {
+    media?: TCmsPicture;
+    alt?: string;
+  }
+}
+
+export type TCmsPicture = {
+  id?: number
+  attributes?: {
+    name?: string
+    alternativeText?: string
+    caption?: string
+    width?: number
+    height?: number
+    formats?: {
+      small?: {
+        ext?: string
+        url?: string
+        hash?: string
+        mime?: string
+        name?: string
+        path?: any
+        size?: number
+        width?: number
+        height?: number
+        sizeInBytes?: number
+      }
+      medium?: {
+        ext?: string
+        url?: string
+        hash?: string
+        mime?: string
+        name?: string
+        path?: any
+        size?: number
+        width?: number
+        height?: number
+        sizeInBytes?: number
+      }
+      thumbnail?: {
+        ext?: string
+        url?: string
+        hash?: string
+        mime?: string
+        name?: string
+        path?: any
+        size?: number
+        width?: number
+        height?: number
+        sizeInBytes?: number
+      }
+    }
+    hash?: string
+    ext?: string
+    mime?: string
+    size?: number
+    url?: string
+    previewUrl?: any
+    provider?: string
+    provider_metadata?: any
+    createdAt?: string
+    updatedAt?: string
+  }
+}

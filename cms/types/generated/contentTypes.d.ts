@@ -406,7 +406,7 @@ export interface ApiPostPost extends Schema.CollectionType {
           localized: true;
         };
       }>;
-    tags: Attribute.Enumeration<['Design']> &
+    tag: Attribute.Enumeration<['Design']> &
       Attribute.Required &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -419,16 +419,6 @@ export interface ApiPostPost extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
-      }>;
-    contentold: Attribute.RichText &
-      Attribute.Required &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.SetMinMaxLength<{
-        minLength: 500;
       }>;
     SEO: Attribute.Component<'shared.seo'> &
       Attribute.Required &
