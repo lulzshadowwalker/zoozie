@@ -8,6 +8,8 @@ import { useScroll } from "@/lib/hooks";
 import Button from "../../../shared/button";
 import UserAvatar from "./components/user-avatar";
 import ZoozieDropDown from "@/components/shared/zoozie-dropdown";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 export default function HeaderNavigationBar() {
   const t = useTranslations("customer.header-navigation-bar");
@@ -40,7 +42,7 @@ export default function HeaderNavigationBar() {
       <nav className="flex items-center border-b-[0.5px] border-gray-300 px-l-xl py-2xs-xs">
         <ZoozLogo />
 
-        <ul className="ms-auto flex items-center gap-2xs-xs">
+        <ul className="ms-auto flex items-center gap-2xs-xs max-md:hidden">
           {navigationSampleItems.map(({ title, href }, index) => (
             <li key={index}>
               <Link
@@ -75,9 +77,34 @@ export default function HeaderNavigationBar() {
           </li>
         </ul>
 
-        <section className="ms-s-m flex items-center gap-xs-s">
-          <Button>List your home</Button>
+        <section className="ms-s-m flex items-center gap-xs-s max-md:ms-auto max-md:gap-[0.2rem]">
+          <Button className="max-md:hidden">{t("list-your-home")}</Button>
           <UserAvatar />
+
+          {/* Mobile Side Menu */}
+          <ZoozieDropDown
+            title={<FontAwesomeIcon icon={faBars} size="2x" />}
+            buttonClassName="bg-transparent md:hidden"
+          >
+            {navigationSampleItems.map(({ title, href }, index) => (
+              <Link
+                key={index}
+                href={href ?? pathname}
+                className={cn(
+                  "text-lg outline-none transition-all hover:text-on-primary-1 focus:text-on-primary-1",
+                  {
+                    "text-gray-500": true,
+                    "font-medium text-on-primary-1": false,
+                  },
+                  {
+                    "cursor-not-allowed": href === null,
+                  },
+                )}
+              >
+                {title}
+              </Link>
+            ))}
+          </ZoozieDropDown>
         </section>
       </nav>
     </header>

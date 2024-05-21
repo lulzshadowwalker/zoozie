@@ -18,7 +18,7 @@ export default function UserAvatar() {
 
   return (
     <ZoozieDropDown
-      buttonClassName="px-0 focus:bg-primary-1"
+      buttonClassName="px-0 focus:bg-primary-1 bg-transparent"
       title={
         <div
           className={cn(
