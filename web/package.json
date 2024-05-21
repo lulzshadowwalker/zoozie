@@ -27,6 +27,7 @@
     "react-dom": "^18",
     "react-fast-marquee": "^1.6.4",
     "react-photo-view": "^1.2.4",
+    "react-share": "^5.1.0",
     "react-toastify": "^10.0.5",
     "sharp": "^0.33.2",
     "tailwind-merge": "^2.2.1",

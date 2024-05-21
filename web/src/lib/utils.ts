@@ -137,7 +137,7 @@ export function isClientSide() {
  * @return {string} The customer image URL.
  */
 export function getCustomerImage(image?: string | null): string {
-  return customerFallbackImage;
+  return image ?? customerFallbackImage;
 }
 
 /**

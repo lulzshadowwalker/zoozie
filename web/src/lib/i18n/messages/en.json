@@ -199,7 +199,12 @@
       "insights-and-tips": "Real Estate Insights & Tips",
       "discover-latest-trends": "Discover the latest trends, tips, and advice to guide your real estate journey. Stay informed and make smart decisions with our expert content.",
       "blog-post-cover": "Blog Post Cover",
-      "related-posts-title": "You might also be interested in..."
+      "related-posts-title": "You might also be interested in...",
+      "share-on-facebook": "Share on Facebook",
+      "share-on-telegram": "Share on Telegram",
+      "share-on-whatsapp": "Share on Whatsapp",
+      "share-on-linkedin": "Share on LinkedIn",
+      "share-on-twitter": "Share on Twitter"
     }
   },
   "dashboard": {

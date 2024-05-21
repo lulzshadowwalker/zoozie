@@ -11,6 +11,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import ZoozImage from "@/components/shared/zooz-image";
 import Card from "@/components/customer/blog/card";
+import SocialLinks from "@/components/customer/blog/social-links";
 
 interface Props extends Omit<IBasePageParams, "params"> {
   params: IBasePageParams["params"] & { slug: string };
@@ -201,14 +202,20 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
         </div>
       )}
 
-      {post?.content && (
-        <article
-          className="mx-auto max-w-[85ch] px-page"
-          dangerouslySetInnerHTML={{
-            __html: post?.content,
-          }}
-        />
-      )}
+      <div className="mx-auto flex max-w-[90ch] max-md:flex-col">
+        <div className="relative">
+          <SocialLinks className="sticky top-[8rem] flex-col justify-center max-md:my-l-xl max-md:flex-row max-md:gap-m-l" />
+        </div>
+
+        {post?.content && (
+          <article
+            className="w-full max-w-[85ch] px-page"
+            dangerouslySetInnerHTML={{
+              __html: post?.content,
+            }}
+          />
+        )}
+      </div>
 
       {post?.relatedPosts?.posts?.data?.length && (
         <section className="my-2xl-3xl px-page">
