@@ -49,7 +49,7 @@ export default async function Listings({
     <main className="my-2xl-3xl">
       <Search />
       <Filters />
-      <section className="mx-auto my-l-xl max-w-page px-page">
+      <section className="mx-auto my-l-xl max-w-page px-page max-sm:px-l-xl">
         {empty ? <EmptyState /> : <ListingsComponent listings={listings} />}
       </section>
     </main>

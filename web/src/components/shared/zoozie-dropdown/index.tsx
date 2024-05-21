@@ -39,7 +39,7 @@ export default function ZoozieDropDown({
       <button
         type="button"
         className={cn(
-          "inline-flex w-full items-center justify-center gap-x-[0.8rem] rounded-xl bg-primary-1 px-xs-s py-3xs-2xs text-lg text-gray-500 outline-none transition-all hover:bg-gray-100 focus:bg-gray-100 focus:text-on-primary-1 dark:text-gray-400",
+          "inline-flex w-full items-center justify-center gap-x-[0.8rem] rounded-3xl bg-primary-1 px-xs-s py-3xs-2xs text-lg text-gray-500 outline-none transition-all hover:bg-gray-100 focus:bg-gray-100 focus:text-on-primary-1 dark:text-gray-400",
           buttonClassName,
         )}
         id={id}
@@ -77,7 +77,10 @@ export default function ZoozieDropDown({
         aria-labelledby={id}
         tabIndex={-1}
       >
-        <div className={`py-[0.35rem] ${styles["dropdown-list"]}`} role="none">
+        <div
+          className={`py-[0.35rem] ${styles["dropdown-list"]} divide-y-[0.5px]`}
+          role="none"
+        >
           {children}
         </div>
       </div>

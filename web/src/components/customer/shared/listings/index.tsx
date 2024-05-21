@@ -20,7 +20,7 @@ export default async function Listings({ listings }: Props) {
   const t = await getTranslations("customer.listings");
 
   return (
-    <ul className="mt-s-m grid grid-cols-[repeat(auto-fit,minmax(25.5rem,16rem))] place-content-start gap-3xs-2xs max-[622px]:grid-cols-1 sm:place-content-start">
+    <ul className="mt-s-m grid grid-cols-[repeat(auto-fill,minmax(25.5rem,1fr))] gap-3xs-2xs max-sm:grid-cols-2">
       {listings?.map((listing, index) => {
         const highlightedPicture =
           listing.pictures?.find((picture) => picture.highlighted) ??

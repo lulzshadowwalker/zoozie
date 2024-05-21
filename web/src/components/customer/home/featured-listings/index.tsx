@@ -27,10 +27,9 @@ export default async function FeaturedListings() {
   }
 
   return (
-    <section className="mx-auto my-l-xl max-w-page px-page">
+    <section className="mx-auto my-l-xl max-w-page px-page max-sm:px-l-xl">
       <article>
         <h2 className="text-2xl font-semibold">{t("featured-listings")}</h2>
-
         <Listings listings={listings?.slice(0, 8)} />
 
         <Link
