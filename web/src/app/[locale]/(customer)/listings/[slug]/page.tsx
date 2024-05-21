@@ -138,8 +138,8 @@ export default async function Listing({ params: { locale, slug } }: Props) {
 
       <section className="mx-auto flex max-w-page flex-col-reverse px-page lg:flex-row lg:items-start lg:gap-m-l">
         <section className="flex-grow">
-          <section className="mt-l-xl flex items-start border-t pt-l-xl">
-            <div className="flex-grow-[2] basis-0">
+          <section className="mt-l-xl border-t pt-l-xl">
+            <div>
               <h2 className="text-xl font-medium">
                 {t("what-this-place-offers")}
               </h2>
@@ -272,7 +272,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
           )}
         </section>
 
-        <div className="top-[3rem] mt-l-xl max-w-[34rem] flex-grow basis-0 rounded-2xl border border-gray-400 bg-gray-300/20 px-s-m py-m-l lg:sticky">
+        <div className="top-[3rem] mt-l-xl w-[34rem] max-w-[34rem] rounded-2xl border border-gray-400 bg-gray-300/20 px-s-m py-m-l lg:sticky">
           {saleAvailability && saleAvailability?.price?.amount && (
             <p className="mb-xs-s border-b-2 pb-xs-s text-xl">
               <strong>{saleAvailability?.price?.amount}</strong>{" "}
