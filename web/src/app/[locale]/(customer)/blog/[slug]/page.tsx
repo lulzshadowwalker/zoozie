@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import ZoozImage from "@/components/shared/zooz-image";
+import Card from "@/components/customer/blog/card";
 
 interface Props extends Omit<IBasePageParams, "params"> {
   params: IBasePageParams["params"] & { slug: string };
@@ -110,7 +111,7 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
     source: "strapi",
     queryParams: {
       "filters[slug][$eq]": slug,
-      populate: "pictures",
+      populate: ["deep", "10"],
     },
   });
   if (!res.ok) {
@@ -207,6 +208,21 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
             __html: post?.content,
           }}
         />
+      )}
+
+      {post?.relatedPosts?.posts?.data?.length && (
+        <section className="my-2xl-3xl px-page">
+          <h2 className="text-balance text-center text-3xl font-medium">
+            {post?.relatedPosts?.title ?? t("related-posts-title")}
+          </h2>
+          <hr className="my-l-xl h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
+
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(35rem,1fr))] justify-items-center gap-s-m">
+            {post?.relatedPosts?.posts?.data?.map((post, index) => (
+              <Card key={index} post={post} />
+            ))}
+          </div>
+        </section>
       )}
     </main>
   );

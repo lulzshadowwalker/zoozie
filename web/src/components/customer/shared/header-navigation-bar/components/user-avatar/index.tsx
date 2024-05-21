@@ -9,6 +9,7 @@ import { cn, getCustomerImage } from "@/lib/utils";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
+import LanguageSwitcher from "./components/language-switcher";
 
 export default function UserAvatar() {
   const t = useTranslations("customer.header-navigation-bar");
@@ -55,6 +56,8 @@ export default function UserAvatar() {
           </button>
         </>
       )}
+
+      <LanguageSwitcher />
 
       {!user?.role && (
         <Link

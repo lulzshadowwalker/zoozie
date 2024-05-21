@@ -67,7 +67,7 @@ export default function ZoozieDropDown({
         className={cn(
           "absolute end-0 z-10 w-[15rem] origin-top-right rounded-lg bg-primary-1 ring-1 ring-on-primary-1 ring-opacity-5 drop-shadow-md focus:outline-none",
           {
-            "scale-95 opacity-0 duration-300": !isOpen,
+            "pointer-events-none scale-95 opacity-0 duration-300": !isOpen,
             "scale-100 opacity-100 duration-200": isOpen,
           },
           listClassName,

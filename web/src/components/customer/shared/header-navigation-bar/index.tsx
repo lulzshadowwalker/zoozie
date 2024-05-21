@@ -22,11 +22,14 @@ export default function HeaderNavigationBar() {
       title: t("rent"),
       href: "/listings?availability=RENT",
     },
+    {
+      title: t("blog"),
+      href: "/blog",
+    },
   ] as const;
 
   const { isScrollingDown } = useScroll();
 
-  // TODO: responsive mobile navigation burger menu
   return (
     <header
       className={cn("sticky top-0 z-10 bg-primary-1/70 backdrop-blur-sm", {
@@ -59,7 +62,7 @@ export default function HeaderNavigationBar() {
           ))}
 
           <li>
-            <ZoozieDropDown title="services">
+            <ZoozieDropDown title="services" buttonClassName="bg-transparent">
               <div className="cursor-not-allowed">
                 <Link
                   href="/services/property-estimation"

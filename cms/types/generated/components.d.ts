@@ -1,5 +1,25 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
+export interface PostRelatedPosts extends Schema.Component {
+  collectionName: 'components_post_related_posts';
+  info: {
+    displayName: 'Related Posts';
+    icon: 'rotate';
+    description: '';
+  };
+  attributes: {
+    posts: Attribute.Relation<
+      'post.related-posts',
+      'oneToMany',
+      'api::post.post'
+    >;
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+  };
+}
+
 export interface SharedSeo extends Schema.Component {
   collectionName: 'components_shared_seos';
   info: {
@@ -40,6 +60,7 @@ export interface SharedSharedImage extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
+      'post.related-posts': PostRelatedPosts;
       'shared.seo': SharedSeo;
       'shared.shared-image': SharedSharedImage;
     }

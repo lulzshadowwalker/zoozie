@@ -53,7 +53,11 @@
       "favorites": "Favorites",
       "sign-out": "Sign out",
       "dashboard": "Dashboard",
-      "sign-in": "Sign in"
+      "sign-in": "Sign in",
+      "blog": "Blog",
+      "switch-language": "Switch language",
+      "english": "English",
+      "arabic": "Arabic"
     },
     "home": {
       "featured-listings": "Featured Listings",
@@ -194,7 +198,8 @@
       "min": "Min",
       "insights-and-tips": "Real Estate Insights & Tips",
       "discover-latest-trends": "Discover the latest trends, tips, and advice to guide your real estate journey. Stay informed and make smart decisions with our expert content.",
-      "blog-post-cover": "Blog Post Cover"
+      "blog-post-cover": "Blog Post Cover",
+      "related-posts-title": "You might also be interested in..."
     }
   },
   "dashboard": {

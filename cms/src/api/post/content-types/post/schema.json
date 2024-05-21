@@ -16,17 +16,6 @@
     }
   },
   "attributes": {
-    "title": {
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "type": "string",
-      "unique": true,
-      "required": true,
-      "maxLength": 50
-    },
     "description": {
       "pluginOptions": {
         "i18n": {
@@ -70,7 +59,6 @@
         }
       },
       "type": "uid",
-      "targetField": "title",
       "required": true
     },
     "SEO": {
@@ -97,6 +85,26 @@
       },
       "required": true,
       "customField": "plugin::ckeditor.CKEditor"
+    },
+    "relatedPosts": {
+      "type": "component",
+      "repeatable": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "post.related-posts"
+    },
+    "title": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "required": true,
+      "maxLength": 55
     }
   }
 }

@@ -379,17 +379,6 @@ export interface ApiPostPost extends Schema.CollectionType {
     };
   };
   attributes: {
-    title: Attribute.String &
-      Attribute.Required &
-      Attribute.Unique &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }>;
     description: Attribute.Text &
       Attribute.Required &
       Attribute.SetPluginOptions<{
@@ -413,7 +402,7 @@ export interface ApiPostPost extends Schema.CollectionType {
           localized: true;
         };
       }>;
-    slug: Attribute.UID<'api::post.post', 'title'> &
+    slug: Attribute.UID &
       Attribute.Required &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -440,6 +429,22 @@ export interface ApiPostPost extends Schema.CollectionType {
         i18n: {
           localized: true;
         };
+      }>;
+    relatedPosts: Attribute.Component<'post.related-posts'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.SetMinMaxLength<{
+        maxLength: 55;
       }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
