@@ -18,11 +18,9 @@ export default async function middleware(request: NextRequest) {
     try {
       const claims = await authenticate(token);
       if (claims.role !== "CUSTOMER") {
-        console.debug("redirecting to 403");
         return redirect(request, "/403");
       }
     } catch (e) {
-      console.debug("redirecting to register");
       return redirect(request, "/auth/register");
     }
   }

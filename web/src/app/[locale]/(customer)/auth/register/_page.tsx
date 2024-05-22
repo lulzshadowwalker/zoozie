@@ -13,11 +13,13 @@ import Button from "@/components/shared/button";
 import SubmitButton from "@/components/shared/submit-button";
 import ZoozInput from "@/components/shared/zooz-input";
 import { Link } from "@/lib/i18n/navigation";
+import { useUser } from "@/lib/context/user";
 
 export default function Register() {
   const t = useTranslations("customer.auth");
   const [message, dispatch] = useFormState(registerCustomer, undefined);
   const otpDialogRef = useRef<TOtpDialogHandle>(null);
+  const { refresh } = useUser();
 
   function toggleOtpDialog() {
     if (otpDialogRef.current) {
@@ -34,8 +36,10 @@ export default function Register() {
           toggleOtpDialog();
         }
       }
+
+      refresh();
     },
-    [message],
+    [message, refresh],
   );
 
   return (

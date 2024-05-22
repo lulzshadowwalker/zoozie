@@ -58,7 +58,8 @@
       "switch-language": "Switch language",
       "english": "English",
       "arabic": "Arabic",
-      "list-your-home": "List your home"
+      "list-your-home": "List your home",
+      "sign-out-success": "Signed out successfully"
     },
     "home": {
       "featured-listings": "Featured Listings",

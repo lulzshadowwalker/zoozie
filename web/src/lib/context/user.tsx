@@ -4,6 +4,7 @@ import { TUser } from "@types";
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -18,6 +19,7 @@ type Props = {
 type TUserContext = {
   user: PendingValue<TUser>;
   accessToken: PendingValue<string>;
+  refresh: () => void;
 };
 
 type PendingValue<T> = {
@@ -32,11 +34,11 @@ export default function UserContextProvider({ children }: Props) {
   const [accessToken, setAccessToken] = useState<PendingValue<string>>({
     pending: true,
   });
+  const [_refresh, _setRefresh] = useState(false);
   const posthog = usePostHog();
 
   useEffect(
     function handleGetUser() {
-      console.log(1);
       getUser()
         .then((payload) => {
           if (payload?.user) {
@@ -45,6 +47,7 @@ export default function UserContextProvider({ children }: Props) {
             return;
           }
 
+          setUser({ value: undefined, pending: false });
           posthog.reset();
         })
         .catch((e) => {
@@ -53,22 +56,28 @@ export default function UserContextProvider({ children }: Props) {
           return setUser({ pending: false });
         });
     },
-    [posthog],
+    [posthog, _refresh],
   );
 
-  useEffect(function handleGetAccessToken() {
-    getAccessToken()
-      .then((token) => {
-        setAccessToken({ value: token, pending: false });
-      })
-      .catch((e) => {
-        console.error("failed to get access token", e);
-        return setAccessToken({ pending: false });
-      });
-  }, []);
+  useEffect(
+    function handleGetAccessToken() {
+      getAccessToken()
+        .then((token) => {
+          setAccessToken({ value: token, pending: false });
+        })
+        .catch((e) => {
+          console.error("failed to get access token", e);
+          return setAccessToken({ pending: false });
+        });
+    },
+    [_refresh],
+  );
 
+  function refresh() {
+    _setRefresh((prev) => !prev);
+  }
   return (
-    <UserContext.Provider value={{ user, accessToken }}>
+    <UserContext.Provider value={{ user, accessToken, refresh }}>
       {children}
     </UserContext.Provider>
   );

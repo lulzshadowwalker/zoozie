@@ -146,8 +146,6 @@ export async function registerCustomer(
   }
 
   updateCookies(user.accessToken, user.refreshToken);
-
-  redirect("/");
 }
 
 export async function sendOtp(

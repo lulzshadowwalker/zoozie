@@ -1,6 +1,11 @@
 import { twMerge } from "tailwind-merge";
 import { clsx, ClassValue } from "clsx";
-import { IBasePageParams, TListingFilters, TZoozieUserMessage } from "@types";
+import {
+  IBasePageParams,
+  TListingFilters,
+  TUser,
+  TZoozieUserMessage,
+} from "@types";
 import { toast } from "react-toastify";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Locale } from "./i18n/config";
@@ -131,13 +136,27 @@ export function isClientSide() {
 }
 
 /**
+ * Returns the user's profile picture based on the provided user's role.
+ *
+ * @param {TUser | undefined} user - The user object containing the profile picture.
+ * @return {string} The user's profile picture URL. If the user object is undefined or does not have a profile picture, the function returns the corresponding fallback image URL.
+ */
+export function getUserImage(user?: TUser): string {
+  if (user?.role === "AGENCY_AGENT") {
+    return user?.profilePicture || agencyFallbackImage;
+  }
+
+  return user?.profilePicture || customerFallbackImage;
+}
+
+/**
  * Retrieves the customer image based on the provided image or fallback to a default image.
  *
  * @param {string | undefined} image - The image URL to retrieve or undefined.
  * @return {string} The customer image URL.
  */
 export function getCustomerImage(image?: string | null): string {
-  return image ?? customerFallbackImage;
+  return image?.length ? image : customerFallbackImage;
 }
 
 /**
@@ -147,7 +166,7 @@ export function getCustomerImage(image?: string | null): string {
  * @return {string} The agency image URL.
  */
 export function getAgencyImage(image: string | undefined): string {
-  return image ?? agencyFallbackImage;
+  return image?.length ? image : agencyFallbackImage;
 }
 
 export function isEmptyObject(obj: any): boolean {

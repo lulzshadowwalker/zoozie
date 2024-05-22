@@ -12,6 +12,7 @@ import OtpDialog, {
   TOtpDialogHandle,
 } from "@/components/customer/auth/otp-dialog";
 import { TPhoneNumber } from "@/lib/types";
+import { useUser } from "@/lib/context/user";
 
 export default function Login() {
   const t = useTranslations("customer.auth");
@@ -21,6 +22,7 @@ export default function Login() {
   });
   const sendOtpToPhoneNumber = sendOtp.bind(null, phoneNumber);
   const otpDialogRef = useRef<TOtpDialogHandle>(null);
+  const { refresh } = useUser();
 
   async function handleSendOtp() {
     if (phoneNumber.phoneNumber == "") {
@@ -49,6 +51,8 @@ export default function Login() {
     if (message) {
       showToast(message);
     }
+
+    refresh();
   }
 
   return (

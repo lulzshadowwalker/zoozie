@@ -2,6 +2,7 @@
 
 import ZoozImage from "@/components/shared/zooz-image";
 import { useUser } from "@/lib/context/user";
+import { getAgencyImage, getCustomerImage } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 export default function UserAvatar() {
@@ -10,16 +11,14 @@ export default function UserAvatar() {
 
   return (
     <div className="relative h-[3.2rem] w-[3.2rem] overflow-hidden rounded-full bg-gray-400">
-      {user?.value?.profilePicture && (
-        <ZoozImage
-          src={user?.value?.profilePicture}
-          title={t("user-avatar")}
-          alt={t("user-avatar")}
-          fill
-          sizes="42px"
-          className="object-cover"
-        />
-      )}
+      <ZoozImage
+        src={getCustomerImage(user?.value?.profilePicture)}
+        title={t("user-avatar")}
+        alt={t("user-avatar")}
+        fill
+        sizes="42px"
+        className="object-cover"
+      />
     </div>
   );
 }

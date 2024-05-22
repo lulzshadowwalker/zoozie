@@ -68,7 +68,6 @@ export function ChatViewInput() {
 
     socket.onerror = function onerror(e) {
       console.error("[WS]: WebSocket error", e);
-      console.debug("closing the ws");
       socket.close();
     };
   }

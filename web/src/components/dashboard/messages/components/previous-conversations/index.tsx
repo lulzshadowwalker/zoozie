@@ -61,7 +61,6 @@ export function PreviousConversations() {
         },
         signal: abortController?.signal,
       });
-      console.debug("fetched conversations ..");
 
       if (!res.ok) {
         throw new Error(
