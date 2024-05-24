@@ -15,7 +15,8 @@
         "Transactioner",
         "Xmark",
         "zooz",
-        "zoozie"
+        "zoozie",
+        "zustand"
     ],
     "editor.formatOnSave": true,
     "sqltools.connections": [

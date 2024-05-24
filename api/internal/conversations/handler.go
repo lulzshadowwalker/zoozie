@@ -24,6 +24,7 @@ type Service interface {
 
 	GetConversations(context.Context, getConversationsRequest) ([]Conversation, error)
 	GetConversationHistory(context.Context, conversationHistoryRequest) (Conversation, error)
+	CreateConversation(context.Context, createConversationRequest) (Conversation, error)
 }
 
 type SocketErrorCode string
@@ -57,6 +58,7 @@ func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/conversations/chat/:to", utils.Unwrap(h.Chat), middleware.Auth())
 	e.GET("/conversations/:to", utils.Unwrap(h.GetConversationHistory), middleware.Auth())
 	e.GET("/conversations", utils.Unwrap(h.GetConversations), middleware.Auth())
+	e.POST("/conversations/:to", utils.Unwrap(h.CreateConversation), middleware.Auth())
 }
 
 type ConversationID = int
@@ -229,6 +231,34 @@ func (h *handler) GetConversationHistory(c echo.Context) error {
 
 	conversation, err := h.service.GetConversationHistory(utils.TransformEchoContext(c), request)
 	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"conversation": conversation,
+		},
+	})
+}
+
+func (h *handler) CreateConversation(c echo.Context) error {
+	var request createConversationRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+	request.Expand = c.QueryParams()["expand"]
+
+	conversation, err := h.service.CreateConversation(utils.TransformEchoContext(c), request)
+	if err != nil {
+		if err, ok := err.(*utils.ApiError); ok && err.Status == http.StatusConflict {
+			return c.JSON(err.Status, echo.Map{
+				"data": echo.Map{
+					"conversation": conversation,
+				},
+				"message": err.Message,
+			})
+		}
+
 		return err
 	}
 

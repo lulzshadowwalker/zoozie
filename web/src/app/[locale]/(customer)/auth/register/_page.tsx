@@ -39,7 +39,8 @@ export default function Register() {
 
       refresh();
     },
-    [message, refresh],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [message],
   );
 
   return (

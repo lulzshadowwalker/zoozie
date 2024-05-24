@@ -165,7 +165,7 @@ export function getCustomerImage(image?: string | null): string {
  * @param {string | undefined} image - The image URL to retrieve or undefined.
  * @return {string} The agency image URL.
  */
-export function getAgencyImage(image: string | undefined): string {
+export function getAgencyImage(image?: string | null): string {
   return image?.length ? image : agencyFallbackImage;
 }
 

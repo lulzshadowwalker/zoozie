@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/lulzshadowwalker/zoozie/api/internal/agencies"
@@ -119,7 +118,6 @@ func (r *repo) CreateConversation(c context.Context, customerID, agencyID int, t
 		db = tx
 	}
 
-	log.Println("creating conversation", customerID, agencyID)
 	var dbConversation DBConversation
 	if err := Conversations.INSERT(
 		Conversations.CustomerID,

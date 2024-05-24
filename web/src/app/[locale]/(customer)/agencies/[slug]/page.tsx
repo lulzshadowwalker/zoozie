@@ -12,6 +12,7 @@ import { Link } from "@/lib/i18n/navigation";
 import FollowButton from "@/components/customer/agencies/follow-button";
 import { getAccessToken } from "@/lib/actions/auth";
 import Reviews from "@/components/customer/agencies/reviews";
+import MessageButton from "@/components/customer/agencies/message-button";
 
 export async function generateStaticParams({
   params: { locale },
@@ -99,9 +100,7 @@ export default async function Agency({ params: { locale, slug } }: Props) {
 
           <section className="flex items-center gap-xs-s md:ms-auto">
             {agency?.slug && <FollowButton slug={agency.slug} />}
-            <Button className="ms-0 flex-grow basis-0 py-xs-s md:flex-grow-0 md:py-3xs-2xs">
-              {t("message")}
-            </Button>
+            <MessageButton agency={agency} />
           </section>
         </div>
       </section>
@@ -163,7 +162,7 @@ export default async function Agency({ params: { locale, slug } }: Props) {
 
       {/* NOTE: I don't want this button to be fluid in spacings or font size */}
       <Link href={`/listings?agency=${agency.slug}`}>
-        <Button className="fixed bottom-m-l end-m-l px-[2rem] py-[0.625rem] text-[1.5rem]">
+        <Button className="fixed bottom-m-l right-m-l px-[2rem] py-[0.625rem] text-[1.5rem]">
           {t("view-listings")}
         </Button>
       </Link>

@@ -18,6 +18,7 @@ import { Link } from "@/lib/i18n/navigation";
 import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
 import FollowButton from "@/components/customer/agencies/follow-button";
+import MessageButton from "@/components/customer/listings/message-button";
 
 export const dynamic = "force-static";
 
@@ -324,9 +325,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
             </ul>
           </article>
 
-          <Button className="mt-xl-2xl w-full py-xs-s lg:py-3xs-2xs">
-            {t("message")}
-          </Button>
+          {listing?.agency && <MessageButton agency={listing.agency} />}
         </div>
       </section>
 

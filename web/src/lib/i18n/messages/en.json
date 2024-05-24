@@ -207,6 +207,26 @@
       "share-on-whatsapp": "Share on Whatsapp",
       "share-on-linkedin": "Share on LinkedIn",
       "share-on-twitter": "Share on Twitter"
+    },
+    "messages": {
+      "messages": "Messages",
+      "write-your-message": "Write your message",
+      "message-input": "Message input",
+      "send": "Send",
+      "failed-to-load-previous-messages": "Failed to load previous messages. Please try again later.",
+      "failed-to-load-message-history": "Failed to load message history. Please try again later.",
+      "unknown-customer": "Unknown customer",
+      "unknown-agency": "Unknown agency",
+      "nothing-here-yet": "Nothing here yet",
+      "no-conversations": "No conversations",
+      "dont-do-that": "dont do that ..",
+      "avatar": "avatar",
+      "no-conversation-selected": "No conversation selected",
+      "not-in-conversation": "You are not part of the conversation",
+      "something-went-wrong": "Something went wrong. Please try again later.",
+      "read-failure": "failed to read incoming message. Please try again later.",
+      "write-failure": "failed to write outgoing message. Please try again later.",
+      "logo": "Logo"
     }
   },
   "dashboard": {

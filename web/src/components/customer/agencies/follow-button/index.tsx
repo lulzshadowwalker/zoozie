@@ -147,7 +147,7 @@ export default function FollowButton({
     <Button
       typ="secondary"
       className={cn(
-        "relative ms-0 flex-grow basis-0 py-xs-s transition-all md:flex-grow-0 md:py-3xs-2xs",
+        "relative ms-0 min-w-fit flex-grow basis-0 py-xs-s transition-all md:flex-grow-0 md:py-3xs-2xs",
         className,
       )}
       onClick={(e) => {

@@ -155,6 +155,7 @@ func (s *service) GetConversationHistory(c context.Context, request conversation
 		if errors.Is(err, ErrConversationNotFound) {
 			return Conversation{}, utils.NewApiError(http.StatusForbidden, "sender is not part of the conversation")
 		}
+
 		return Conversation{}, err
 	}
 
@@ -173,6 +174,7 @@ func (s *service) expand(c context.Context, conversation Conversation, options [
 				slog.ErrorContext(c, "failed to get agency", "err", err)
 				return Conversation{}, utils.NewApiError(http.StatusInternalServerError, "")
 			}
+
 			return Conversation{}, err
 		}
 
@@ -255,4 +257,45 @@ func (s *service) getSenderType(c context.Context) (senderID int, senderType Sen
 	}
 
 	return -1, "", ErrInvalidSenderType
+}
+
+func (s *service) CreateConversation(c context.Context, request createConversationRequest) (Conversation, error) {
+	sender, receiver, senderType, err := s.getSenderAndReceiver(c, request.To)
+	if err != nil {
+		return Conversation{}, err
+	}
+
+	var customerID, agencyID int
+	switch senderType {
+	case SenderCustomer:
+		customerID = sender
+		agencyID = receiver
+	case SenderAgency:
+		agencyID = sender
+		customerID = receiver
+	default:
+		return Conversation{}, fmt.Errorf("%w %s", ErrInvalidSenderType, senderType)
+	}
+
+	// NOTE: cannot check for unique constraint violation because rn the repo uses `QueryContext` instead of `ExecContext`
+	// and for some reason it doesn't actually return `*pg.Error` in case of a unique constraint violation
+	// so this may or may not be a lazy fix ..
+	if conversation, err := s.repo.GetConversation(c, customerID, agencyID, nil); err == nil {
+		if conversation, err = s.expand(c, conversation, request.Expand); err != nil {
+			return Conversation{}, err
+		}
+
+		return conversation, utils.NewApiError(http.StatusConflict, "conversation already exists")
+	}
+
+	conversation, err := s.repo.CreateConversation(c, customerID, agencyID, nil)
+	if err != nil {
+		return Conversation{}, err
+	}
+
+	if conversation, err = s.expand(c, conversation, request.Expand); err != nil {
+		return Conversation{}, err
+	}
+
+	return conversation, nil
 }

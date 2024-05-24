@@ -50,10 +50,12 @@ export async function fetchApi(
     locale = lang;
   }
 
-  let requestOptions: RequestInit = init ?? {}
-  let headers: Record<string, string> = headersInitToRecord(init?.headers ?? {});
+  let requestOptions: RequestInit = init ?? {};
+  let headers: Record<string, string> = headersInitToRecord(
+    init?.headers ?? {},
+  );
   if (source === "strapi") {
-    headers['Authorization'] = `Bearer ${Config.strapiAccessToken}`;
+    headers["Authorization"] = `Bearer ${Config.strapiAccessToken}`;
     requestOptions.headers = headers;
   }
 
@@ -75,13 +77,13 @@ export function generateApiUrl({
   locale,
   queryParams,
   source,
-}: { endpoint: string; locale?: Locale; } & BaseRequestOptions) {
-  source = source ?? "lulzie"
+}: { endpoint: string; locale?: Locale } & BaseRequestOptions) {
+  source = source ?? "lulzie";
   let url: URL | undefined = undefined;
 
   switch (source) {
     case "lulzie":
-      url = new URL(path.join(lulzieApiBaseUrl, locale as string, endpoint))
+      url = new URL(path.join(lulzieApiBaseUrl, locale as string, endpoint));
       break;
     case "strapi":
       url = new URL(path.join(strapiBaseUrl, endpoint));
@@ -100,7 +102,7 @@ export function generateApiUrl({
       if (Array.isArray(value)) {
         if (source === "strapi") {
           url.searchParams.append(key, value.join(","));
-          continue
+          continue;
         }
 
         for (const v of value) {
@@ -116,8 +118,9 @@ export function generateApiUrl({
   return url;
 }
 
-
-export function headersInitToRecord(headersInit: HeadersInit): Record<string, string> {
+export function headersInitToRecord(
+  headersInit: HeadersInit,
+): Record<string, string> {
   const headers: Record<string, string> = {};
 
   if (headersInit instanceof Headers) {
@@ -136,7 +139,6 @@ export function headersInitToRecord(headersInit: HeadersInit): Record<string, st
 
   return headers;
 }
-
 
 export function getStrapiFileUrl(v: string | undefined): URL | undefined {
   if (!v) return undefined;
