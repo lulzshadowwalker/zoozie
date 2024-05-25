@@ -40,6 +40,7 @@ type (
 
 	Availability struct {
 		ID           int    `json:"-"`
+		ListingID    int    `json:"-"`
 		Availability string `json:"availability,omitempty"`
 		Price        Price  `json:"price,omitempty"`
 	}

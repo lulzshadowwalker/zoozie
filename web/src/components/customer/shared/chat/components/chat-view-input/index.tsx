@@ -24,8 +24,9 @@ export default function ChatViewInput() {
   useEffect(() => {
     connect();
     return function cleanup() {
-      // ws?.current?.close(1000, "Bye!");
+      ws?.current?.close(1000, "Bye!");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id]);
 
   function connect(): void {

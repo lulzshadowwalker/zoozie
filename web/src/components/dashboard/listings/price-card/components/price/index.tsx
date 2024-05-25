@@ -36,18 +36,21 @@ export default function Price() {
           inputClassName="max-w-[10rem]"
           value={rentPrice}
           onChange={({ target: { value } }) => {
-            setRentPrice(parseInt(value));
             if (!value) {
               removeAvailability("RENT");
+              setRentPrice(undefined);
+              return;
             }
 
-            return addAvailability({
+            addAvailability({
               availability: "RENT",
               price: {
                 amount: Number(value),
                 currency: "JOD",
               },
             });
+
+            setRentPrice(parseInt(value));
           }}
         />{" "}
         {tCurrency("jod")}
@@ -67,18 +70,21 @@ export default function Price() {
           inputClassName="max-w-[10rem]"
           value={salePrice}
           onChange={({ target: { value } }) => {
-            setSalePrice(parseInt(value));
             if (!value) {
               removeAvailability("SALE");
+              setSalePrice(undefined);
+              return;
             }
 
-            return addAvailability({
+            addAvailability({
               availability: "SALE",
               price: {
                 amount: Number(value),
                 currency: "JOD",
               },
             });
+
+            setSalePrice(parseInt(value));
           }}
         />{" "}
         {tCurrency("jod")}

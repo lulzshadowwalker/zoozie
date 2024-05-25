@@ -15,10 +15,10 @@ export default function LanguageSwitcher() {
     <Link
       href={pathname}
       locale={locale === "en" ? "ar" : "en"}
-      className="!flex items-center justify-between gap-2xs-xs"
+      className="!flex items-center gap-2xs-xs"
     >
-      {locale === "en" ? t("arabic") : t("english")}
       <FontAwesomeIcon icon={faEarthAsia}></FontAwesomeIcon>
+      {locale === "en" ? t("arabic") : t("english")}
     </Link>
   );
 }

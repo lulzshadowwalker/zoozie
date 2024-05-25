@@ -100,9 +100,13 @@ func (r *repo) CreateListingAvailability(c context.Context, listingAvailability 
 	}
 
 	var dbAvailability DBAvailability
-	stmt := ListingAvailabilities.INSERT(ListingAvailabilities.AvailabilityID).
+	stmt := ListingAvailabilities.INSERT(
+		ListingAvailabilities.AvailabilityID,
+		ListingAvailabilities.ListingID,
+	).
 		VALUES(
 			Availabilities.SELECT(Availabilities.ID).WHERE(Availabilities.Code.EQ(String(listingAvailability.Availability))),
+			listingAvailability.ListingID,
 		).
 		RETURNING(ListingAvailabilities.ID)
 

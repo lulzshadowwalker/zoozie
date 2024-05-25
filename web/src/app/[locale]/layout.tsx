@@ -15,6 +15,7 @@ import UserContextProvider from "@/lib/context/user";
 import ClientSidePostHogProvider from "@/lib/posthog/providers";
 import dynamic from "next/dynamic";
 import ZoozieToast from "@/components/shared/zoozie-toast";
+import { PostHogProvider } from "posthog-js/react";
 
 const PostHogPageView = dynamic(() => import("@/lib/posthog/page-view"), {
   ssr: false,
@@ -44,9 +45,9 @@ export default function RootLayout({
     <html lang={locale} dir={dir}>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <ClientSidePostHogProvider>
-          <PostHogPageView />
           <UserContextProvider>
             <body className={inter.className}>
+              <PostHogPageView />
               <ZoozieToast />
               {children}
             </body>

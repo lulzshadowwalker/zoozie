@@ -31,7 +31,12 @@ export default function SaveButton() {
     if (!validateArabic() && locale === "en") {
       router.replace(pathname, { locale: "ar" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, t, router, pathname]);
+
+  useEffect(() => {
+    console.log("availabilities =======> ", state.availabilities);
+  }, [state.availabilities]);
 
   async function handleClick() {
     if (!validateCommon() || !validateArabic!()) {
@@ -126,7 +131,6 @@ export default function SaveButton() {
       !!state.bathrooms &&
       !!state.yearBuilt &&
       !!state.area &&
-      !!state.furnished &&
       !!state.availabilities?.length
     );
   }

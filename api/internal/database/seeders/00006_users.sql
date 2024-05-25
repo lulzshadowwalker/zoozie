@@ -10,7 +10,7 @@ INSERT INTO
         role
     )
 VALUES
-    -- roles (customer: -1, agency_agent: -2, zoozie_admin: -3)
+    -- roles (CUSTOMER: -1, AGENCY_AGENT: -2, ZOOZIE_ADMIN: -3)
     -- active customer
     (
         -42069,

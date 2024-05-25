@@ -40,7 +40,7 @@ export default function ImageInput() {
 
       {/* NOTE: for some reason `<Marquee>` doesn't seem to load until all the children are loaded or something of sorts 
         so this wrapper div is to prevent cls */}
-      <div className="mt-m-l min-h-[16rem] md:min-h-[26rem]">
+      <div className="mt-m-l min-h-[16rem] md:min-h-[26rem]" dir="ltr">
         <Marquee autoFill speed={30}>
           {(pictures ?? [...Array(5)]).map((image, index) => (
             <div

@@ -116,10 +116,26 @@ export const useCreateListingStore = create<TState & TActions>(
           [`${locale}FurnishedDescription`]: description,
         })),
       addAvailability: (availability) =>
-        set((state) => ({
-          ...state,
-          availabilities: [...(state.availabilities || []), availability],
-        })),
+        set((state) => {
+          const index = state.availabilities?.findIndex(
+            (a) => a.availability === availability.availability,
+          );
+
+          console.log("index: ", index, state.availabilities);
+          if (index !== undefined && index !== -1) {
+            return {
+              ...state,
+              availabilities: state.availabilities?.map((a, i) =>
+                i === index ? availability : a,
+              ),
+            };
+          }
+
+          return {
+            ...state,
+            availabilities: [...(state.availabilities || []), availability],
+          };
+        }),
       removeAvailability: (availability) =>
         set((state) => ({
           ...state,

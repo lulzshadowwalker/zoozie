@@ -115,7 +115,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
 
         {/* NOTE: for some reason `<Marquee>` doesn't seem to load until all the children are loaded or something of sorts 
         so this wrapper div is to prevent cls */}
-        <div className="mt-m-l min-h-[16rem] md:min-h-[26rem]">
+        <div className="mt-m-l min-h-[16rem] md:min-h-[26rem]" dir="ltr">
           <Marquee autoFill speed={30}>
             {listing.pictures?.map(({ url, title }, index) => (
               <div
@@ -249,7 +249,7 @@ export default async function Listing({ params: { locale, slug } }: Props) {
                       <div className="text-lg font-medium">
                         {furnished?.value === true
                           ? t("furnished")
-                          : t("not-furnished")}
+                          : t("unfurnished")}
                       </div>
                       {furnished?.description && (
                         <p className="max-w-[50ch] text-base text-gray-400">

@@ -50,7 +50,7 @@ export default function ChatFab() {
       setShouldScaleCount(false);
     }, 750);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isOpen]);
 
   async function fetchConversations(abortController?: AbortController) {
     const unknownErr: TZoozieUserMessage = {
@@ -59,12 +59,7 @@ export default function ChatFab() {
     };
 
     try {
-      if (accessToken.pending) return;
-      if (!accessToken.value) {
-        console.error("ChatFab: no access token");
-        // showToast(unknownErr);
-        return;
-      }
+      if (accessToken.pending || !accessToken.value) return;
 
       const url = generateApiUrl({
         endpoint: "/conversations",

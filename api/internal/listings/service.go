@@ -165,6 +165,7 @@ func (s *service) CreateListing(c context.Context, request createListingRequest)
 	availability := make([]Availability, len(request.Availabilities))
 	for index := range request.Availabilities {
 		availability[index] = Availability{
+			ListingID:    listing.ID,
 			Availability: request.Availabilities[index].Availability,
 			Price: Price{
 				Amount:   request.Availabilities[index].Price.Amount,
