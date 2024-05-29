@@ -6,8 +6,8 @@ import (
 
 type Agency struct {
 	ID           int         `json:"id,omitempty"`
-	PhoneNumber  PhoneNumber `json:"phoneNumber,omitempty"`
 	EmailAddress string      `json:"emailAddress,omitempty"`
+	PhoneNumber  PhoneNumber `json:"phoneNumber,omitempty"`
 	Logo         string      `json:"logo,omitempty"`
 	Slug         string      `json:"slug,omitempty"`
 
@@ -42,4 +42,13 @@ type AgencyReview struct {
 	Rating     int        `json:"rating,omitempty"`
 	CreatedAt  *time.Time `json:"createdAt,omitempty"`
 	UpdateAt   *time.Time `json:"updatedAt,omitempty"`
+}
+
+type AgencyStats struct {
+	AgencyID           int     `json:"agencyId,omitempty"`
+	AdminsCount        int     `json:"adminsCount"`
+	ListingsCount      int     `json:"listingsCount"`
+	ConversationsCount int     `json:"conversationsCount"`
+	ReviewsCount       int     `json:"reviewsCount"`
+	Rating             float64 `json:"rating"`
 }

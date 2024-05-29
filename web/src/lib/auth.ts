@@ -12,6 +12,8 @@ interface JwtCustomClaims {
   customerId?: number;
 }
 
+export type TUserClaims = JwtCustomClaims;
+
 export class TokenNotFound extends Error {}
 export class Forbidden extends Error {}
 

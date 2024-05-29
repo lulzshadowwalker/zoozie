@@ -24,7 +24,8 @@ export default function FollowButton({
   const [following, setFollowing] = useState<boolean>(false);
   const [agency, setAgency] = useState<TAgency>();
   const { accessToken } = useUser();
-  const { showAuthRequiredToast } = useToastHelpers();
+  const { showAuthRequiredToast, showAgentRestrictionToast } =
+    useToastHelpers();
   const locale = useLocale() as Locale;
 
   useEffect(() => {
@@ -73,10 +74,7 @@ export default function FollowButton({
       if (!res.ok) {
         switch (res.status) {
           case 403:
-            showToast({
-              status: "warning",
-              message: t("agents-cannot-follow"),
-            });
+            showAgentRestrictionToast();
             return;
           default:
             showToast(unknownError);

@@ -426,3 +426,17 @@ export type TCmsPicture = {
     updatedAt?: string;
   };
 };
+
+export type TAgencyStats = {
+  agencyId?: number;
+  adminsCount?: number;
+  listingsCount?: number;
+  conversationsCount?: number;
+  reviewsCount?: number;
+  rating?: number;
+};
+
+export type TPostHogTrendsQueryResult = {
+  data: number[];
+  days: string[];
+};

@@ -12,7 +12,7 @@ type Props = {
   icon: IconProp;
 };
 
-export default function Item({ title, href, icon }: Props) {
+export default function LinkItem({ title, href, icon }: Props) {
   const pathname = usePathname();
 
   const { agency, sanitizedPathname } = useMemo(() => {
@@ -43,14 +43,14 @@ export default function Item({ title, href, icon }: Props) {
       )}
     >
       {isActive && (
-        <div className="w-[4px] self-stretch bg-black rounded-se-md rounded-ee-md" />
+        <div className="w-[4px] self-stretch rounded-ee-md rounded-se-md bg-black" />
       )}
 
       <FontAwesomeIcon
         icon={icon}
         size="lg"
         className={cn(
-          "text-inherit transition-all hover:text-on-primary-1 cursor-pointer mx-auto py-xs",
+          "mx-auto cursor-pointer py-xs text-inherit transition-all hover:text-on-primary-1",
           {
             "text-on-primary-1": isActive,
           },

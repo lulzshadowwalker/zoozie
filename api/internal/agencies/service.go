@@ -3,6 +3,7 @@ package agencies
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/entities"
 	"github.com/lulzshadowwalker/zoozie/api/internal/interfaces"
@@ -28,6 +29,7 @@ type Repo interface {
 	GetAgencyReviews(c context.Context, id int, tx interfaces.Transaction) ([]entities.AgencyReview, error)
 	CreateAgencyReview(c context.Context, review entities.AgencyReview, tx interfaces.Transaction) (entities.AgencyReview, error)
 	ToggleAgencyFollow(c context.Context, customerID, agencyID int, tx interfaces.Transaction) (bool, error)
+	GetAgencyStats(c context.Context, agencyID int) (entities.AgencyStats, error)
 }
 
 func (s *service) GetAgencies(c context.Context) ([]entities.Agency, error) {
@@ -122,4 +124,17 @@ func (s *service) ToggleAgencyFollowRequest(c context.Context, request toggleAge
 	}
 
 	return s.repo.ToggleAgencyFollow(c, customerID, request.AgencyID, nil)
+}
+
+func (s *service) GetAgencyStats(c context.Context, request getAgencyStatsRequest) (entities.AgencyStats, error) {
+	agencyID, err := utils.GetAgencyID(c)
+	if err != nil {
+		return entities.AgencyStats{}, err
+	}
+
+	if agencyID != request.AgencyID {
+		return entities.AgencyStats{}, utils.NewApiError(http.StatusForbidden, "forbidden")
+	}
+
+	return s.repo.GetAgencyStats(c, request.AgencyID)
 }

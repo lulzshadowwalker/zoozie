@@ -9,8 +9,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getAccessToken, getUser } from "@lib/actions/auth";
+import { getAccessToken, getUser, getUserClaims } from "@lib/actions/auth";
 import { usePostHog } from "posthog-js/react";
+import { TUserClaims } from "../auth";
 
 type Props = {
   children: ReactNode;
@@ -19,6 +20,7 @@ type Props = {
 type TUserContext = {
   user: PendingValue<TUser>;
   accessToken: PendingValue<string>;
+  claims: PendingValue<TUserClaims>;
   refresh: () => void;
 };
 
@@ -31,6 +33,9 @@ const UserContext = createContext<TUserContext | null>(null);
 
 export default function UserContextProvider({ children }: Props) {
   const [user, setUser] = useState<PendingValue<TUser>>({ pending: true });
+  const [claims, setClaims] = useState<PendingValue<TUserClaims>>({
+    pending: true,
+  });
   const [accessToken, setAccessToken] = useState<PendingValue<string>>({
     pending: true,
   });
@@ -73,11 +78,25 @@ export default function UserContextProvider({ children }: Props) {
     [_refresh],
   );
 
+  useEffect(
+    function handleGetUserClaims() {
+      getUserClaims()
+        .then((claims) => {
+          setClaims({ value: claims, pending: false });
+        })
+        .catch((e) => {
+          console.error("failed to get user claims", e);
+          return setClaims({ pending: false });
+        });
+    },
+    [_refresh],
+  );
+
   function refresh() {
     _setRefresh((prev) => !prev);
   }
   return (
-    <UserContext.Provider value={{ user, accessToken, refresh }}>
+    <UserContext.Provider value={{ user, claims, accessToken, refresh }}>
       {children}
     </UserContext.Provider>
   );

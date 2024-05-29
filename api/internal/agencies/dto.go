@@ -30,3 +30,7 @@ type createAgencyReviewRequest struct {
 type toggleAgencyFollowRequest struct {
 	AgencyID int `param:"id" validate:"required,number"`
 }
+
+type getAgencyStatsRequest struct {
+	AgencyID int `param:"id" validate:"required,number"`
+}

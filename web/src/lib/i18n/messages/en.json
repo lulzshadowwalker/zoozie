@@ -4,9 +4,6 @@
   "currency": {
     "jod": "JOD"
   },
-  "listing-card": {
-    "edit": "Edit"
-  },
   "403": {
     "access-denied": "Access denied",
     "message": "Sorry, you don't have permission to access this page.",
@@ -231,6 +228,28 @@
     }
   },
   "dashboard": {
+    "home": {
+      "welcome-back": "Welcome back",
+      "page-views": "Page views",
+      "past-30-days": "Past 30 days",
+      "admins": "Admins",
+      "listings": "Listings",
+      "reviews": "Reviews",
+      "rating": "Rating",
+      "conversations": "Conversations"
+    },
+    "listings": {
+      "edit": "Edit",
+      "your-favorites": "Your Favorites",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "square-meters": "Square meters",
+      "square-meters-unit": "m",
+      "rent": "Rent",
+      "sale": "Sale",
+      "empty-state-title": "Start by creating a listing!",
+      "empty-state-description": "Nothing here yet! Kickstart your journey by creating your first listing and publishing it to the world."
+    },
     "side-navigation-bar": {
       "home": "Home",
       "listings": "Listings",
@@ -239,7 +258,8 @@
       "messages": "Messages",
       "agency-information": "Agency Information",
       "settings": "Settings",
-      "sign-out": "Sign out"
+      "sign-out": "Sign out",
+      "sign-out-success": "Signed out successfully"
     },
     "create-listing": {
       "title": "title",
@@ -321,6 +341,7 @@
     "agencies": {}
   },
   "toast-helpers": {
-    "auth-required": "Login or register a new account to use this feature"
+    "auth-required": "Login or register a new account to use this feature",
+    "agents-cannot-interact-with-customer-functionalities": "Agents cannot interact with customer functionalities"
   }
 }

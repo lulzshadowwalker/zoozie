@@ -14,6 +14,9 @@ export default function PostHogPageView() {
 
   useEffect(() => {
     if (pathname && posthog) {
+      const excludedRoutes = ["/listings", "/agencies"];
+      if (excludedRoutes.some((r) => pathname.includes(r))) return;
+
       let url = window.origin + pathname;
       if (searchParams.toString()) {
         url = url + `?${searchParams.toString()}`;

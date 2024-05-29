@@ -10,6 +10,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import { redirect } from "@/lib/i18n/navigation";
+import { TUserClaims, authenticate } from "../auth";
 
 export async function login({
   phoneNumber,
@@ -436,4 +437,16 @@ export async function signOut() {
 export async function switchAccount() {
   signOut();
   redirect("/auth/login");
+}
+
+/**
+ * Retrieves the user claims from the authentication token.
+ *
+ * @return {Promise<TUserClaims | undefined>} The user claims or undefined if the token is missing or invalid.
+ */
+export async function getUserClaims(): Promise<TUserClaims | undefined> {
+  const token = await getAccessToken();
+  try {
+    return await authenticate(token);
+  } catch {}
 }

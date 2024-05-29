@@ -22,6 +22,7 @@ type Service interface {
 	GetAgencyReviews(c context.Context, request getAgencyReviewsRequest) ([]entities.AgencyReview, error)
 	CreateAgencyReview(c context.Context, request createAgencyReviewRequest) (entities.AgencyReview, error)
 	ToggleAgencyFollowRequest(c context.Context, request toggleAgencyFollowRequest) (bool, error)
+	GetAgencyStats(c context.Context, request getAgencyStatsRequest) (entities.AgencyStats, error)
 }
 
 func NewHandler(s Service) *handler {
@@ -32,6 +33,7 @@ func NewHandler(s Service) *handler {
 
 func (h *handler) RegisterRoutes(e *echo.Group) {
 	e.GET("/agencies", utils.Unwrap(h.GetAgencies), middleware.PreferAuth())
+	e.GET("/agencies/:id/stats", utils.Unwrap(h.GetAgencyStats), middleware.Auth(), middleware.WithAgencyAgent)
 	e.POST(
 		"/agencies",
 		utils.Unwrap(h.CreateAgency),
@@ -150,6 +152,24 @@ func (h *handler) ToggleAgencyFollow(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"data": echo.Map{
 			"following": status,
+		},
+	})
+}
+
+func (h *handler) GetAgencyStats(c echo.Context) error {
+	var request getAgencyStatsRequest
+	if err := utils.BindAndValidate(c, &request); err != nil {
+		return err
+	}
+
+	stats, err := h.service.GetAgencyStats(utils.TransformEchoContext(c), request)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": echo.Map{
+			"stats": stats,
 		},
 	})
 }

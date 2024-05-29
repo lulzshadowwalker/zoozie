@@ -19,7 +19,7 @@ export default function Footer() {
       items: [
         {
           title: t("blog"),
-          href: "https://google.com",
+          href: "/blog",
         },
         {
           title: t("services"),

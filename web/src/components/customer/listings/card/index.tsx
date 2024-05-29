@@ -28,38 +28,36 @@ export default async function Card({ listing }: Props) {
       href={`/listings/${listing.slug}`}
       className="group flex min-h-[28rem] flex-col gap-m-l rounded-xl border p-m-l shadow-sm !outline-none hover:bg-gray-100/70 md:flex-row md:justify-between dark:shadow-none"
     >
-      <div className="flex flex-row justify-between gap-3xs-2xs">
-        <section>
-          <p className="text-lg text-gray-400">{listing.type}</p>
-          <div className="mb-3xs-2xs">
-            {rentPrice && rentPrice?.amount && (
-              <div className="flex items-center font-bold text-on-primary-1">
-                {rentPrice?.currency && rentPrice?.currency + " "}
-                {rentPrice?.amount}
+      <section>
+        <p className="text-lg text-gray-400">{listing.type}</p>
+        <div className="mb-3xs-2xs">
+          {rentPrice && rentPrice?.amount && (
+            <div className="flex items-center font-bold text-on-primary-1">
+              {rentPrice?.currency && rentPrice?.currency + " "}
+              {rentPrice?.amount}
 
-                <span className="ms-2xs-xs inline-block rounded-2xl bg-gray-200 px-2xs-xs py-[0.2rem] text-sm text-on-primary-1">
-                  {t("rent")}
-                </span>
-              </div>
-            )}
-            {salePrice && salePrice?.amount && (
-              <div className="font-bold text-on-primary-1">
-                {salePrice?.currency && salePrice?.currency + " "}
-                {salePrice?.amount}
+              <span className="ms-2xs-xs inline-block rounded-2xl bg-gray-200 px-2xs-xs py-[0.2rem] text-sm text-on-primary-1">
+                {t("rent")}
+              </span>
+            </div>
+          )}
+          {salePrice && salePrice?.amount && (
+            <div className="font-bold text-on-primary-1">
+              {salePrice?.currency && salePrice?.currency + " "}
+              {salePrice?.amount}
 
-                <span className="ms-2xs-xs inline-block rounded-2xl bg-gray-200 px-2xs-xs py-[0.2rem] text-sm text-on-primary-1">
-                  {t("sale")}
-                </span>
-              </div>
-            )}
-          </div>
-          <p className="text-lg text-gray-400">
-            {bedrooms && `${bedrooms} ${t("bedrooms")}, `}
-            {bathrooms && `${bathrooms} ${t("bathrooms")}, `}
-            {areaSize && `${areaSize}${t("square-meters-unit")}²`}
-          </p>
-        </section>
-      </div>
+              <span className="ms-2xs-xs inline-block rounded-2xl bg-gray-200 px-2xs-xs py-[0.2rem] text-sm text-on-primary-1">
+                {t("sale")}
+              </span>
+            </div>
+          )}
+        </div>
+        <p className="text-lg text-gray-400">
+          {bedrooms && `${bedrooms} ${t("bedrooms")}, `}
+          {bathrooms && `${bathrooms} ${t("bathrooms")}, `}
+          {areaSize && `${areaSize}${t("square-meters-unit")}²`}
+        </p>
+      </section>
 
       <div className="relative flex-grow overflow-hidden rounded-lg md:max-w-[30rem]">
         <ZoozImage

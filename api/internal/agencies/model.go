@@ -106,3 +106,16 @@ func (m *DBAgencyReview) ToEntity() (entities.AgencyReview, error) {
 
 	return review, nil
 }
+
+type AgencyStats struct {
+	AgencyID           int     `json:"agencyId,omitempty"`
+	AdminsCount        int     `json:"adminsCount"`
+	ListingsCount      int     `json:"listingsCount"`
+	ConversationsCount int     `json:"conversationsCount"`
+	ReviewsCount       int     `json:"reviewsCount"`
+	Rating             float64 `json:"rating"`
+}
+
+func (a AgencyStats) ToEntity() entities.AgencyStats {
+	return entities.AgencyStats(a)
+}

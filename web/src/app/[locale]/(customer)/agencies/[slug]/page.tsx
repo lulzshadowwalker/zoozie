@@ -13,6 +13,9 @@ import FollowButton from "@/components/customer/agencies/follow-button";
 import { getAccessToken } from "@/lib/actions/auth";
 import Reviews from "@/components/customer/agencies/reviews";
 import MessageButton from "@/components/customer/agencies/message-button";
+import PostHogClient from "@/lib/posthog/client";
+import { getPostHogDistinctId } from "@/lib/actions/posthog";
+import { headers } from "next/headers";
 
 export async function generateStaticParams({
   params: { locale },
@@ -43,12 +46,13 @@ interface Props extends Omit<IBasePageParams, "params"> {
 export default async function Agency({ params: { locale, slug } }: Props) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("customer.agency");
+
   const accessToken = await getAccessToken();
-  const headers: Record<string, string> = {};
-  accessToken && (headers.Authorization = `Bearer ${accessToken}`);
+  const requestHeaders: Record<string, string> = {};
+  accessToken && (requestHeaders.Authorization = `Bearer ${accessToken}`);
 
   const res = await fetchApi("/agencies", {
-    init: { headers },
+    init: { headers: requestHeaders },
     queryParams: { slug },
   });
   if (!res.ok) {
@@ -63,6 +67,20 @@ export default async function Agency({ params: { locale, slug } }: Props) {
   if (!agency) {
     throw new Error("agencies/[slug]: agency is not in the expected format");
   }
+
+  const posthog = PostHogClient();
+  const distinctId = await getPostHogDistinctId();
+  const currentUrl = headers().get("x-current-url") || "";
+  posthog.capture({
+    event: "$pageview",
+    distinctId,
+    properties: {
+      $current_url: currentUrl,
+      type: "agency",
+      ["agency.id"]: agency.id,
+      ["agency.slug"]: agency.slug,
+    },
+  });
 
   return (
     <main className="my-2xl-3xl">

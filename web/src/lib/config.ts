@@ -58,7 +58,6 @@ export default class Config {
 
     return key;
   }
-
   static get postHogHost(): string {
     const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
     if (!host) {
@@ -66,5 +65,13 @@ export default class Config {
     }
 
     return host;
+  }
+  static get postHogApiKey(): string {
+    const key = process.env.POSTHOG_API_KEY;
+    if (!key) {
+      throw new Error("env.POSTHOG_API_KEY is not set");
+    }
+
+    return key;
   }
 }

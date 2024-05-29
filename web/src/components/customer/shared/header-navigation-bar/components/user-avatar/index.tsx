@@ -17,15 +17,9 @@ import LanguageSwitcher from "./components/language-switcher";
 
 export default function UserAvatar() {
   const t = useTranslations("customer.header-navigation-bar");
+  const router = useRouter();
   const { user: res, refresh: refreshUser } = useUser();
   const user = res?.value;
-
-  function showSignOutSuccessToast() {
-    showToast({
-      status: "success",
-      message: t("sign-out-success"),
-    });
-  }
 
   return (
     <ZoozieDropDown
@@ -63,7 +57,6 @@ export default function UserAvatar() {
             onClick={async function handleSignOut() {
               await signOut();
               refreshUser();
-              showSignOutSuccessToast();
             }}
           >
             <FontAwesomeIcon
@@ -92,7 +85,7 @@ export default function UserAvatar() {
             onClick={async function handleSignOut() {
               await signOut();
               refreshUser();
-              showSignOutSuccessToast();
+              router.push("/auth/register");
             }}
           >
             <FontAwesomeIcon

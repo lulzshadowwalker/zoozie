@@ -399,3 +399,41 @@ func (r *repo) DeleteAgencyFollow(c context.Context, customerID, agencyID int, t
 
 	return nil
 }
+
+func (r *repo) GetAgencyStats(c context.Context, agencyID int) (entities.AgencyStats, error) {
+	var dest AgencyStats
+	if err := SELECT(
+		Int(int64(agencyID)).AS("agency_stats.agency_id"),
+
+		SELECT(
+			COUNT(AgencyAgents.ID).AS("agency_stats.admins_count"),
+		).FROM(AgencyAgents).
+			WHERE(AgencyAgents.AgencyID.EQ(Int(int64(agencyID)))),
+
+		SELECT(
+			COUNT(AgencyReviews.ID).AS("agency_stats.reviews_count"),
+		).FROM(AgencyReviews).
+			WHERE(Agencies.ID.EQ(Int(int64(agencyID)))),
+
+		SELECT(
+			COUNT(Conversations.ID).AS("agency_stats.conversations_count"),
+		).FROM(Conversations).
+			WHERE(Conversations.AgencyID.EQ(Int(int64(agencyID)))),
+
+		SELECT(
+			COUNT(Listings.ID).AS("agency_stats.listings_count"),
+		).FROM(Listings).
+			WHERE(Listings.AgencyID.EQ(Int(int64(agencyID)))),
+
+		SELECT(
+			AVG(AgencyReviews.Rating).AS("dbagency.rating"),
+		).
+			FROM(AgencyReviews).
+			WHERE(Agencies.ID.EQ(Int(int64(agencyID)))).AS("agency_stats.rating"),
+	).FROM(Agencies).
+		QueryContext(c, r.database, &dest); err != nil {
+		return entities.AgencyStats{}, fmt.Errorf("failed to get agency stats because %w", err)
+	}
+
+	return dest.ToEntity(), nil
+}

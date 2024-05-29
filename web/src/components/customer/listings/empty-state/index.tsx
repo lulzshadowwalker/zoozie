@@ -2,12 +2,20 @@
 import Lottie from "lottie-react";
 import animation from "../../../../../public/assets/animations/girl-empty-box.json";
 import { useTranslations } from "next-intl";
+import { HTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
 
-export default function EmptyState() {
+export default function EmptyState({
+  className,
+  ...rest
+}: HTMLAttributes<HTMLElement>) {
   const t = useTranslations("customer.listings");
 
   return (
-    <section className="mx-auto my-l-xl max-w-screen-sm px-s-m">
+    <section
+      className={cn("mx-auto my-l-xl max-w-screen-sm px-s-m", className)}
+      {...rest}
+    >
       <Lottie
         animationData={animation}
         loop={true}

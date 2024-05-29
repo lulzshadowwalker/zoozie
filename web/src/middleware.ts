@@ -25,7 +25,9 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  return handleI18nRouting(request);
+  const response = handleI18nRouting(request);
+  response.headers.set("x-current-url", request.nextUrl.href);
+  return response;
 }
 
 /**

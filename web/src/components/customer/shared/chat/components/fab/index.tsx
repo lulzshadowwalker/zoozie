@@ -26,7 +26,7 @@ export default function ChatFab() {
   const count: number = 1;
 
   const t = useTranslations("customer.messages");
-  const { accessToken } = useUser();
+  const { claims, accessToken } = useUser();
   const { locale } = useParams();
 
   useEffect(
@@ -101,7 +101,12 @@ export default function ChatFab() {
     setIsOpen(true);
   }
 
-  if (isOpen || !previousConversations?.length) return <></>;
+  if (
+    claims?.value?.role !== "CUSTOMER" ||
+    isOpen ||
+    !previousConversations?.length
+  )
+    return <></>;
 
   return (
     <Button

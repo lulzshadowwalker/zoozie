@@ -1,13 +1,11 @@
 import ZoozImage from "@/components/shared/zooz-image";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import Section from "../section";
 import { TAgency, TAgencyReview } from "@/lib/types";
 import { fetchApi } from "@/lib/api";
 import { getCustomerImage } from "@/lib/utils";
-import { formatDateTime } from "@/lib/utils";
 import { Fragment } from "react";
-import WriteReviewButton from "./dialog";
-import { Locale } from "@/lib/i18n/config";
+import WriteReviewButton from "./write-review-button";
 import Time from "@/components/shared/time";
 
 type Props = {

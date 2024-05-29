@@ -32,8 +32,9 @@ export default function WriteReviewButton({ agency }: Props) {
   const [isClosed, setIsClosed] = useState(true);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
   const [rating, setRating] = useState<number>();
-  const { user, accessToken } = useUser();
-  const { showAuthRequiredToast } = useToastHelpers();
+  const { user, accessToken, claims } = useUser();
+  const { showAuthRequiredToast, showAgentRestrictionToast } =
+    useToastHelpers();
   const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
@@ -66,10 +67,7 @@ export default function WriteReviewButton({ agency }: Props) {
       if (!res.ok) {
         switch (res.status) {
           case 403:
-            showToast({
-              status: "warning",
-              message: t("agents-cannot-write-reviews"),
-            });
+            showAgentRestrictionToast();
             return;
           case 409:
             showToast({
@@ -116,6 +114,11 @@ export default function WriteReviewButton({ agency }: Props) {
   }
 
   function toggleDialog() {
+    if (claims?.value?.role !== "CUSTOMER") {
+      showAgentRestrictionToast();
+      return;
+    }
+
     if (!dialogRef.current) {
       return;
     }

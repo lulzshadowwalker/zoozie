@@ -52,7 +52,24 @@ export function useToastHelpers() {
     showToast(message);
   }
 
-  return { showAuthRequiredToast };
+  /**
+   * Displays a toast notification indicating that agents cannot
+   * interact with certain customer functionalities.
+   *
+   * This function is intended to inform the user (an agent)
+   * that their current permissions do not allow interaction with
+   * specific customer-related features or actions.
+   */
+  function showAgentRestrictionToast() {
+    const message: TZoozieUserMessage = {
+      status: "info",
+      message: t("agents-cannot-interact-with-customer-functionalities"),
+    };
+
+    showToast(message);
+  }
+
+  return { showAuthRequiredToast, showAgentRestrictionToast };
 }
 
 export function useFormatDateTime() {

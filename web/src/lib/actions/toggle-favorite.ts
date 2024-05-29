@@ -11,6 +11,7 @@ async function toggleFavorite({
   listingId: number;
 }): Promise<{ message?: TZoozieUserMessage; status?: boolean }> {
   const t = await getTranslations("customer.listings");
+  const tToastHelpers = await getTranslations("toast-helpers");
   const unknownError: TZoozieUserMessage = {
     status: "failure",
     message: t("unknown-error"),
@@ -36,7 +37,7 @@ async function toggleFavorite({
       if (res.status === 403) {
         const message: TZoozieUserMessage = {
           status: "info",
-          message: t("agents-cannot-favorite"),
+          message: t("agents-cannot-interact-with-customer-functionalities"),
         };
 
         return { message };

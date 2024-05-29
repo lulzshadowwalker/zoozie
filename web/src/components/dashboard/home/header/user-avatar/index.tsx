@@ -2,7 +2,7 @@
 
 import ZoozImage from "@/components/shared/zooz-image";
 import { useUser } from "@/lib/context/user";
-import { getAgencyImage, getCustomerImage } from "@/lib/utils";
+import { getCustomerImage } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 export default function UserAvatar() {

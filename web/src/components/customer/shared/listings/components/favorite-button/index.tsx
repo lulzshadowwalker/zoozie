@@ -18,7 +18,8 @@ export default function FavoriteButton({ listing }: Props) {
   const t = useTranslations("customer.listings");
   const [favorite, setFavorite] = useState(listing.favorite);
   const { accessToken } = useUser();
-  const { showAuthRequiredToast } = useToastHelpers();
+  const { showAuthRequiredToast, showAgentRestrictionToast } =
+    useToastHelpers();
 
   async function toggleFavorite() {
     if (accessToken.pending) return;
@@ -55,10 +56,8 @@ export default function FavoriteButton({ listing }: Props) {
 
       if (!res.ok) {
         if (res.status === 403) {
-          showToast({
-            status: "info",
-            message: t("agents-cannot-favorite"),
-          });
+          showAgentRestrictionToast();
+          return;
         }
 
         console.error("toggleFavorite: unknown error", res);

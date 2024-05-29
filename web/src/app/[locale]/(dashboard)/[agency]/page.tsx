@@ -1,19 +1,21 @@
-import Header from "@/components/dashboard/shared/header";
-import Button from "@/components/shared/button";
-import { IBaseAgencyParams, IBasePageParams } from "@types";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Header from "@/components/dashboard/home/header";
+import { IBaseAgencyParams } from "@types";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
-import UserAvatar from "@/components/dashboard/home/user-avatar";
 import { redirect } from "@/lib/i18n/navigation";
 import { authenticate, forbidden, Forbidden, TokenNotFound } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { getUser } from "@/lib/actions/auth";
+import CardStats from "@/components/dashboard/home/card-stats";
+import PageViewsChart from "@/components/dashboard/home/charts/page-views";
 
 export default async function Home({
   params: { locale, agency },
 }: IBaseAgencyParams) {
   unstable_setRequestLocale(locale);
   const t = await getTranslations("dashboard.home");
+  const res = await getUser();
+  const user = res?.user;
+
   try {
     const claims = await authenticate(cookies().get("access-token")?.value);
     if (claims.agencySlug !== agency) forbidden();
@@ -24,22 +26,15 @@ export default async function Home({
   }
 
   return (
-    <Header
-      leading={
-        <div className="flex items-center gap-s-m">
-          <UserAvatar />
-          <h2 className="text-2xl">Welcome Back, Valeria</h2>
-        </div>
-      }
-      trailing={
-        <Button
-          square
-          className="flex h-[3.8rem] w-[3.8rem] items-center justify-center rounded-full"
-          typ="secondary"
-        >
-          <FontAwesomeIcon icon={faBell} size="lg" />
-        </Button>
-      }
-    />
+    <>
+      <Header />
+      <main className="mx-m-l">
+        <CardStats />
+
+        <section className="my-m-l grid grid-cols-1 gap-xs-s lg:grid-cols-2">
+          <PageViewsChart className="lg:col-span-2" agency={agency} />
+        </section>
+      </main>
+    </>
   );
 }

@@ -8,7 +8,7 @@ export default function EmptyState() {
   const t = useTranslations("customer.account-favorites");
 
   return (
-    <section className="mx-auto my-l-xl max-w-screen-sm px-s-m">
+    <section className="mx-auto mb-xl-2xl max-w-screen-sm px-s-m">
       <Lottie
         animationData={EmptyStateAnimation}
         loop={true}

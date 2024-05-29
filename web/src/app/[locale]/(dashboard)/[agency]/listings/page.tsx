@@ -1,20 +1,24 @@
 import Header from "@/components/dashboard/shared/header";
-import { IBaseAgencyParams, IBasePageParams } from "@types";
-import { unstable_setRequestLocale } from "next-intl/server";
+import { IBaseAgencyParams, IBasePageParams, TListing } from "@types";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import Card from "@/components/dashboard/listings/card";
 import Button from "@/components/shared/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFilter,
-  faMagnifyingGlass,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Link, redirect } from "@/lib/i18n/navigation";
 import { authenticate, forbidden, Forbidden, TokenNotFound } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { fetchApi } from "@/lib/api";
+import FilterButton from "@/components/customer/listings/filters/components/filter-button";
+import {
+  extractListingsFiltersFromSearchParams,
+  pageSearchParamsToURLSearchParams,
+} from "@/lib/utils";
+import EmptyState from "@/components/customer/listings/empty-state";
 
 export default async function Listings({
   params: { locale, agency },
+  searchParams,
 }: IBaseAgencyParams) {
   unstable_setRequestLocale(locale);
   try {
@@ -26,6 +30,29 @@ export default async function Listings({
     throw e;
   }
 
+  const t = await getTranslations("dashboard.listings");
+  const filters = extractListingsFiltersFromSearchParams(
+    pageSearchParamsToURLSearchParams(searchParams),
+  );
+
+  const res = await fetchApi("/listings", {
+    queryParams: {
+      agency,
+      ...(filters as Record<string, string>),
+    },
+  });
+  if (!res.ok) {
+    throw new Error(
+      "failed to fetch agency listings because " + res.statusText,
+    );
+  }
+
+  const listings = (await res.json())?.data?.listings as TListing[] | undefined;
+  if (!listings) {
+    throw new Error("listings are not in the expected format");
+  }
+  const isEmpty = !listings.length;
+
   return (
     <main>
       <Header leading={<h1 className="text-2xl">Listings</h1>} />
@@ -34,13 +61,17 @@ export default async function Listings({
         <article className="flex-grow-[1.2] basis-0">
           <Filters />
 
-          <ul className="my-s-m space-y-s-m">
-            {[...Array(30)].map((_, index) => (
-              <li key={index}>
-                <Card />
-              </li>
-            ))}
-          </ul>
+          {!isEmpty && (
+            <ul className="my-s-m space-y-s-m">
+              {listings.map((listing, index) => (
+                <li key={index}>
+                  <Card listing={listing} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {isEmpty && <EmptyState className="max-w-[50rem]" />}
         </article>
 
         <iframe
@@ -81,13 +112,7 @@ function Filters() {
         />
       </div>
 
-      <Button
-        typ="secondary"
-        className="flex items-center gap-2xs-xs text-gray-500"
-      >
-        <FontAwesomeIcon icon={faFilter} />
-        Filter
-      </Button>
+      <FilterButton />
     </search>
   );
 }

@@ -1,4 +1,3 @@
-import Button from "@/components/shared/button";
 import ZoozImage from "@/components/shared/zooz-image";
 import Marquee from "react-fast-marquee";
 import {
@@ -19,8 +18,9 @@ import { fetchApi } from "@/lib/api";
 import { notFound } from "next/navigation";
 import FollowButton from "@/components/customer/agencies/follow-button";
 import MessageButton from "@/components/customer/listings/message-button";
-
-export const dynamic = "force-static";
+import { getPostHogDistinctId } from "@/lib/actions/posthog";
+import PostHogClient from "@/lib/posthog/client";
+import { headers } from "next/headers";
 
 export async function generateStaticParams({
   params: { locale },
@@ -96,6 +96,22 @@ export default async function Listing({ params: { locale, slug } }: Props) {
   const email = listing.agency?.emailAddress;
   const phone = listing.agency?.phoneNumber;
   const agency = listing.agency;
+
+  const posthog = PostHogClient();
+  const distinctId = await getPostHogDistinctId();
+  const currentUrl = headers().get("x-current-url") || "";
+  posthog.capture({
+    event: "$pageview",
+    distinctId,
+    properties: {
+      $current_url: currentUrl,
+      type: "listing",
+      ["listing.id"]: listing?.id,
+      ["listing.slug"]: listing?.slug,
+      ["agency.id"]: listing?.agency?.id,
+      ["agency.slug"]: listing?.agency?.slug,
+    },
+  });
 
   return (
     <main className="my-xl-2xl">
