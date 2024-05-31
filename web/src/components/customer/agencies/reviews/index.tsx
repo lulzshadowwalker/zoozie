@@ -36,6 +36,7 @@ export default async function Reviews({ agency }: Props) {
     console.error("agency reviews response is not in the expected format");
     return <></>;
   }
+
   return (
     <Section id="reviews">
       <article className="mt-l-xl flex flex-col border-t pt-l-xl">

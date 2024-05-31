@@ -54,7 +54,7 @@ export default async function CardStats() {
 
       {stats?.rating !== undefined && (
         <Card title={t("rating")}>
-          <p className="text-3xl font-semibold">{stats.rating}</p>
+          <p className="text-3xl font-semibold">{stats.rating.toFixed(1)}</p>
         </Card>
       )}
 

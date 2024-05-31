@@ -1,20 +1,18 @@
 import { cn } from "@/lib/utils";
 import Card from "../../card";
-import { TPostHogTrendsQueryResult } from "@/lib/types";
+import { TAgency, TPostHogTrendsQueryResult } from "@/lib/types";
 import PageViewsChartGraph from "./components/chart";
 import { getTranslations } from "next-intl/server";
 import Config from "@/lib/config";
 import { randomUUID } from "crypto";
+import RatingsChart from "../ratings";
 
 type Props = {
   className?: string;
-  agency: string;
+  agency: TAgency;
 };
 
-export default async function PageViewsChart({
-  agency: slug,
-  className,
-}: Props) {
+export default async function PageViewsChart({ agency, className }: Props) {
   const t = await getTranslations("dashboard.home");
 
   const res = await fetch("https://app.posthog.com/api/projects/68109/query/", {
@@ -45,7 +43,7 @@ export default async function PageViewsChart({
         properties: [
           {
             key: "agency.slug",
-            value: [slug],
+            value: [agency.slug],
             operator: "exact",
             type: "event",
           },

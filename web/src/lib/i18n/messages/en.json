@@ -238,7 +238,9 @@
       "listings": "Listings",
       "reviews": "Reviews",
       "rating": "Rating",
-      "conversations": "Conversations"
+      "conversations": "Conversations",
+      "ratings": "Ratings",
+      "all-time": "All time"
     },
     "listings": {
       "edit": "Edit",
