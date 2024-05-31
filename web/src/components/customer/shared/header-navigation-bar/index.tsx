@@ -34,12 +34,15 @@ export default function HeaderNavigationBar() {
 
   return (
     <header
-      className={cn("sticky top-0 z-10 bg-primary-1/70 backdrop-blur-sm", {
-        "animate-slide-in-bottom": !isScrollingDown,
-        "animate-slide-out-top": isScrollingDown,
-      })}
+      className={cn(
+        "sticky top-0 z-10 border-b-[0.5px] border-gray-300 bg-primary-1/70 px-l-xl py-2xs-xs backdrop-blur-sm",
+        {
+          "animate-slide-in-bottom": !isScrollingDown,
+          "animate-slide-out-top": isScrollingDown,
+        },
+      )}
     >
-      <nav className="flex items-center border-b-[0.5px] border-gray-300 px-l-xl py-2xs-xs">
+      <nav className="mx-auto flex max-w-supported items-center">
         <ZoozLogo />
 
         <ul className="ms-auto flex items-center gap-2xs-xs max-md:hidden">

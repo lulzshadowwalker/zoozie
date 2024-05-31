@@ -6,9 +6,16 @@ import { Link, redirect } from "@/lib/i18n/navigation";
 import Lottie from "lottie-react";
 import animation from "../../../../public/assets/animations/girl-knocking-on-door.json";
 import { useTranslations } from "next-intl";
+import { useUser } from "@/lib/context/user";
 
 export default function Forbidden() {
   const t = useTranslations("403");
+  const { refresh: refreshUser } = useUser();
+
+  async function handleSwitchAccount() {
+    await switchAccount();
+    refreshUser();
+  }
 
   return (
     <main className="min-w-screen flex min-h-screen -translate-y-[6rem] flex-col items-center justify-center">
@@ -25,7 +32,7 @@ export default function Forbidden() {
       </p>
 
       <section className="mt-l-xl flex flex-wrap items-center justify-center gap-xs-s">
-        <form action={switchAccount}>
+        <form action={handleSwitchAccount}>
           <Button>{t("switch-account")}</Button>
         </form>
         <Link href="/">

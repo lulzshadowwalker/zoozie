@@ -32,18 +32,16 @@ export default function SocialLinks({
       <FacebookShareButton url={url}>
         <FontAwesomeIcon
           icon={faFacebookSquare}
-          size="3x"
           title={t("share-on-facebook")}
-          className="text-[#1877F2]"
+          className="text-4xl text-[#1877F2]"
         />
       </FacebookShareButton>
 
       <LinkedinShareButton url={url}>
         <FontAwesomeIcon
           icon={faLinkedin}
-          size="3x"
           title={t("share-on-linkedin")}
-          className="text-[#0072b1]"
+          className="text-4xl text-[#0072b1]"
         />
       </LinkedinShareButton>
 
@@ -53,26 +51,24 @@ export default function SocialLinks({
       >
         <FontAwesomeIcon
           icon={faTwitter}
-          size="3x"
           title={t("share-on-twitter")}
-          className="text-[#1DA1F2]"
+          className="text-4xl text-[#1DA1F2]"
         />
       </TwitterShareButton>
 
       <WhatsappShareButton url={url}>
         <FontAwesomeIcon
           icon={faWhatsappSquare}
-          size="3x"
           title={t("share-on-whatsapp")}
-          className="text-[#25D366]"
+          className="text-4xl text-[#25D366]"
         />
       </WhatsappShareButton>
       {/* <TelegramShareButton url={url}>
         <FontAwesomeIcon
           icon={faTelegram}
-          size="3x"
+          
           title={t("share-on-telegram")}
-          className="text-[#24A1DE]"
+          className="text-[#24A1DE] text-4xl"
         />
       </TelegramShareButton> */}
     </aside>

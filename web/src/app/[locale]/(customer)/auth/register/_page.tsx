@@ -12,20 +12,18 @@ import ProfilePictureInput from "@/components/customer/auth/profile-picture-inpu
 import Button from "@/components/shared/button";
 import SubmitButton from "@/components/shared/submit-button";
 import ZoozInput from "@/components/shared/zooz-input";
-import { Link } from "@/lib/i18n/navigation";
+import { Link, useRouter } from "@/lib/i18n/navigation";
 import { useUser } from "@/lib/context/user";
+import AuthContextProvider, { useAuth } from "@/lib/context/auth/register";
+import { TPhoneNumber } from "@/lib/types";
 
-export default function Register() {
+function Register() {
   const t = useTranslations("customer.auth");
+  const router = useRouter();
   const [message, dispatch] = useFormState(registerCustomer, undefined);
   const otpDialogRef = useRef<TOtpDialogHandle>(null);
   const { refresh } = useUser();
-
-  function toggleOtpDialog() {
-    if (otpDialogRef.current) {
-      otpDialogRef.current.toggle();
-    }
-  }
+  const { phoneNumber, setPhoneNumber } = useAuth();
 
   useEffect(
     function showUserToast() {
@@ -42,6 +40,16 @@ export default function Register() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [message],
   );
+
+  function toggleOtpDialog() {
+    if (otpDialogRef.current) {
+      otpDialogRef.current.toggle();
+    }
+  }
+
+  function handleRedirect() {
+    router.push("/");
+  }
 
   return (
     <>
@@ -84,6 +92,15 @@ export default function Register() {
               containerClassName="pointer-events-none max-w-fit"
               labelClassName="text-center"
               inputClassName="text-center"
+              onChange={({ target: { value } }) =>
+                setPhoneNumber(
+                  (prev) =>
+                    ({
+                      ...prev,
+                      countryCode: value,
+                    }) as TPhoneNumber,
+                )
+              }
             />
 
             <ZoozInput
@@ -96,6 +113,16 @@ export default function Register() {
               placeholder="7x xxx xxxx"
               containerClassName="flex-grow"
               required
+              value={phoneNumber?.phoneNumber}
+              onChange={({ target: { value } }) =>
+                setPhoneNumber(
+                  (prev) =>
+                    ({
+                      ...prev,
+                      phoneNumber: value,
+                    }) as TPhoneNumber,
+                )
+              }
             />
           </div>
 
@@ -121,7 +148,19 @@ export default function Register() {
           </div>
         </form>
       </main>
-      <OtpDialog ref={otpDialogRef} />
+      <OtpDialog
+        ref={otpDialogRef}
+        onSuccess={handleRedirect}
+        phoneNumber={phoneNumber}
+      />
     </>
+  );
+}
+
+export default function ClientRegisterWrapper() {
+  return (
+    <AuthContextProvider>
+      <Register />
+    </AuthContextProvider>
   );
 }

@@ -143,11 +143,14 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 
 	if request.ProfilePicture != nil {
 		uploadInfo, err := utils.StoreFile(request.ProfilePicture)
-		if err != nil {
+		if err == nil {
+			user.ProfilePicture = &uploadInfo.Path
+		}
+
+		if !errors.Is(err, utils.ErrEmptyFile) {
 			return entities.User{}, err
 		}
 
-		user.ProfilePicture = &uploadInfo.Path
 	}
 	user, err = s.repo.CreateUser(c, user, tx)
 	if err != nil {

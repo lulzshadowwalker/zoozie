@@ -143,7 +143,9 @@ export function isClientSide() {
  */
 export function getUserImage(user?: TUser): string {
   if (user?.role === "AGENCY_AGENT") {
-    return user?.profilePicture || agencyFallbackImage;
+    return (
+      user?.agent?.agency?.logo ?? user?.profilePicture ?? agencyFallbackImage
+    );
   }
 
   return user?.profilePicture || customerFallbackImage;
@@ -156,7 +158,11 @@ export function getUserImage(user?: TUser): string {
  * @return {string} The customer image URL.
  */
 export function getCustomerImage(image?: string | null): string {
-  return image?.length ? image : customerFallbackImage;
+  if (image?.length) {
+    return image;
+  }
+
+  return customerFallbackImage;
 }
 
 /**

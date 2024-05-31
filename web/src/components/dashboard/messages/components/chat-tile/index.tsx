@@ -128,7 +128,7 @@ export function ChatTile({ conversation, className, ...rest }: ChatTileProps) {
       )}
       {...rest}
     >
-      <div className="relative min-h-xl-2xl w-full max-w-xl-2xl overflow-hidden rounded-full bg-gray-400">
+      <div className="relative min-h-xl-2xl min-w-xl-2xl  overflow-hidden rounded-full bg-gray-400">
         <ZoozImage
           src={getCustomerImage(customer?.profilePicture)}
           alt={`${customer?.name ?? ""} ${t("avatar")}`}
@@ -140,7 +140,7 @@ export function ChatTile({ conversation, className, ...rest }: ChatTileProps) {
         />
       </div>
 
-      <div className="flex-grow">
+      <div className="flex-grow overflow-hidden">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">
             {customer?.name ?? t("unknown-customer")}

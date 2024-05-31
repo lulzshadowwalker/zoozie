@@ -18,6 +18,7 @@ export default async function PageViewsChart({
   const t = await getTranslations("dashboard.home");
 
   const res = await fetch("https://app.posthog.com/api/projects/68109/query/", {
+    next: { revalidate: 60 * 5 },
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +28,7 @@ export default async function PageViewsChart({
       query: {
         kind: "TrendsQuery",
         dateRange: {
-          date_from: "-30dStart",
+          date_from: "-7dStart",
           date_to: "-1dEnd",
         },
         interval: "day",
@@ -82,7 +83,7 @@ export default async function PageViewsChart({
   return (
     <Card
       title={t("page-views")}
-      subtitle={t("past-30-days")}
+      subtitle={t("past-7-days")}
       className={cn("h-[42rem] w-full", className)}
     >
       <PageViewsChartGraph data={chartData} />

@@ -147,6 +147,10 @@ export async function registerCustomer(
   }
 
   updateCookies(user.accessToken, user.refreshToken);
+  return {
+    status: "success",
+    message: t("otp-sent-successfully"),
+  };
 }
 
 export async function sendOtp(

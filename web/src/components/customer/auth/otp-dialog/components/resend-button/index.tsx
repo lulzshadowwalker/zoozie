@@ -1,14 +1,12 @@
 import Button from "@/components/shared/button";
 import { sendOtp } from "@/lib/actions/auth";
+import { TPhoneNumber } from "@/lib/types";
 import { showToast } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 
 type Props = {
-  phoneNumber: {
-    countryCode: string;
-    phoneNumber: string;
-  };
+  phoneNumber?: TPhoneNumber;
 };
 
 export default function ResendButton({ phoneNumber }: Props) {
@@ -52,7 +50,7 @@ export default function ResendButton({ phoneNumber }: Props) {
       type="button"
       typ="secondary"
       onClick={handleResendOtp}
-      disabled={disabled}
+      disabled={disabled || !phoneNumber}
     >
       {t("resend-code")}
       {disabled && ` (${delay}${t("seconds")})`}

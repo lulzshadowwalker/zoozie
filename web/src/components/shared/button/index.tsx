@@ -30,7 +30,7 @@ export default function Button({
         },
         {
           "active:scale-[0.98]": !disabled,
-          "pointer-events-none text-gray-500 saturate-[0.6]": disabled,
+          "pointer-events-none text-gray-500": disabled,
         },
         className,
       )}

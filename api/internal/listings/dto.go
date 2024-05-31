@@ -32,28 +32,29 @@ type (
 		Type     string          `json:"type" form:"type" validate:"required,oneof=PROPERTY COMMERCIAL_PROPERTY OFFICE_SPACE RETAIL_SPACE INDUSTRIAL_SPACE MIXED_USE_PROPERTY RESIDENTIAL_PROPERTY APARTMENT VILLA TOWNHOUSE CONDOMINIUM"`
 		Location requestLocation `json:"location" form:"location" validate:"required"`
 
+		// TODO: might wanna make descriptions required if they're set for the other locale
 		DescriptionEnglish string `json:"descriptionEnglish" form:"descriptionEnglish" validate:"required"`
 		DescriptionArabic  string `json:"descriptionArabic" form:"descriptionArabic" validate:"required"`
 
 		Bedrooms                   int    `json:"bedrooms" form:"bedrooms" validate:"required,number,gte=0"`
-		BedroomsDescriptionEnglish string `json:"bedroomsDescriptionEnglish" form:"bedroomsDescriptionEnglish" validate:"required"`
-		BedroomsDescriptionArabic  string `json:"bedroomsDescriptionArabic" form:"bedroomsDescriptionArabic" validate:"required"`
+		BedroomsDescriptionEnglish string `json:"bedroomsDescriptionEnglish" form:"bedroomsDescriptionEnglish"`
+		BedroomsDescriptionArabic  string `json:"bedroomsDescriptionArabic" form:"bedroomsDescriptionArabic"`
 
 		Bathrooms                   int    `json:"bathrooms" form:"bathrooms" validate:"required,number,gte=0"`
-		BathroomsDescriptionEnglish string `json:"bathroomsDescriptionEnglish" form:"bathroomsDescriptionEnglish" validate:"required"`
-		BathroomsDescriptionArabic  string `json:"bathroomsDescriptionArabic" form:"bathroomsDescriptionArabic" validate:"required"`
+		BathroomsDescriptionEnglish string `json:"bathroomsDescriptionEnglish" form:"bathroomsDescriptionEnglish"`
+		BathroomsDescriptionArabic  string `json:"bathroomsDescriptionArabic" form:"bathroomsDescriptionArabic"`
 
 		YearBuilt                   int    `json:"yearBuilt" form:"yearBuilt" validate:"required,number,min=1900,max=2030"`
-		YearBuiltDescriptionEnglish string `json:"yearBuiltDescriptionEnglish" form:"yearBuiltDescriptionEnglish" validate:"required"`
-		YearBuiltDescriptionArabic  string `json:"yearBuiltDescriptionArabic" form:"yearBuiltDescriptionArabic" validate:"required"`
+		YearBuiltDescriptionEnglish string `json:"yearBuiltDescriptionEnglish" form:"yearBuiltDescriptionEnglish"`
+		YearBuiltDescriptionArabic  string `json:"yearBuiltDescriptionArabic" form:"yearBuiltDescriptionArabic"`
 
 		Area                   float64 `json:"area" form:"area" validate:"required,number,gte=0"`
-		AreaDescriptionEnglish string  `json:"areaDescriptionEnglish" form:"areaDescriptionEnglish" validate:"required"`
-		AreaDescriptionArabic  string  `json:"areaDescriptionArabic" form:"areaDescriptionArabic" validate:"required"`
+		AreaDescriptionEnglish string  `json:"areaDescriptionEnglish" form:"areaDescriptionEnglish"`
+		AreaDescriptionArabic  string  `json:"areaDescriptionArabic" form:"areaDescriptionArabic"`
 
 		Furnished                   bool   `json:"furnished" form:"furnished" validate:"boolean"`
-		FurnishedDescriptionEnglish string `json:"furnishedDescriptionEnglish" form:"furnishedDescriptionEnglish" validate:"required"`
-		FurnishedDescriptionArabic  string `json:"furnishedDescriptionArabic" form:"furnishedDescriptionArabic" validate:"required"`
+		FurnishedDescriptionEnglish string `json:"furnishedDescriptionEnglish" form:"furnishedDescriptionEnglish"`
+		FurnishedDescriptionArabic  string `json:"furnishedDescriptionArabic" form:"furnishedDescriptionArabic"`
 
 		ExtraFeatures  []requestExtraFeature `json:"extraFeatures" form:"extraFeatures" validate:"dive,required"`
 		Availabilities []requestAvailability `json:"availabilities" form:"availabilities" validate:"dive,required"`

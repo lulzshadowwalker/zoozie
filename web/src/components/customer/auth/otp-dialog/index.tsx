@@ -14,6 +14,7 @@ import {
 } from "react";
 import { useFormState } from "react-dom";
 import ResendButton from "./components/resend-button";
+import { TPhoneNumber } from "@/lib/types";
 
 export type TOtpDialogHandle = {
   open: () => void;
@@ -24,10 +25,12 @@ export type TOtpDialogHandle = {
 
 type TProps = {
   verifier?: (prompt: string) => void;
+  onSuccess?: () => void;
+  phoneNumber?: TPhoneNumber;
 };
 
 const OtpDialog = forwardRef<TOtpDialogHandle, TProps>(function OtpDialog(
-  { verifier },
+  { verifier, onSuccess, phoneNumber },
   ref,
 ) {
   const t = useTranslations("customer.auth");
@@ -62,10 +65,11 @@ const OtpDialog = forwardRef<TOtpDialogHandle, TProps>(function OtpDialog(
 
         if (message.status === "success") {
           close();
+          onSuccess?.();
         }
       }
     },
-    [message],
+    [message, onSuccess],
   );
 
   useEffect(() => {
@@ -129,10 +133,7 @@ const OtpDialog = forwardRef<TOtpDialogHandle, TProps>(function OtpDialog(
             >
               {t("verify")}
             </SubmitButton>
-            {/* FIXME: pass phone number to resend button or use zustand */}
-            <ResendButton
-              phoneNumber={{ countryCode: "US", phoneNumber: "1234567890" }}
-            />
+            <ResendButton phoneNumber={phoneNumber} />
           </div>
         </form>
       </dialog>

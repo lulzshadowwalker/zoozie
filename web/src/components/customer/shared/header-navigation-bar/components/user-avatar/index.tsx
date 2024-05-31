@@ -5,7 +5,7 @@ import ZoozieDropDown from "@/components/shared/zoozie-dropdown";
 import { signOut } from "@/lib/actions/auth";
 import { useUser } from "@/lib/context/user";
 import { Link, useRouter } from "@/lib/i18n/navigation";
-import { cn, getCustomerImage, getUserImage, showToast } from "@/lib/utils";
+import { cn, getUserImage } from "@/lib/utils";
 import {
   faHeart,
   faRightToBracket,
@@ -18,8 +18,7 @@ import LanguageSwitcher from "./components/language-switcher";
 export default function UserAvatar() {
   const t = useTranslations("customer.header-navigation-bar");
   const router = useRouter();
-  const { user: res, refresh: refreshUser } = useUser();
-  const user = res?.value;
+  const { user, refresh: refreshUser } = useUser();
 
   return (
     <ZoozieDropDown
@@ -27,22 +26,30 @@ export default function UserAvatar() {
       title={
         <div
           className={cn(
-            "relative h-l-xl w-l-xl overflow-hidden rounded-full bg-gray-400",
+            "relative h-l-xl w-l-xl overflow-hidden rounded-full bg-gray-300 transition-all",
+            {
+              "animate-pulse duration-200": user?.pending,
+            },
+            {
+              "ring-2 ring-accent-1 hover:ring-focused-accent-1": user?.value,
+            },
           )}
         >
-          <ZoozImage
-            src={getUserImage(user)}
-            alt={t("avatar")}
-            title={t("avatar")}
-            fill
-            sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
-            quality={65}
-            className="object-cover"
-          />
+          {!user?.pending && (
+            <ZoozImage
+              src={getUserImage(user?.value)}
+              alt={t("avatar")}
+              title={t("avatar")}
+              fill
+              sizes="(min-width: 1320px) 38px, calc(1.7vw + 16px)"
+              quality={65}
+              className="object-cover"
+            />
+          )}
         </div>
       }
     >
-      {user?.role === "CUSTOMER" && (
+      {user?.value?.role === "CUSTOMER" && (
         <>
           <Link
             href="/account/favorites"
@@ -68,11 +75,11 @@ export default function UserAvatar() {
         </>
       )}
 
-      {user?.role === "AGENCY_AGENT" && (
+      {user?.value?.role === "AGENCY_AGENT" && (
         <>
-          {user?.agent?.agency?.slug && (
+          {user?.value?.agent?.agency?.slug && (
             <Link
-              href={`/${user?.agent?.agency?.slug}`}
+              href={`/${user?.value?.agent?.agency?.slug}`}
               className="!flex items-center gap-2xs-xs"
             >
               <FontAwesomeIcon icon={faToolbox} />
@@ -97,7 +104,7 @@ export default function UserAvatar() {
         </>
       )}
 
-      {!user?.role && (
+      {!user?.value?.role && (
         <>
           <LanguageSwitcher />
           <Link href="/auth/login" className="!flex items-center gap-2xs-xs">

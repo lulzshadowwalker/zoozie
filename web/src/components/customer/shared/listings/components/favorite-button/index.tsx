@@ -86,7 +86,7 @@ export default function FavoriteButton({ listing }: Props) {
         icon={faHeart}
         size="sm"
         className={cn(
-          "rounded-full border border-gray-500 bg-primary-1/30 p-3xs-2xs text-sm text-gray-600 backdrop-blur-md transition-all",
+          "rounded-full border border-gray-500 bg-primary-1/30 p-[0.6rem] text-[1rem] text-gray-600 backdrop-blur-md transition-all max-md:opacity-100",
           {
             "opacity-0 group-hover:opacity-100": !favorite,
           },

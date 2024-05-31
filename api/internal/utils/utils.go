@@ -37,6 +37,8 @@ const (
 var (
 	ErrNotCustomer = errors.New("user is not a customer")
 	ErrNotAgent    = errors.New("user is not an agent")
+
+	ErrEmptyFile = errors.New("file is empty")
 )
 
 type ApiError struct {
@@ -256,10 +258,20 @@ func GenerateSlug(s ...string) string {
 
 // returns the destination file, the destination file path, and the error if any
 func StoreFile(file *multipart.FileHeader) (FileInfo, error) {
+	if file.Size == 0 {
+		return FileInfo{}, ErrEmptyFile
+	}
+
+	source, err := file.Open()
+	if err != nil {
+		return FileInfo{}, fmt.Errorf("failed to open file because %w", err)
+	}
+	defer source.Close()
+
 	id := uuid.NewString()
 	destPath := fmt.Sprintf("public/%s/%s/%s/", id[0:1], id[0:2], id[0:3])
 
-	err := os.MkdirAll(destPath, os.ModePerm)
+	err = os.MkdirAll(destPath, os.ModePerm)
 	if err != nil {
 		return FileInfo{}, fmt.Errorf("failed to create directory because %w", err)
 	}
@@ -270,12 +282,6 @@ func StoreFile(file *multipart.FileHeader) (FileInfo, error) {
 		return FileInfo{}, fmt.Errorf("failed to open file because %w", err)
 	}
 	defer dest.Close()
-
-	source, err := file.Open()
-	if err != nil {
-		return FileInfo{}, fmt.Errorf("failed to open file because %w", err)
-	}
-	defer source.Close()
 
 	_, err = io.Copy(dest, source)
 	if err != nil {

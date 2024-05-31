@@ -10,9 +10,10 @@ type Props = {
   title: string;
   href: string;
   icon: IconProp;
+  className?: string;
 };
 
-export default function LinkItem({ title, href, icon }: Props) {
+export default function LinkItem({ title, href, icon, className }: Props) {
   const pathname = usePathname();
 
   const { agency, sanitizedPathname } = useMemo(() => {
@@ -33,13 +34,14 @@ export default function LinkItem({ title, href, icon }: Props) {
 
   return (
     <Link
-      href={agency + href}
+      href={`/${agency}${href}`}
       title={title}
       className={cn(
         "group flex items-center justify-center text-gray-300 focus:text-on-primary-1",
         {
           "pointer-events-none": isActive,
         },
+        className,
       )}
     >
       {isActive && (

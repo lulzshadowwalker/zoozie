@@ -15,7 +15,10 @@ export default function Card({
 }: Props) {
   return (
     <div
-      className={cn("rounded-2xl border px-s-m py-xs-s", className)}
+      className={cn(
+        "rounded-2xl border border-gray-300 bg-gray-50/80 px-s-m py-xs-s",
+        className,
+      )}
       {...rest}
     >
       <div className="mb-l-xl">

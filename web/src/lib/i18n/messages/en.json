@@ -1,6 +1,7 @@
 {
   "just-now": "just now",
   "minutes-ago": "minutes ago",
+  "loading": "Loading",
   "currency": {
     "jod": "JOD"
   },
@@ -232,6 +233,7 @@
       "welcome-back": "Welcome back",
       "page-views": "Page views",
       "past-30-days": "Past 30 days",
+      "past-7-days": "Past 7 days",
       "admins": "Admins",
       "listings": "Listings",
       "reviews": "Reviews",
@@ -316,7 +318,8 @@
       "failure": "An unexpected error occurred. Please try again later.",
       "square-meter-unit": "m",
       "logo": "Logo",
-      "follow": "Follow"
+      "follow": "Follow",
+      "year-built-invalid": "Year built is invalid"
     },
     "messages": {
       "messages": "Messages",

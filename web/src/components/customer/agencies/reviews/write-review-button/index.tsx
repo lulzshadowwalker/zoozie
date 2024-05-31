@@ -114,6 +114,11 @@ export default function WriteReviewButton({ agency }: Props) {
   }
 
   function toggleDialog() {
+    if (!claims.value) {
+      showAuthRequiredToast();
+      return;
+    }
+
     if (claims?.value?.role !== "CUSTOMER") {
       showAgentRestrictionToast();
       return;

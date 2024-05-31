@@ -3,7 +3,7 @@
 import ZoozInput from "@/components/shared/zooz-input";
 import { login, sendOtp } from "@/lib/actions/auth";
 import { showToast } from "@/lib/utils";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import SubmitButton from "@/components/shared/submit-button";
 import Button from "@/components/shared/button";
@@ -11,21 +11,18 @@ import { Link } from "@/lib/i18n/navigation";
 import OtpDialog, {
   TOtpDialogHandle,
 } from "@/components/customer/auth/otp-dialog";
-import { TPhoneNumber } from "@/lib/types";
 import { useUser } from "@/lib/context/user";
+import AuthContextProvider, { useAuth } from "@/lib/context/auth/register";
 
-export default function Login() {
+function Login() {
   const t = useTranslations("customer.auth");
-  const [phoneNumber, setPhoneNumber] = useState<TPhoneNumber>({
-    countryCode: "962",
-    phoneNumber: "",
-  });
+  const { phoneNumber, setPhoneNumber } = useAuth();
   const sendOtpToPhoneNumber = sendOtp.bind(null, phoneNumber);
   const otpDialogRef = useRef<TOtpDialogHandle>(null);
   const { refresh } = useUser();
 
   async function handleSendOtp() {
-    if (phoneNumber.phoneNumber == "") {
+    if (phoneNumber.phoneNumber == "" || phoneNumber.countryCode == "") {
       showToast({
         status: "failure",
         message: t("bad-request"),
@@ -118,7 +115,19 @@ export default function Login() {
           </div>
         </form>
       </main>{" "}
-      <OtpDialog ref={otpDialogRef} verifier={handleOtpVerification} />
+      <OtpDialog
+        ref={otpDialogRef}
+        verifier={handleOtpVerification}
+        phoneNumber={phoneNumber}
+      />
     </>
+  );
+}
+
+export default function ClientLoginWrapper() {
+  return (
+    <AuthContextProvider>
+      <Login />
+    </AuthContextProvider>
   );
 }

@@ -18,7 +18,9 @@ export default async function Favorites({
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetchApi("/listings/favorites", { init: { headers } });
+  const res = await fetchApi("/listings/favorites", {
+    init: { headers, cache: "no-store" },
+  });
   if (!res.ok) {
     throw new Error("account.favorites: " + res.statusText);
   }

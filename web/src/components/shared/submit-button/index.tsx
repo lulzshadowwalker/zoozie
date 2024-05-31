@@ -2,7 +2,8 @@
 
 import Button, { ButtonProps } from "@/components/shared/button";
 import { useTranslations } from "next-intl";
-import { ButtonHTMLAttributes } from "react";
+import Spinner from "../spinner";
+import { cn } from "@/lib/utils";
 import { useFormStatus } from "react-dom";
 
 /**
@@ -20,8 +21,12 @@ export default function SubmitButton({
   const { pending } = useFormStatus();
 
   return (
-    <Button className={className} disabled={pending} {...rest}>
-      {children}
+    <Button
+      className={cn("flex items-center justify-center gap-2xs-xs", className)}
+      disabled={pending}
+      {...rest}
+    >
+      {pending && <Spinner />} {children}
     </Button>
   );
 }

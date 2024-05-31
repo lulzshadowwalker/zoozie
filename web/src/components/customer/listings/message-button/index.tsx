@@ -14,10 +14,16 @@ type Props = {
 export default function MessageButton({ agency }: Props) {
   const t = useTranslations("customer.listings");
   const { claims } = useUser();
-  const { showAgentRestrictionToast } = useToastHelpers();
+  const { showAuthRequiredToast, showAgentRestrictionToast } =
+    useToastHelpers();
   const { startConversation } = useCustomerStartConversation();
 
   function handleStartConversation() {
+    if (!claims.value) {
+      showAuthRequiredToast();
+      return;
+    }
+
     if (claims?.value?.role !== "CUSTOMER") {
       showAgentRestrictionToast();
       return;

@@ -172,6 +172,7 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
 /** END CSS RESET **/
 
 p {
@@ -193,6 +194,7 @@ a:focus {
 }
 
 @layer base {
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;

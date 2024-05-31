@@ -4,7 +4,6 @@ import { TUser } from "@types";
 import {
   ReactNode,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,

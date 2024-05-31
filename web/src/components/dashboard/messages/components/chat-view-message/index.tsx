@@ -47,7 +47,7 @@ export function ChatViewMessage({
 
       <p
         className={cn(
-          "break-words rounded-3xl bg-primary-1/50 p-xs-s",
+          "max-w-full text-balance break-words rounded-3xl bg-primary-1/50 p-xs-s",
           {
             "rounded-tr-none": sender,
           },

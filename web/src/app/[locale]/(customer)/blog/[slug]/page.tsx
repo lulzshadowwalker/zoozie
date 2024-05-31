@@ -202,7 +202,7 @@ export default async function BlogPost({ params: { locale, slug } }: Props) {
         </div>
       )}
 
-      <div className="mx-auto flex max-w-[90ch] max-md:flex-col">
+      <div className="mx-auto flex max-w-[90ch] max-md:flex-col-reverse">
         <div className="relative">
           <SocialLinks className="sticky top-[8rem] flex-col justify-center max-md:my-l-xl max-md:flex-row max-md:gap-m-l" />
         </div>

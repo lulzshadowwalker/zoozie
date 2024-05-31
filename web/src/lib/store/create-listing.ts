@@ -74,11 +74,39 @@ type TActions = {
   setLocation(location: TState["location"]): void;
   setPropertyType(code: string): void;
   setTranslated: (translated: boolean) => void;
+  reset: () => void;
+};
+
+const initialState: TState = {
+  enDescription: undefined,
+  arDescription: undefined,
+  bedrooms: undefined,
+  enBedroomsDescription: undefined,
+  arBedroomsDescription: undefined,
+  bathrooms: undefined,
+  enBathroomsDescription: undefined,
+  arBathroomsDescription: undefined,
+  yearBuilt: undefined,
+  enYearBuiltDescription: undefined,
+  arYearBuiltDescription: undefined,
+  area: undefined,
+  enAreaDescription: undefined,
+  arAreaDescription: undefined,
+  furnished: undefined,
+  enFurnishedDescription: undefined,
+  arFurnishedDescription: undefined,
+  availabilities: undefined,
+  extraFeatures: undefined,
+  pictures: undefined,
+  location: undefined,
+  propertyType: undefined,
+  translated: undefined,
 };
 
 export const useCreateListingStore = create<TState & TActions>(
   (set) => {
     return {
+      ...initialState,
       setDescription: (locale, description) =>
         set((state) => ({ ...state, [`${locale}Description`]: description })),
       setYearBuilt: (yearBuilt) =>
@@ -202,6 +230,9 @@ export const useCreateListingStore = create<TState & TActions>(
       setPropertyType: (code) =>
         set((state) => ({ ...state, propertyType: code })),
       setTranslated: (translated) => set((state) => ({ ...state, translated })),
+      reset: () => {
+        set({ ...initialState });
+      },
     };
   },
   {
