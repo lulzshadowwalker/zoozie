@@ -98,6 +98,7 @@ export default function WriteReviewButton({ agency }: Props) {
 
   function resetAndToggle() {
     formRef.current?.reset();
+    setRating(undefined);
     toggleDialog();
   }
 

@@ -3,7 +3,6 @@ package agencies
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -112,10 +111,6 @@ func (h *handler) GetAgencyReviews(c echo.Context) error {
 	reviews, err := h.service.GetAgencyReviews(utils.TransformEchoContext(c), request)
 	if err != nil {
 		return err
-	}
-
-	for _, r := range reviews {
-		log.Println(r.CreatedAt)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{

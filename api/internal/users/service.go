@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/lulzshadowwalker/zoozie/api/internal/customers"
@@ -50,7 +49,6 @@ func (s *service) GetUserById(c context.Context, id int) (*entities.User, error)
 }
 
 func (s *service) expandUser(c context.Context, user entities.User) (entities.User, error) {
-	log.Println("user role", user.Role)
 	if user.Role == entities.RoleCustomer {
 		customer, err := s.repo.GetCustomerByUserID(c, int(user.ID), nil)
 		if err != nil {

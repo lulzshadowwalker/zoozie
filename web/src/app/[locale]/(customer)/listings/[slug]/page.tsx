@@ -22,6 +22,8 @@ import { getPostHogDistinctId } from "@/lib/actions/posthog";
 import PostHogClient from "@/lib/posthog/client";
 import { headers } from "next/headers";
 
+// export const dynamic = "force-static";
+
 export async function generateStaticParams({
   params: { locale },
 }: {
@@ -58,6 +60,11 @@ export default async function Listing({ params: { locale, slug } }: Props) {
   const t = await getTranslations("customer.listings");
 
   const res = await fetchApi("/listings/" + slug, {
+    init: {
+      next: {
+        revalidate: 60,
+      },
+    },
     queryParams: {
       expand: "agency",
     },

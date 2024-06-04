@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -141,7 +140,6 @@ func (h *handler) Chat(c echo.Context) error {
 	conversations[conversation.ID] = append(conversations[conversation.ID], socketSession)
 	defer delete(conversations, conversation.ID)
 
-	log.Println("SAVED WS => ", socketSession.ws != nil)
 	return h.handleConnection(c, socketSession)
 }
 
@@ -190,8 +188,6 @@ func (h *handler) handleConnection(c echo.Context, session SocketSession) error 
 			Content: string(incomingPayload.Message.Content),
 			Type:    MessageText,
 		}
-
-		log.Println("len of conns", len(conversations[session.Conversation.ID]))
 
 		message := SocketPayload{Message: content}
 		for _, s := range conversations[session.Conversation.ID] {

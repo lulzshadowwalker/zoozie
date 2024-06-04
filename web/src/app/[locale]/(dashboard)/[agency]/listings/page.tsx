@@ -36,6 +36,7 @@ export default async function Listings({
   );
 
   const res = await fetchApi("/listings", {
+    init: { cache: "no-store" },
     queryParams: {
       agency,
       ...(filters as Record<string, string>),

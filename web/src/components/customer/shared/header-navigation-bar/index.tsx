@@ -81,7 +81,9 @@ export default function HeaderNavigationBar() {
         </ul>
 
         <section className="ms-s-m flex items-center gap-xs-s max-md:ms-auto max-md:gap-[0.2rem]">
-          <Button className="max-md:hidden">{t("list-your-home")}</Button>
+          <Button className="cursor-not-allowed max-md:hidden">
+            {t("list-your-home")}
+          </Button>
           <UserAvatar />
 
           {/* Mobile Side Menu */}

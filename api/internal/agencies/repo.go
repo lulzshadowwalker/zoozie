@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	. "github.com/go-jet/jet/v2/postgres"
@@ -325,10 +324,6 @@ func (r *repo) GetAgencyReviews(c context.Context, id int, tx interfaces.Transac
 		}
 
 		reviews[index] = review
-	}
-	for i, r := range reviews {
-		log.Println(dest[i].Review.CreatedAt)
-		log.Println(r.CreatedAt)
 	}
 
 	return reviews, nil

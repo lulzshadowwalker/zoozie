@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -143,15 +144,14 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 
 	if request.ProfilePicture != nil {
 		uploadInfo, err := utils.StoreFile(request.ProfilePicture)
+		if err != nil && !errors.Is(err, utils.ErrEmptyFile) {
+			return entities.User{}, err
+		}
 		if err == nil {
 			user.ProfilePicture = &uploadInfo.Path
 		}
-
-		if !errors.Is(err, utils.ErrEmptyFile) {
-			return entities.User{}, err
-		}
-
 	}
+
 	user, err = s.repo.CreateUser(c, user, tx)
 	if err != nil {
 		return entities.User{}, err
@@ -179,6 +179,7 @@ func (s *service) RegisterCustomer(c context.Context, request registerCustomerRe
 
 	user.AccessToken = accessToken
 	user.RefreshToken = refreshToken
+	log.Printf("User registered successfully %+#v\n", user)
 	return user, nil
 }
 
