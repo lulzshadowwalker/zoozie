@@ -4,3 +4,5 @@ analyzer:
   language:
     strict-raw-types: true
     strict-casts: true
+  plugins:
+    - custom_lint

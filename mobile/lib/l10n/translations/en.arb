@@ -1,14 +1,7 @@
 {
-    "@@locale": "en",
-    "hello": "hello, {name}.",
-    "@helloWorld": {
-      "description": "A simple hello world function",
-        "placeholders": {
-          "name": {
-            "description": "The name of the person to greet",
-            "type": "String",
-            "example": "Lulzie"
-          }
-        }
-      }
+    "@@locale": "ar",
+    "countryCode": "Country code",
+    "countryCodeSearchPlaceholder": "Search by country, code, or dial code",
+    "phoneNumber": "Phone number",
+    "phoneNumberRequired": "Please enter a valid phone number"
 }
