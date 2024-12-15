@@ -11,22 +11,22 @@ import (
 var Database *sql.DB
 
 func init() {
-  port, err := config.GetDatabasePort()
-  if err != nil {
-    panic(fmt.Errorf("failed to read database port because %w", err))
-  }
+	port, err := config.GetDatabasePort()
+	if err != nil {
+		panic(fmt.Errorf("failed to read database port because %w", err))
+	}
 
 	connectionString := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=%s password=%s",
 		config.GetDatabaseHost(),
-    port,
+		port,
 		config.GetDatabaseUsername(),
 		config.GetDatabaseName(),
 
 		// TODO:: enable sslmode in prod using build tags
 		"disable",
 
-    config.GetDatabasePassword(),
+		config.GetDatabasePassword(),
 	)
 
 	database, err := sql.Open("postgres", connectionString)
