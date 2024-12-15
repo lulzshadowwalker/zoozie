@@ -1,5 +1,5 @@
 import Config from "@/lib/config";
-import useSWR from "swr";
+import useSWR from "./swr";
 import path from "path";
 import { useParams } from "next/navigation";
 import { getLocale } from "next-intl/server";
@@ -60,6 +60,7 @@ export async function fetchApi(
   }
 
   const url = generateApiUrl({ endpoint, queryParams, locale, source });
+  console.debug('Fetching ... ', url.href);
   const startTime = performance.now();
   const res = await fetch(url, requestOptions); // TODO: might want to use a default revalidation duration
   const endTime = performance.now();
