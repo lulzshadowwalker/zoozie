@@ -32,6 +32,7 @@ export function PreviousConversations() {
         clearInterval(interval);
       };
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [accessToken.pending, accessToken.value, conversation],
   );
 

@@ -19,20 +19,22 @@ export default class Config {
     return apiBaseUrl;
   }
   static get strapiBaseUrl(): string {
+    return ""
     const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_BASE_URL;
     if (!strapiBaseUrl) {
       throw new Error("env.NEXT_PUBLIC_STRAPI_BASE_URL is not set");
     }
 
-    return strapiBaseUrl;
+    // return strapiBaseUrl;
   }
   static get strapiAccessToken(): string {
-    const token = process.env.STRAPI_ACCESS_TOKEN;
-    if (!token) {
-      throw new Error("env.STRAPI_ACCESS_TOKEN is not set");
-    }
+    return ""
+    // const token = process.env.STRAPI_ACCESS_TOKEN;
+    // if (!token) {
+    //   throw new Error("env.STRAPI_ACCESS_TOKEN is not set");
+    // }
 
-    return token;
+    // return token;
   }
   static get jwtSecret(): string {
     const secret = process.env.JWT_SECRET;

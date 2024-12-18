@@ -111,8 +111,8 @@ export function ChatTile({ conversation, className, ...rest }: ChatTileProps) {
           console.error("ChatViewBody: failed to fetch conversation", err);
           showToast(failureMessage);
         });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [accessToken.value, customerSearchParam],
   );
 
