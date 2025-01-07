@@ -30,6 +30,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "api.zoozie.lulzie.online",
+      },
+      {
+        protocol: "https",
         hostname: "**.google.com",
       },
       {
