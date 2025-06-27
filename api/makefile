@@ -4,7 +4,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 	@true
 
 .DEFAULT_TARGET=watch
-.PHONY: watch build run test clean proto-go goose-up goose-up-by-one goose-up-to goose-down goose-down-to goose-redo goose-reset goose-status goose-version goose-create goose-fix goose-validate
+.PHONY: watch build run test clean proto-go goose-up goose-up-by-one goose-up-to goose-down goose-down-to goose-redo goose-reset goose-status goose-version goose-create goose-fix goose-validate fresh
 
 # Live Reload
 watch:
@@ -156,3 +156,9 @@ seeders-fix:
 # seeders validate
 seeders-validate:
 	@goose --dir ${SEEDERS_DIR} --table="seeders_db_version" validate
+
+fresh:
+	-$(MAKE) seeders-reset
+	$(MAKE) goose-reset
+	$(MAKE) goose-up
+	$(MAKE) seeders-up

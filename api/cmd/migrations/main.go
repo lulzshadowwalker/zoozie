@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 
 	"github.com/go-jet/jet/v2/generator/metadata"
 	"github.com/go-jet/jet/v2/generator/postgres"
@@ -16,7 +17,7 @@ import (
 func main() {
 	port, err := config.GetDatabasePort()
 	if err != nil {
-		panic(fmt.Errorf("failed to read database port because %w", err))
+		slog.Warn("failed to read database port", "error", err)
 	}
 
 	dbConnection := postgres.DBConnection{

@@ -8,12 +8,14 @@ require (
 	github.com/go-jet/jet/v2 v2.11.0
 	github.com/google/wire v0.6.0
 	github.com/gorilla/websocket v1.5.1
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
 )
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.28.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

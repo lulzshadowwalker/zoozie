@@ -5,8 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
-
 	"github.com/joho/godotenv"
 )
 
@@ -42,13 +40,13 @@ func GetDatabaseUsername() string {
 	return os.Getenv("DB_USERNAME")
 }
 
-func GetDatabasePort() (int, error) {
+func GetDatabasePort() (string, error) {
 	str := os.Getenv("DB_PORT")
 	if str == "" {
-		return -1, ErrNoValue
+		return "", ErrNoValue
 	}
 
-	return strconv.Atoi(str)
+	return str, nil
 }
 
 func GetDatabasePassword() string {
@@ -57,6 +55,17 @@ func GetDatabasePassword() string {
 
 func GetDatabaseName() string {
 	return os.Getenv("DB_NAME")
+}
+
+// GetDatabaseSSLMode returns the SSL mode for the database connection.
+// If the environment variable is not set, it defaults to "disable".
+func GetDatabaseSSLMode() string {
+	val := os.Getenv("DB_SSL_MODE")
+	if val == "" {
+		return "disable"
+	}
+
+	return val
 }
 
 func GetSupportedLocales() []string {
