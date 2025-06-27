@@ -1,22 +1,14 @@
 import type { Schema, Attribute } from '@strapi/strapi';
 
-export interface PostRelatedPosts extends Schema.Component {
-  collectionName: 'components_post_related_posts';
+export interface SharedSharedImage extends Schema.Component {
+  collectionName: 'components_shared_shared_images';
   info: {
-    displayName: 'Related Posts';
-    icon: 'rotate';
-    description: '';
+    displayName: 'Shared Image';
+    icon: 'landscape';
   };
   attributes: {
-    posts: Attribute.Relation<
-      'post.related-posts',
-      'oneToMany',
-      'api::post.post'
-    >;
-    title: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }>;
+    media: Attribute.Media<'images'> & Attribute.Required;
+    alt: Attribute.String & Attribute.Required;
   };
 }
 
@@ -45,24 +37,32 @@ export interface SharedSeo extends Schema.Component {
   };
 }
 
-export interface SharedSharedImage extends Schema.Component {
-  collectionName: 'components_shared_shared_images';
+export interface PostRelatedPosts extends Schema.Component {
+  collectionName: 'components_post_related_posts';
   info: {
-    displayName: 'Shared Image';
-    icon: 'landscape';
+    displayName: 'Related Posts';
+    icon: 'rotate';
+    description: '';
   };
   attributes: {
-    media: Attribute.Media & Attribute.Required;
-    alt: Attribute.String & Attribute.Required;
+    posts: Attribute.Relation<
+      'post.related-posts',
+      'oneToMany',
+      'api::post.post'
+    >;
+    title: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
   };
 }
 
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
-      'post.related-posts': PostRelatedPosts;
-      'shared.seo': SharedSeo;
       'shared.shared-image': SharedSharedImage;
+      'shared.seo': SharedSeo;
+      'post.related-posts': PostRelatedPosts;
     }
   }
 }

@@ -389,7 +389,7 @@ export interface ApiPostPost extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 155;
       }>;
-    pictures: Attribute.Media &
+    pictures: Attribute.Media<'images', true> &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
