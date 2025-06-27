@@ -48,7 +48,26 @@
       },
       "type": "enumeration",
       "enum": [
-        "Design"
+        "Buying",
+        "Selling",
+        "Renting",
+        "Investment",
+        "Mortgage",
+        "Market Trends",
+        "Home Improvement",
+        "Neighborhoods",
+        "Real Estate Tips",
+        "Legal Advice",
+        "Property Management",
+        "Luxury",
+        "First Time Buyers",
+        "Commercial",
+        "Valuation",
+        "Renovation",
+        "Interior Design",
+        "Architecture",
+        "Financing",
+        "News"
       ],
       "required": true
     },

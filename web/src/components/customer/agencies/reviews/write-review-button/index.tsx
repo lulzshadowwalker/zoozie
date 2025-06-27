@@ -152,9 +152,9 @@ export default function WriteReviewButton({ agency }: Props) {
               title={agency.name ?? t("agency-logo")}
               fill
               sizes="56px"
-              className="object-contain"
+              // className="object-contain"
+              className="object-cover"
             />
-            kj
           </div>
 
           <div>
@@ -222,7 +222,7 @@ export default function WriteReviewButton({ agency }: Props) {
           </div>
 
           <div className="mx-auto flex items-start gap-s-m px-m-l">
-            <div className="relative h-xl-2xl w-xl-2xl overflow-hidden rounded-3xl">
+            <div className="relative h-xl-2xl min-w-xl-2xl overflow-hidden rounded-3xl">
               <ZoozImage
                 src={getCustomerImage(user?.value?.profilePicture)}
                 alt={user?.value?.name ?? t("customer-avatar")}

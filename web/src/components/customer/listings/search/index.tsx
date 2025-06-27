@@ -6,7 +6,7 @@ export default function Search() {
   return (
     <section className="border-b border-gray-300 pb-m-l mb-l-xl">
       <search>
-        <div className="mx-auto mt-2xl-3xl p-3xs-2xs rounded-full flex items-center max-w-[64rem] transition-all focus-within:border-[3px] border-focused-accent-1 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
+        <div className="mx-auto mt-2xl-3xl p-3xs-2xs rounded-full flex items-center max-w-[64rem] focus-within:ring-[3px] ring-focused-accent-1 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
           <label htmlFor="search-field">
             <FontAwesomeIcon
               icon={faMagnifyingGlass}

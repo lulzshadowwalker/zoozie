@@ -6,7 +6,7 @@ export default function TermsAndConditions() {
 
   return (
     <div className="bg-primary-1 py-2xl">
-      <div className="prose prose-2xl mx-auto max-w-screen-lg text-on-primary-1 dark:prose-invert">
+      <div className="prose prose-2xl mx-auto max-w-screen-lg text-on-primary-1 dark:prose-invert px-8 max-md:prose-lg">
         <h1>{t("title")}</h1>
         <p>{t("last-updated")}</p>
         <h2>{t("agreement.title")}</h2>

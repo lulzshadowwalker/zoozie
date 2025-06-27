@@ -54,7 +54,7 @@ export default async function Reviews({ agency }: Props) {
 
               return (
                 <li className="flex items-start gap-s-m" key={index}>
-                  <div className="relative h-xl-2xl w-xl-2xl overflow-hidden rounded-3xl">
+                  <div className="relative h-xl-2xl min-w-xl-2xl overflow-hidden rounded-3xl">
                     <ZoozImage
                       src={getCustomerImage(customer?.profilePicture)}
                       alt={customer?.name ?? t("customer-avatar")}
@@ -62,6 +62,7 @@ export default async function Reviews({ agency }: Props) {
                       fill
                       sizes="(min-width: 1340px) 50px, (min-width: 620px) calc(1.71vw + 27px), calc(7.67vw - 8px)"
                       quality={65}
+                      className="object-cover" 
                     />
                   </div>
                   <div className="w-full self-center leading-[1.2rem]">

@@ -395,7 +395,30 @@ export interface ApiPostPost extends Schema.CollectionType {
           localized: true;
         };
       }>;
-    tag: Attribute.Enumeration<['Design']> &
+    tag: Attribute.Enumeration<
+      [
+        'Buying',
+        'Selling',
+        'Renting',
+        'Investment',
+        'Mortgage',
+        'Market Trends',
+        'Home Improvement',
+        'Neighborhoods',
+        'Real Estate Tips',
+        'Legal Advice',
+        'Property Management',
+        'Luxury',
+        'First Time Buyers',
+        'Commercial',
+        'Valuation',
+        'Renovation',
+        'Interior Design',
+        'Architecture',
+        'Financing',
+        'News'
+      ]
+    > &
       Attribute.Required &
       Attribute.SetPluginOptions<{
         i18n: {
