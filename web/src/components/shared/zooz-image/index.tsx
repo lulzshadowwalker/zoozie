@@ -44,7 +44,8 @@ async function ServerImage({ src, ...rest }: Props) {
       <Image src={src} placeholder="blur" blurDataURL={base64} {...rest} />
     );
   } catch (e) {
-    console.error("failure generating placeholder image because ", e);
+    //  TODO: This component should be depracated in favor of something else
+    // console.error("failure generating placeholder image because ", e);
     return <Image src={src} {...rest} />;
   }
 }

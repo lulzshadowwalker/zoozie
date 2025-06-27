@@ -1,8 +1,9 @@
+import { IBasePageParams } from "@/lib/types";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-
-export default function TermsAndConditions() {
-  const t = useTranslations("terms-and-conditions");
+export default async function TermsAndConditions({ params: { locale } }: IBasePageParams) {
+  unstable_setRequestLocale(locale); 
+  const t = await getTranslations("terms-and-conditions");
 
   return (
     <div className="bg-primary-1 py-2xl">

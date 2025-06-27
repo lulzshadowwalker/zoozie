@@ -1,8 +1,9 @@
+import { IBasePageParams } from "@/lib/types";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-
-export default function PrivacyPolicy() {
-  const t = useTranslations("privacy-policy");
+export default async function PrivacyPolicy({ params: { locale } }: IBasePageParams ) {
+  unstable_setRequestLocale(locale); 
+  const t = await getTranslations("privacy-policy");
 
   return (
     <div className="bg-primary-1 py-2xl">
