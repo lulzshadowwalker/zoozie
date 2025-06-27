@@ -47,11 +47,11 @@ export default function Footer() {
       items: [
         {
           title: t("privacy-policy"),
-          href: "https://google.com",
+          href: "/privacy-policy",
         },
         {
           title: t("terms-and-conditions"),
-          href: "https://google.com",
+          href: "/terms-and-conditions",
         },
       ],
     },

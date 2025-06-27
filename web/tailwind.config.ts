@@ -95,6 +95,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwind-scrollbar-hide"), require("tailwindcss-dir")()],
+  plugins: [require("tailwind-scrollbar-hide"), require("tailwindcss-dir")(), require("@tailwindcss/typography")],
 };
 export default config;

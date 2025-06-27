@@ -53,5 +53,4 @@ export default async function Listings({
         {empty ? <EmptyState /> : <ListingsComponent listings={listings} />}
       </section>
     </main>
-  );
-}
+  ); }

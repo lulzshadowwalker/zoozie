@@ -32,7 +32,7 @@ export default function Hero() {
         </p>
 
         <search>
-          <div className="bg-white p-xs-s rounded-xl flex items-center max-w-[42rem] transition-all focus-within:border-[3px] border-focused-accent-1 mt-m-l">
+          <div className="bg-white p-xs-s rounded-xl flex items-center max-w-[42rem] focus-within:ring-[3px] ring-focused-accent-1 mt-m-l">
             <label htmlFor="search-field">
               <FontAwesomeIcon
                 icon={faMagnifyingGlass}

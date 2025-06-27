@@ -349,5 +349,105 @@
   "toast-helpers": {
     "auth-required": "Login or register a new account to use this feature",
     "agents-cannot-interact-with-customer-functionalities": "Agents cannot interact with customer functionalities"
+  },
+  "privacy-policy": {
+    "title": "Privacy Policy",
+    "last-updated": "Last Updated: June 27, 2025",
+    "introduction": "Welcome to Zoozie! We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services. By using our services, you agree to the collection and use of information in accordance with this policy.",
+    "information-we-collect": {
+      "title": "Information We Collect",
+      "introduction": "We may collect information about you in a variety of ways. The information we may collect on the Site includes:",
+      "personal-information": "Personal Information: We collect personally identifiable information, such as your name, shipping address, email address, and telephone number, and demographic information, such as your age, gender, hometown, and interests, that you voluntarily give to us when you register with the Site or when you choose to participate in various activities related to the Site, such as online chat and message boards.",
+      "usage-data": "Usage Data: We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ('Usage Data'). This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers and other diagnostic data.",
+      "cookies": "Cookies: We use cookies and similar tracking technologies to track the activity on our Service and we hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service."
+    },
+    "how-we-use-your-information": {
+      "title": "How We Use Your Information",
+      "introduction": "Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Site to:",
+      "provide-services": "Provide and maintain our Service;",
+      "improve-services": "Notify you about changes to our Service;",
+      "communication": "Allow you to participate in interactive features of our Service when you choose to do so;",
+      "legal-compliance": "Provide customer support;"
+    },
+    "sharing-your-information": {
+      "title": "Sharing Your Information",
+      "introduction": "We may share information we have collected about you in certain situations. Your information may be disclosed as follows:",
+      "third-party-providers": "Third-Party Service Providers: We may share your information with third parties that perform services for us or on our behalf, including payment processing, data analysis, email delivery, hosting services, customer service, and marketing assistance.",
+      "legal-requirements": "Legal Requirements: We may disclose your information if required to do so by law or in the good faith belief that such action is necessary to (i) comply with a legal obligation, (ii) protect and defend the rights or property of the Company, (iii) prevent or investigate possible wrongdoing in connection with the Service, (iv) protect the personal safety of users of the Service or the public, or (v) protect against legal liability.",
+      "business-transfers": "Business Transfers: We may share or transfer your information in connection with, or during negotiations of, any merger, sale of company assets, financing, or acquisition of all or a portion of our business to another company."
+    },
+    "your-choices": {
+      "title": "Your Choices",
+      "introduction": "You have certain choices about your information. You can:",
+      "cookies": "Cookies: You can set your browser to refuse all or some browser cookies, or to alert you when cookies are being sent. If you disable or refuse cookies, please note that some parts of this site may then be inaccessible or not function properly.",
+      "marketing-communications": "Marketing Communications: If you do not want us to use your email address to promote our own or third parties' products or services, you can opt-out by following the unsubscribe instructions in the email."
+    },
+    "security": {
+      "title": "Security of Your Information",
+      "introduction": "We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other type of misuse."
+    },
+    "childrens-privacy": {
+      "title": "Children's Privacy",
+      "introduction": "Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If you are a parent or guardian and you are aware that your child has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers."
+    },
+    "changes-to-this-policy": {
+      "title": "Changes to This Privacy Policy",
+      "introduction": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page."
+    },
+    "contact-us": {
+      "title": "Contact Us",
+      "introduction": "If you have any questions about this Privacy Policy, you can contact us by email at support@zoozie.com"
+    }
+  },
+  "terms-and-conditions": {
+    "title": "Terms and Conditions",
+    "last-updated": "Last Updated: June 27, 2025",
+    "agreement": {
+      "title": "Agreement to Terms",
+      "introduction": "These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Zoozie (“we,” “us” or “our”), concerning your access to and use of the zoozie.com website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Site”). You agree that by accessing the Site, you have read, understood, and agree to be bound by all of these Terms and Conditions. If you do not agree with all of these Terms and Conditions, then you are expressly prohibited from using the Site and you must discontinue use immediately."
+    },
+    "accounts": {
+      "title": "User Accounts",
+      "introduction": "To use certain features of our Service, you may be required to create an account. You are responsible for maintaining the confidentiality of your account and password, and you agree to accept responsibility for all activities that occur under your account or password. We reserve the right to refuse service, terminate accounts, remove or edit content, or cancel orders in our sole discretion."
+    },
+    "user-content": {
+      "title": "User Content",
+      "introduction": "You are responsible for any content that you post to the Service, including its legality, reliability, and appropriateness. By posting content to the Service, you grant us the right and license to use, modify, publicly perform, publicly display, reproduce, and distribute such content on and through the Service. You retain any and all of your rights to any content you submit, post, or display on or through the Service and you are responsible for protecting those rights."
+    },
+    "prohibited-activities": {
+      "title": "Prohibited Activities",
+      "introduction": "You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us. As a user of the Site, you agree not to:",
+      "illegal-activities": "Engage in any activity that is illegal or fraudulent.",
+      "spam": "Send spam or any other form of unsolicited communication.",
+      "harmful-content": "Post any content that is harmful, abusive, or obscene."
+    },
+    "intellectual-property": {
+      "title": "Intellectual Property",
+      "introduction": "The Service and its original content, features, and functionality are and will remain the exclusive property of Zoozie and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Zoozie."
+    },
+    "termination": {
+      "title": "Termination",
+      "introduction": "We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Service will immediately cease. If you wish to terminate your account, you may simply discontinue using the Service."
+    },
+    "disclaimer": {
+      "title": "Disclaimer of Warranties",
+      "introduction": "The Service is provided on an “AS IS” and “AS AVAILABLE” basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance."
+    },
+    "limitation-of-liability": {
+      "title": "Limitation of Liability",
+      "introduction": "In no event shall Zoozie, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose."
+    },
+    "governing-law": {
+      "title": "Governing Law",
+      "introduction": "These Terms shall be governed and construed in accordance with the laws of the Hashemite Kingdom of Jordan, without regard to its conflict of law provisions. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have had between us regarding the Service."
+    },
+    "changes-to-terms": {
+      "title": "Changes to Terms",
+      "introduction": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion. By continuing to access or use our Service after any revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, you are no longer authorized to use the Service."
+    },
+    "contact-us": {
+      "title": "Contact Us",
+      "introduction": "If you have any questions about these Terms, please contact us at support@zoozie.com"
+    }
   }
 }
