@@ -4,7 +4,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
+
 	"github.com/joho/godotenv"
 )
 
@@ -22,7 +24,7 @@ func init() {
 
 	err = godotenv.Load(dir + "/.env.local")
 	if err != nil {
-		panic(fmt.Errorf("failed to initialize config because %s", err))
+		slog.Warn("failed to load config file", "err", err, "file", ".env.local")
 	}
 
 	flag.Parse()
