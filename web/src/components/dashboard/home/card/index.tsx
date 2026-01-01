@@ -16,7 +16,7 @@ export default function Card({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-gray-300 bg-gray-50/80 px-s-m py-xs-s",
+        "rounded-2xl border border-gray-300 bg-gray-50/80 px-s-m py-xs-s transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1",
         className,
       )}
       {...rest}

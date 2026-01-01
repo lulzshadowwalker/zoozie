@@ -56,7 +56,7 @@ export default function Partners() {
     <section className="my-l-xl">
       <h2 className="text-center text-2xl font-semibold">{t("partners")}</h2>
 
-      <div className="my-l-xl flex flex-col gap-m-l">
+      <div className="my-l-xl flex flex-col gap-m-l" dir="ltr">
         {[
           samplePartnerIcons.slice(0, samplePartnerIcons.length / 2),
           samplePartnerIcons.slice(samplePartnerIcons.length / 2),

@@ -40,6 +40,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "**.assets.so",
       },
+      {
+        protocol: "https",
+        hostname: "img.freepik.com",
+      },
     ],
   },
 };

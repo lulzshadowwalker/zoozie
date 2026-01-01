@@ -5,6 +5,9 @@
   "currency": {
     "jod": "JOD"
   },
+  "listing-card": {
+    "edit": "Edit"
+  },
   "403": {
     "access-denied": "Access denied",
     "message": "Sorry, you don't have permission to access this page.",
@@ -58,7 +61,8 @@
       "english": "English",
       "arabic": "Arabic",
       "list-your-home": "List your home",
-      "sign-out-success": "Signed out successfully"
+      "sign-out-success": "Signed out successfully",
+      "property-estimation": "Property Estimation"
     },
     "home": {
       "featured-listings": "Featured Listings",
@@ -89,6 +93,12 @@
             "title": "We take care of the sale from start to finish."
           }
         }
+      },
+      "hero": {
+        "title": "The most beautiful homes",
+        "description": "Find the perfect place for you and your family",
+        "search-placeholder": "Search by address, city, or ZIP",
+        "search-button": "Search"
       }
     },
     "agency": {

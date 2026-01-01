@@ -67,13 +67,13 @@ export default function HeaderNavigationBar() {
           ))}
 
           <li>
-            <ZoozieDropDown title="services" buttonClassName="bg-transparent">
+            <ZoozieDropDown title={t("services")} buttonClassName="bg-transparent">
               <div className="cursor-not-allowed">
                 <Link
                   href="/services/property-estimation"
                   className="pointer-events-none"
                 >
-                  Property Estimation
+                  {t("property-estimation")}
                 </Link>
               </div>
             </ZoozieDropDown>

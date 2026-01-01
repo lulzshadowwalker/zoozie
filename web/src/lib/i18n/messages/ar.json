@@ -1,6 +1,7 @@
 {
   "just-now": "الآن",
   "minutes-ago": "قبل دقائق",
+  "loading": "جار التحميل",
   "currency": {
     "jod": "دينار أردني"
   },
@@ -43,7 +44,8 @@
       "otp-verified-successfully": "تم التحقق من رقم الهاتف بنجاح.",
       "seconds": "ثوان",
       "discover-your-dream-home": "اكتشف منزلك المثالي",
-      "fill-in-your-details": "أدخل تفاصيلك لتتمكن من الدخول"
+      "fill-in-your-details": "أدخل تفاصيلك لتتمكن من الدخول",
+      "profile-picture": "صورة الملف الشخصي"
     },
     "header-navigation-bar": {
       "avatar": "الصورة الرمزية",
@@ -59,7 +61,8 @@
       "english": "الإنجليزية",
       "arabic": "العربية",
       "list-your-home": "أدرج منزلك",
-      "sign-out-success": "تم تسجيل الخروج بنجاح"
+      "sign-out-success": "تم تسجيل الخروج بنجاح",
+      "property-estimation": "تخمين عقاري"
     },
     "home": {
       "featured-listings": "العقارات المميزة",
@@ -90,6 +93,12 @@
             "title": "نحن نتولى عملية البيع من البداية إلى النهاية."
           }
         }
+      },
+      "hero": {
+        "title": "أجمل المنازل",
+        "description": "ابحث عن المكان المثالي لك ولعائلتك",
+        "search-placeholder": "البحث حسب العنوان أو المدينة أو الرمز البريدي",
+        "search-button": "بحث"
       }
     },
     "agency": {
@@ -176,7 +185,8 @@
       "empty-state": {
         "title": "لا توجد نتائج للبحث",
         "description": "حاول تعديل تفضيلاتك أو استكشاف العروض الأخرى للحصول على تطابقات محتملة."
-      }
+      },
+      "unfurnished": "غير مفروش"
     },
     "footer": {
       "resources": "الموارد",
@@ -238,7 +248,33 @@
       "messages": "الرسائل",
       "agency-information": "معلومات الوكالة",
       "settings": "الإعدادات",
-      "sign-out": "تسجيل الخروج"
+      "sign-out": "تسجيل الخروج",
+      "sign-out-success": "تم تسجيل الخروج بنجاح"
+    },
+    "listings": {
+      "edit": "تعديل",
+      "your-favorites": "مفضلاتك",
+      "bedrooms": "غرف نوم",
+      "bathrooms": "حمامات",
+      "square-meters": "متر مربع",
+      "square-meters-unit": "م",
+      "rent": "إيجار",
+      "sale": "بيع",
+      "empty-state-title": "ابدأ بإنشاء قائمة!",
+      "empty-state-description": "لا يوجد شيء هنا بعد! ابدأ رحلتك بإنشاء قائمتك الأولى ونشرها للعالم."
+    },
+    "home": {
+      "welcome-back": "مرحباً بعودتك",
+      "page-views": "مشاهدات الصفحة",
+      "past-30-days": "آخر 30 يومًا",
+      "past-7-days": "آخر 7 أيام",
+      "admins": "المسؤولون",
+      "listings": "القوائم",
+      "reviews": "المراجعات",
+      "rating": "التقييم",
+      "conversations": "المحادثات",
+      "ratings": "التقييمات",
+      "all-time": "كل الأوقات"
     },
     "create-listing": {
       "title": "عنوان",
@@ -292,7 +328,10 @@
       "enter-arabic-first": "يرجى ملء التفاصيل باللغة العربية لقائمتك أولاً",
       "bad-request": "يرجى إدخال التفاصيل بشكل صحيح",
       "failure": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقًا.",
-      "square-meter-unit": "م"
+      "square-meter-unit": "م",
+      "logo": "شعار",
+      "follow": "متابعة",
+      "year-built-invalid": "سنة البناء غير صالحة"
     },
     "messages": {
       "messages": "الرسائل",
@@ -317,7 +356,8 @@
     "agencies": {}
   },
   "toast-helpers": {
-    "auth-required": "تسجيل الدخول أو إنشاء حساب جديد لاستخدام هذه الميزة"
+    "auth-required": "تسجيل الدخول أو إنشاء حساب جديد لاستخدام هذه الميزة",
+    "agents-cannot-interact-with-customer-functionalities": "لا يمكن للوكلاء التفاعل مع وظائف العملاء"
   },
   "privacy-policy": {
     "title": "سياسة الخصوصية",

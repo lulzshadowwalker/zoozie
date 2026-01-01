@@ -3,8 +3,11 @@ import ZoozImage from "@/components/shared/zooz-image";
 import { useRouter } from "@/lib/i18n/navigation";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useTranslations } from "next-intl";
 
 export default function Hero() {
+  const t = useTranslations("customer.home.hero");
+
   function handleSearch() {
     // TODO: handle prefetching after validation on hover
     // NOTE: keep this file as a server component to benefit from the blur placeholders that only work on the server with ZoozImage
@@ -25,10 +28,10 @@ export default function Hero() {
 
       <div className="absolute p-m-l bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/50 to-slate-900/0">
         <h2 className="text-3xl font-bold text-gray-200">
-          The most beautiful homes
+          {t("title")}
         </h2>
         <p className="text-lg text-gray-200 font-light">
-          Find the perfect place for you and your family
+          {t("description")}
         </p>
 
         <search>
@@ -44,12 +47,12 @@ export default function Hero() {
             <input
               id="search-field"
               type="search"
-              placeholder="Search by address, city, or ZIP"
+              placeholder={t("search-placeholder")}
               className="bg-transparent w-full mx-2xs-xs outline-none"
             />
 
             <label htmlFor="search-field" className="ms-auto">
-              <Button>Search</Button>
+              <Button>{t("search-button")}</Button>
             </label>
           </div>
         </search>
