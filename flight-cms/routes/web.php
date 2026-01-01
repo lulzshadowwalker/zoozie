@@ -10,6 +10,10 @@ Flight::route('GET /posts', static function (): void {
   Flight::panel('pages/posts/index', ['title' => 'Posts']);
 });
 
+Flight::route('GET /posts/create', static function (): void {
+  Flight::panel('pages/posts/create', ['title' => 'Create Post']);
+});
+
 Flight::map('notFound', static function (): void { 
   Flight::render('pages/404');
 });

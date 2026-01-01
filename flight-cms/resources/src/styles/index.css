@@ -5,6 +5,8 @@
 @source "../../../node_modules/preline/dist/*.js";
 @import "../../../node_modules/preline/variants.css";
 
+@plugin "@tailwindcss/forms";
+
 /* Adds pointer cursor to buttons */
 @layer base {
   button:not(:disabled),
