@@ -33,5 +33,5 @@ lulzie.md
 .env
 .env.*local
 
-public
+/public
 *.session.sql
