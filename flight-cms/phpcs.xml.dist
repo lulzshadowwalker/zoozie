@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+  <description />
+  <arg name="colors" />
+  <arg name="tab-width" value="2" />
+  <file>app/</file>
+  <file>resources/views/</file>
+  <file>routes/</file>
+  <file>tests/</file>
+  <file>index.php</file>
+  <file>rector.php</file>
+  <exclude-pattern>vendor</exclude-pattern>
+
+  <rule ref="Generic">
+    <exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
+    <exclude name="Generic.Classes.OpeningBraceSameLine.BraceOnNewLine" />
+    <exclude name="Generic.Commenting.DocComment.MissingShort" />
+    <exclude name="Generic.Files.EndFileNoNewline.Found" />
+    <exclude name="Generic.Formatting.MultipleStatementAlignment.NotSame" />
+    <exclude name="Generic.Formatting.NoSpaceAfterCast.SpaceFound" />
+    <exclude name="Generic.Formatting.SpaceBeforeCast.NoSpace" />
+    <exclude name="Generic.Functions.OpeningFunctionBraceBsdAllman.BraceOnSameLine" />
+    <exclude name="Generic.NamingConventions.AbstractClassNamePrefix.Missing" />
+    <exclude name="Generic.PHP.UpperCaseConstant.Found" />
+    <exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed" />
+  </rule>
+
+  <rule ref="Generic.Arrays.ArrayIndent">
+    <properties>
+      <property name="indent" value="2" />
+    </properties>
+  </rule>
+
+  <rule ref="Generic.Files.InlineHTML.Found">
+    <exclude-pattern>resources/views</exclude-pattern>
+  </rule>
+
+  <rule ref="Generic.Files.LowercasedFilename">
+    <include-pattern>database</include-pattern>
+    <include-pattern>resources</include-pattern>
+    <include-pattern>routes</include-pattern>
+    <include-pattern>scripts</include-pattern>
+  </rule>
+
+  <rule ref="Generic.Formatting.SpaceAfterNot">
+    <properties>
+      <property name="spacing" value="0" />
+    </properties>
+  </rule>
+
+  <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie">
+    <properties>
+      <property name="checkFunctions" value="false" />
+      <property name="checkClosures" value="true" />
+    </properties>
+  </rule>
+
+  <rule ref="Generic.PHP.ClosingPHPTag">
+    <include-pattern>resources/views</include-pattern>
+  </rule>
+
+  <rule ref="Generic.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="2" />
+    </properties>
+  </rule>
+
+  <rule ref="PEAR">
+    <exclude name="PEAR.Commenting.ClassComment.Missing" />
+    <exclude name="PEAR.Commenting.FileComment.Missing" />
+    <exclude name="PEAR.Commenting.FunctionComment.Missing" />
+    <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+    <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+    <exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+  </rule>
+
+  <rule ref="PEAR.Commenting.FunctionComment">
+    <properties>
+      <property name="specialMethods" type="array">
+        <element value="setUp" />
+      </property>
+    </properties>
+  </rule>
+
+  <rule ref="PEAR.Functions.FunctionCallSignature">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="allowMultipleArguments" value="true" />
+      <property name="requiredSpacesAfterOpen" value="0" />
+      <property name="requiredSpacesBeforeClose" value="0" />
+    </properties>
+  </rule>
+
+  <rule ref="PEAR.Functions.FunctionDeclaration">
+    <properties>
+      <property name="indent" value="2" />
+    </properties>
+  </rule>
+
+  <rule ref="PEAR.WhiteSpace.ObjectOperatorIndent">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="multilevel" value="false" />
+    </properties>
+  </rule>
+
+  <rule ref="PEAR.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="exact" value="true" />
+      <property name="tabIndent" value="false" />
+      <!-- <property name="tabWidth" value="2" /> -->
+      <property name="ignoreIndentationTokens" type="array">
+        <!-- <element value="" /> -->
+      </property>
+    </properties>
+  </rule>
+
+  <rule ref="PSR1" />
+
+  <rule ref="PSR12">
+    <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
+  </rule>
+
+  <rule ref="PSR2" />
+
+  <rule ref="PSR2.Methods.FunctionCallSignature">
+    <properties>
+      <property name="indent" value="2" />
+      <property name="allowMultipleArguments" value="false" />
+      <property name="requiredSpacesAfterOpen" value="0" />
+      <property name="requiredSpacesBeforeClose" value="0" />
+    </properties>
+  </rule>
+
+  <rule ref="Squiz">
+    <exclude name="Squiz.Commenting.ClassComment.Missing" />
+    <exclude name="Squiz.Commenting.ClosingDeclarationComment.Missing" />
+    <exclude name="Squiz.Commenting.FileComment.Missing" />
+    <exclude name="Squiz.Commenting.FunctionComment.Missing" />
+    <exclude name="Squiz.Commenting.VariableComment.Missing" />
+    <exclude name="Squiz.Files.FileExtension.ClassFound" />
+    <exclude name="Squiz.Formatting.OperatorBracket.MissingBrackets" />
+    <exclude name="Squiz.Operators.ComparisonOperatorUsage.NotAllowed" />
+    <exclude name="Squiz.PHP.EmbeddedPhp.ShortOpenEchoNoSemicolon" />
+    <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar" />
+    <exclude name="Squiz.WhiteSpace.FunctionClosingBraceSpace.SpacingBeforeClose" />
+  </rule>
+
+  <rule ref="Squiz.Commenting.FunctionComment">
+    <properties>
+      <property name="specialMethods" type="array">
+        <element value="setUp" />
+      </property>
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+    <properties>
+      <property name="indent" value="2" />
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.Strings.ConcatenationSpacing">
+    <properties>
+      <property name="spacing" value="1" />
+      <property name="ignoreNewlines" value="true" />
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+    <properties>
+      <property name="spacing" value="1" />
+      <property name="spacingBeforeFirst" value="0" />
+      <property name="spacingAfterLast" value="0" />
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.WhiteSpace.MemberVarSpacing">
+    <properties>
+      <property name="spacingBeforeFirst" value="0" />
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing">
+    <properties>
+      <property name="ignoreNewlines" value="true" />
+    </properties>
+  </rule>
+
+  <rule ref="Zend">
+    <exclude name="Zend.NamingConventions.ValidVariableName.PrivateNoUnderscore" />
+  </rule>
+</ruleset>

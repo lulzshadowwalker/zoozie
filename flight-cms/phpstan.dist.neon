@@ -1,0 +1,13 @@
+includes:
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
+
+parameters:
+  level: 0
+  paths:
+    - app
+    - routes
+    - resources/views
+    - tests
+    - index.php
+    - rector.php

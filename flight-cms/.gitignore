@@ -1,0 +1,13 @@
+/vendor
+/node_modules
+.env
+.env.test
+.phpunit.result.cache
+*.sublime-*
+phpcs.xml
+phpstan.neon
+phpunit.xml
+*.db
+.idea/
+resources/dist/
+env.d.ts
