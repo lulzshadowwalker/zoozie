@@ -14,7 +14,7 @@
 </head>
 
 <body>
-  <h1>hello, lulzie</h1>
+  <h1 class="bg-blue-400 text-4xl">hello, lulzie</h1>
 </body>
 
 </html>
