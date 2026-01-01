@@ -8,6 +8,7 @@ use Symfony\Component\Dotenv\Dotenv;
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/routes/web.php';
 require_once __DIR__ . '/routes/api.php';
+require_once __DIR__ . '/app/functions.php';
 
 $dotenv = new Dotenv;
 $dotenv->load(__DIR__ . '/.env.dist', __DIR__ . '/.env');

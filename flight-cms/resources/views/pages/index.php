@@ -1,8 +1,4 @@
-<?php
-
-declare(strict_types=1);
-
-?>
+<?php declare(strict_types=1) ?>
 
 <!DOCTYPE html>
 <html>
@@ -14,13 +10,11 @@ declare(strict_types=1);
   <title><?= $_ENV['APP_NAME'] ?></title>
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <link rel="icon" href="./resources/images/favicon.svg" />
-  <link rel="stylesheet" href="./resources/dist/index.css" />
+  <?= vite('resources/src/index.ts') ?>
 </head>
 
 <body>
-  Edit&nbsp;<code><?= __FILE__ ?></code>
-
-  <script src="./resources/dist/index.js"></script>
+  <h1>hello, lulzie</h1>
 </body>
 
 </html>
