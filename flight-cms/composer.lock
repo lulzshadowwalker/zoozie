@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c38aa16e0c793a0efdd2467d019c8a92",
+    "content-hash": "9f1ac44bea160dc65ecadf35edd46521",
     "packages": [
         {
             "name": "cakephp/chronos",
@@ -453,6 +453,63 @@
                 "source": "https://github.com/flightphp/core/tree/v3.17.0"
             },
             "time": "2025-07-20T15:54:04+00:00"
+        },
+        {
+            "name": "flightphp/session",
+            "version": "v0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flightphp/session.git",
+                "reference": "3d328a8961041a631133c9c9609300cabe8d9896"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flightphp/session/zipball/3d328a8961041a631133c9c9609300cabe8d9896",
+                "reference": "3d328a8961041a631133c9c9609300cabe8d9896",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0",
+                "rregeer/phpunit-coverage-check": "^0.3.1",
+                "squizlabs/php_codesniffer": "^3.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "flight\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "n0nag0n",
+                    "email": "n0nag0n@sky-9.com",
+                    "role": "Owner"
+                }
+            ],
+            "description": "Tidy session library for Flight PHP",
+            "homepage": "https://docs.flightphp.com",
+            "keywords": [
+                "Simple",
+                "easy",
+                "flight",
+                "framework",
+                "lightweight",
+                "micro",
+                "php",
+                "session"
+            ],
+            "support": {
+                "issues": "https://github.com/flightphp/session/issues",
+                "source": "https://github.com/flightphp/session/tree/v0.3.0"
+            },
+            "time": "2025-06-21T19:54:01+00:00"
         },
         {
             "name": "league/container",

@@ -8,6 +8,7 @@
     "ext-pdo": "*",
     "flightphp/container": "^1.3",
     "flightphp/core": "^3.17",
+    "flightphp/session": "^0.3.0",
     "robmorgan/phinx": "^0.16.10",
     "symfony/dotenv": "^7.3"
   },
@@ -26,7 +27,7 @@
     "pre-update-cmd": "composer run post-create-project-cmd",
     "serve": [
       "Composer\\Config::disableProcessTimeout",
-      "php -S 0.0.0.0:61001"
+      "php -S 0.0.0.0:8000"
     ],
     "post-create-project-cmd": [
       "php -r \"if (!file_exists('.env')) copy('.env.dist', '.env');\"",

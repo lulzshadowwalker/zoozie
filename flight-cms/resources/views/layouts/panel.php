@@ -17,6 +17,7 @@
     <?= $header ?>
     <?= $sidebar ?>
     <?= $content ?>
+    <?= $alert ?>
 </body>
 
 </html>

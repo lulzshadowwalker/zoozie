@@ -14,32 +14,47 @@
           </button>
         </header>
 
-        <form id="post-form" class="p-6 space-y-8" x-data="{ 
-            title: '', 
-            slug: '',
+        <form id="post-form" action="/posts" method="POST" class="p-6 space-y-8" x-data="{ 
+            title: '<?= old('title') ?>', 
+            slug: '<?= old('slug') ?>',
             updateSlug() {
                 this.slug = this.title
                     .toLowerCase()
                     .replace(/[^\w ]+/g, '')
                     .replace(/ +/g, '-')
+            },
+            init() {
+                this.updateSlug();
             }
         }">
           <!-- Title & Slug -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Title</label>
-              <input type="text" id="title" name="title" x-model="title" @input="updateSlug()" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Enter post title">
+              <input type="text" id="title" name="title" x-model="title" @input="updateSlug()" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Enter post title" aria-invalid=<?= error('title') ?>>
+
+              <?php if (error('title')): ?>
+                <p class="mt-1 text-sm text-red-400"><?= message('title') ?></p>
+              <?php endif; ?>
             </div>
             <div class="space-y-2">
               <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Slug</label>
               <input type="text" id="slug" name="slug" x-model="slug" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="auto-generated-slug">
+
+              <?php if (error('slug')): ?>
+                <p class="mt-1 text-sm text-red-400"><?= message('slug') ?></p>
+              <?php endif; ?>
             </div>
           </div>
 
           <!-- Content -->
           <div class="space-y-2">
             <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Content</label>
-            <textarea id="content" name="content" rows="10" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Write your post content here..."></textarea>
+            <textarea id="content" name="content" rows="10" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Write your post content here..."><?= old('content') ?></textarea>
+
+            <?php if (error('content')): ?>
+              <p class="mt-1 text-sm text-red-400"><?= message('content') ?></p>
+            <?php endif; ?>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -49,19 +64,28 @@
                 
                 <div class="space-y-2">
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
-                    <textarea id="description" name="description" rows="3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"></textarea>
+                    <textarea id="description" name="description" rows="3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"><?= old('description') ?></textarea>
+
+                    <?php if (error('description')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('description') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label for="tag" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tag</label>
-                        <input type="text" id="tag" name="tag" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+                        <input type="text" id="tag" name="tag" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="e.g. Technology, Health" value="<?= old('tag') ?>">
+
+                        <?php if (error('tag')): ?>
+                          <p class="mt-1 text-sm text-red-400"><?= message('tag') ?></p>
+                        <?php endif; ?>
                     </div>
                     <div class="space-y-2">
                         <label for="locale" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Locale</label>
                         <select id="locale" name="locale" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                            <option selected>en</option>
-                            <option>ar</option>
+                            <?php foreach (['en', 'ar'] as $locale): ?>
+                                <option value="<?= $locale ?>" <?= old('locale') === $locale ? 'selected' : '' ?>><?= strtoupper($locale) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -69,6 +93,10 @@
                 <div class="space-y-2">
                     <label for="cover_picture" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Cover Picture</label>
                     <input type="file" id="cover_picture" name="cover_picture" class="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400">
+
+                    <?php if (error('cover_picture')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('cover_picture') ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -78,22 +106,38 @@
                 
                 <div class="space-y-2">
                     <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Meta Title</label>
-                    <input type="text" id="meta_title" name="meta_title" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+                    <input type="text" id="meta_title" name="meta_title" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Meta title for SEO" value="<?= old('meta_title') ?>">
+
+                    <?php if (error('meta_title')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('meta_title') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="space-y-2">
                     <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Meta Description</label>
-                    <textarea id="meta_description" name="meta_description" rows="3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"></textarea>
+                    <textarea id="meta_description" name="meta_description" rows="3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Meta description for SEO"><?= old('meta_description') ?></textarea>
+
+                    <?php if (error('meta_description')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('meta_description') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="space-y-2">
                     <label for="keywords" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Keywords</label>
-                    <input type="text" id="keywords" name="keywords" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="keyword1, keyword2, keyword3">
+                    <input type="text" id="keywords" name="keywords" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="keyword1, keyword2, keyword3" value="<?= old('keywords') ?>">
+
+                    <?php if (error('keywords')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('keywords') ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <div class="flex items-center">
-                    <input type="checkbox" id="prevent_indexing" name="prevent_indexing" class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800">
+                    <input type="checkbox" id="prevent_indexing" name="prevent_indexing" class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" <?= old('prevent_indexing') ? 'checked' : '' ?>>
                     <label for="prevent_indexing" class="text-sm text-gray-500 ms-3 dark:text-neutral-400">Prevent search engines from indexing this page</label>
+
+                    <?php if (error('prevent_indexing')): ?>
+                      <p class="mt-1 text-sm text-red-400"><?= message('prevent_indexing') ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
           </div>
