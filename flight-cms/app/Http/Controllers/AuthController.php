@@ -38,6 +38,7 @@ class AuthController
             Flight::redirect('/login');
         }
 
+        Flight::session()->regenerate(true);
         Flight::session()->set('user_id', $user['id']);
         Flight::session()->set('user_name', $user['name']);
         Flight::session()->set('user_email', $user['email']);
@@ -46,7 +47,9 @@ class AuthController
 
     public function logout()
     {
-        Flight::session()->destroy();
+        Flight::session()->clear();
+        Flight::session()->regenerate(true);
+
         Flight::redirect('/login');
     }
 }
