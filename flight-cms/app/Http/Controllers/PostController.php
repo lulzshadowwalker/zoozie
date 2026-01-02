@@ -27,6 +27,21 @@ class PostController
     public function store()
     {
         $request = CreatePostRequest::make();
+        $files = Flight::request()->getUploadedFiles();
+        $coverImage = $files['cover_picture'] ?? null;
+        $coverImagePath = null;
+
+        if ($coverImage && $coverImage->getError() === UPLOAD_ERR_OK) {
+            $uploadDir = 'public/uploads/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $filename = uniqid() . '_' . $coverImage->getClientFilename();
+            $coverImage->moveTo($uploadDir . $filename);
+            $coverImagePath = '/public/uploads/' . $filename;
+        }
+
 
         Flight::posts()->create([
             'title' => $request->title,
@@ -35,7 +50,7 @@ class PostController
             'description' => $request->description,
             'tag' => $request->tag,
             'locale' => $request->locale,
-            'cover_image' => $request->cover_image,
+            'cover_image' => $coverImagePath,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'keywords' => $request->keywords,

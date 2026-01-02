@@ -14,7 +14,7 @@
           </button>
         </header>
 
-        <form id="post-form" action="/posts" method="POST" class="p-6 space-y-8" x-data="{ 
+        <form id="post-form" action="/posts" method="POST" enctype="multipart/form-data" class="p-6 space-y-8" x-data="{ 
             title: '<?= old('title') ?>', 
             slug: '<?= old('slug') ?>',
             updateSlug() {

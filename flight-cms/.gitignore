@@ -11,3 +11,4 @@ phpunit.xml
 .idea/
 resources/dist/
 env.d.ts
+/public/uploads/
