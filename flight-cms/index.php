@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Exceptions\ValidationException;
 use App\Repositories\PostRepository;
+use App\Repositories\UserRepository;
 use flight\Container;
 use flight\Session;
 use Symfony\Component\Dotenv\Dotenv;
@@ -51,6 +52,7 @@ Flight::register('db', \flight\database\PdoWrapper::class, [
 ]);
 
 Flight::register('posts', PostRepository::class, [Flight::db()]);
+Flight::register('user', UserRepository::class, [Flight::db()]);
 
 Flight::register('session', Session::class);
 
