@@ -29,4 +29,9 @@ class PostRepository
     {
         $this->db->runQuery('DELETE FROM posts WHERE id = :id', ['id' => $id]);
     }
+
+    public function getByLocale(string $locale): array
+    {
+        return $this->db->runQuery('SELECT * FROM posts WHERE locale = :locale ORDER BY created_at DESC', ['locale' => $locale])->fetchAll();
+    }
 }
