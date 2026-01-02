@@ -8,6 +8,7 @@ cmds = [
 
     # Set permissions
     "chown -R www-data:www-data /var/log /app/public/uploads",
+    "chmod -R 775 /app/public/uploads",
 
     # Copy and setup config files
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
@@ -29,6 +30,11 @@ cmd = '/assets/start.sh'
 [staticAssets]
 "start.sh" = '''
 #!/bin/bash
+
+# Ensure permissions are correct at runtime
+mkdir -p /app/public/uploads
+chown -R www-data:www-data /app/public/uploads
+chmod -R 775 /app/public/uploads
 
 # Transform the nginx configuration
 node /assets/scripts/prestart.mjs /assets/nginx.template.conf /etc/nginx.conf

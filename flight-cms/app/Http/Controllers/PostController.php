@@ -32,7 +32,7 @@ class PostController
         $coverImagePath = null;
 
         if ($coverImage && $coverImage->getError() === UPLOAD_ERR_OK) {
-            $uploadDir = 'public/uploads/';
+            $uploadDir = __DIR__ . '/../../../public/uploads/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
