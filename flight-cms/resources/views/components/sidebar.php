@@ -1,6 +1,6 @@
 <div id="hs-pro-sidebar" class="hs-overlay [--body-scroll:true] lg:[--overlay-backdrop:false] [--is-layout-affect:true] [--opened:lg] [--auto-close:lg]
 hs-overlay-open:translate-x-0 lg:hs-overlay-layout-open:translate-x-0
--translate-x-full transition-all duration-300 transform
+-translate-x-full
 w-60
 hidden
 fixed inset-y-0 z-60 start-0
