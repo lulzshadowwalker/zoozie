@@ -34,6 +34,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "flaskcms.staging.zoozie.lulzie.tech",
+      },
+      {
+        protocol: "https",
         hostname: "**.google.com",
       },
       {

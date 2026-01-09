@@ -26,6 +26,14 @@ export default class Config {
 
     return strapiBaseUrl;
   }
+  static get flaskCmsBaseUrl(): string {
+    const flaskCmsBaseUrl = process.env.NEXT_PUBLIC_FLASKCMS_BASE_URL;
+    if (!flaskCmsBaseUrl) {
+      throw new Error("env.NEXT_PUBLIC_FLASKCMS_BASE_URL is not set");
+    }
+
+    return flaskCmsBaseUrl;
+  }
   static get strapiAccessToken(): string {
     const token = process.env.STRAPI_ACCESS_TOKEN;
     if (!token) {
